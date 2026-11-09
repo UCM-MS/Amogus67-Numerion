@@ -1,0 +1,222 @@
+{
+  "schemaVersion": 1,
+  "scope": "Matematika pre 7.–9. ročník ZŠ; engine-independent companion and duel data",
+  "species": [
+    {
+      "id": "ember",
+      "name": "Iskra",
+      "description": "Zvedavá líška s huňatým chvostom. Každý nový chodník je pre ňu dobrodružstvo.",
+      "mathTopic": "Slovné úlohy a matematika v praxi",
+      "visualId": 1,
+      "battleAffinity": 0,
+      "mathTopicId": 5,
+      "signatureMove": "Iskrivý výpad"
+    },
+    {
+      "id": "bolt",
+      "name": "Volt",
+      "description": "Malý výskumný robot so svietiacou anténou. Miluje techniku a logické výzvy.",
+      "mathTopic": "Výrazy a rovnice",
+      "visualId": 2,
+      "battleAffinity": 1,
+      "mathTopicId": 2,
+      "signatureMove": "Voltový impulz"
+    },
+    {
+      "id": "astra",
+      "name": "Astra",
+      "description": "Nočná sova s mäkkými krídlami. Do denníka si zapisuje každú novú vedomosť.",
+      "mathTopic": "Geometria a priestor",
+      "visualId": 3,
+      "battleAffinity": 2,
+      "mathTopicId": 3,
+      "signatureMove": "Hviezdny let"
+    },
+    {
+      "id": "zlomko",
+      "name": "Zlomko",
+      "description": "Veselý slizový spoločník s deleným kryštálom. Z častí vždy zloží celok.",
+      "mathTopic": "Zlomky a racionálne čísla",
+      "visualId": 4,
+      "battleAffinity": 0,
+      "mathTopicId": 0,
+      "signatureMove": "Zlomková vlna"
+    },
+    {
+      "id": "percenta",
+      "name": "Percenta",
+      "description": "Malá dračica s mincovými šupinami. Každú výpravu si prepočíta na sto dielikov.",
+      "mathTopic": "Percentá a finančné úlohy",
+      "visualId": 5,
+      "battleAffinity": 1,
+      "mathTopicId": 1,
+      "signatureMove": "Stotinový záblesk"
+    },
+    {
+      "id": "rovnik",
+      "name": "Rovnik",
+      "description": "Rohatý strážca rovnováhy. Na oboch stranách svojej váhy udržuje rovnakú silu.",
+      "mathTopic": "Lineárne rovnice a nerovnice",
+      "visualId": 6,
+      "battleAffinity": 1,
+      "mathTopicId": 2,
+      "signatureMove": "Rovnovážny úder"
+    },
+    {
+      "id": "geora",
+      "name": "Geora",
+      "description": "Krištáľová korytnačka s trojuholníkovým pancierom. Pozná najkratšie chodníky akadémie.",
+      "mathTopic": "Uhly a Pytagorova veta",
+      "visualId": 7,
+      "battleAffinity": 2,
+      "mathTopicId": 3,
+      "signatureMove": "Trojuholníkový náraz"
+    },
+    {
+      "id": "prizma",
+      "name": "Prizma",
+      "description": "Lietajúci kryštálový mantik s hranatými krídlami. V každom telese objaví nový priestor.",
+      "mathTopic": "Telesá, objem a povrch",
+      "visualId": 8,
+      "battleAffinity": 2,
+      "mathTopicId": 3,
+      "signatureMove": "Priestorový lúč"
+    },
+    {
+      "id": "datax",
+      "name": "Datax",
+      "description": "Zvedavý mechanický chrobák. Zbiera čísla, kreslí grafy a hľadá medzi nimi súvislosti.",
+      "mathTopic": "Štatistika a pravdepodobnosť",
+      "visualId": 9,
+      "battleAffinity": 0,
+      "mathTopicId": 4,
+      "signatureMove": "Dátová lavína"
+    },
+    {
+      "id": "ratio",
+      "name": "Ratio",
+      "description": "Rýchly zajačí kartograf s kompasom. Každú trasu zmenší do dokonalej mierky.",
+      "mathTopic": "Pomer, mierka a úmernosť",
+      "visualId": 10,
+      "battleAffinity": 0,
+      "mathTopicId": 1,
+      "signatureMove": "Pomerný šprint"
+    }
+  ],
+  "affinities": [
+    {
+      "id": 0,
+      "name": "Početný",
+      "strongAgainst": 2
+    },
+    {
+      "id": 1,
+      "name": "Algebraický",
+      "strongAgainst": 0
+    },
+    {
+      "id": 2,
+      "name": "Priestorový",
+      "strongAgainst": 1
+    }
+  ],
+  "rules": {
+    "partyLimit": 3,
+    "baseMaxHP": 100,
+    "startingEnergy": 4,
+    "maxEnergy": 6,
+    "maxRounds": 100,
+    "strikePower": 26,
+    "quickStrikePower": 8,
+    "guardShield": 14,
+    "guardEnergy": 2,
+    "healPower": 30,
+    "healCooldownOnUse": 3,
+    "endRoundCooldownReduction": 1,
+    "endRoundEnergy": 1,
+    "shieldsExpireAtRoundEnd": true,
+    "focusedAttackPercent": 150,
+    "advantagePercent": 120,
+    "disadvantagePercent": 80,
+    "matchingMathTopicPercent": 120,
+    "loadoutHPBonusCap": 20,
+    "loadoutAttackBonusCap": 3,
+    "priorityTieFirstSide": "(unsigned(seed) + unsigned(round)) & 1",
+    "damageRounding": "floor((26 + attackBonus) * effectivenessPercent / 100); then floor(damage * 120 / 100) if math topic matches pet; then floor(damage * 150 / 100) if focused; then max(0, damage - shield)",
+    "actionToken": "battleId:round:side",
+    "rewardNeedsCorrectMath": true,
+    "victoryReward": {
+      "xp": 60,
+      "coins": 100,
+      "petXP": 40
+    },
+    "moves": [
+      {
+        "id": 0,
+        "key": "Strike",
+        "name": "Výpad",
+        "description": "Útok 26. Typová výhoda ±20 %, správna úloha zo špecializácie +20 %; sústredenie posilní ďalší útok o 50 %.",
+        "energyCost": 2,
+        "maxPP": 12,
+        "power": 26,
+        "priority": 1,
+        "requiresMathAnswer": true
+      },
+      {
+        "id": 1,
+        "key": "Guard",
+        "name": "Ochranný štít",
+        "description": "Zablokuje 14 poškodenia v tomto kole a obnoví 2 energie. Obrana má prednosť pred útokom.",
+        "energyCost": 0,
+        "maxPP": 0,
+        "power": 14,
+        "priority": 3,
+        "requiresMathAnswer": true
+      },
+      {
+        "id": 2,
+        "key": "Focus",
+        "name": "Sústredenie",
+        "description": "Ďalší úspešný útok bude o 50 % silnejší. Účinok zostáva aj po vystriedaní.",
+        "energyCost": 1,
+        "maxPP": 4,
+        "power": 0,
+        "priority": 2,
+        "requiresMathAnswer": true
+      },
+      {
+        "id": 3,
+        "key": "Heal",
+        "name": "Obnova",
+        "description": "Obnoví 30 HP. Dve použitia na spoločníka; potom treba počkať dve celé kolá.",
+        "energyCost": 3,
+        "maxPP": 2,
+        "power": 30,
+        "priority": 2,
+        "requiresMathAnswer": true
+      },
+      {
+        "id": 4,
+        "key": "Switch",
+        "name": "Vystriedať",
+        "description": "Vymeň aktívneho spoločníka. Výmena prebehne pred útokmi a spotrebuje tento ťah.",
+        "energyCost": 0,
+        "maxPP": 0,
+        "power": 0,
+        "priority": 4,
+        "requiresMathAnswer": true
+      },
+      {
+        "id": 5,
+        "key": "QuickStrike",
+        "name": "Rýchly výpad",
+        "description": "Slabý zásah bez otázky: sila 8, ktorú môže zachytiť štít. Nezískava vedomostné body ani nevyužíva bonus výbavy či sústredenia.",
+        "energyCost": 0,
+        "maxPP": 0,
+        "power": 8,
+        "priority": 1,
+        "requiresMathAnswer": false
+      }
+    ]
+  }
+}
