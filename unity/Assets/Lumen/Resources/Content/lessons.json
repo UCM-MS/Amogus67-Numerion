@@ -1,0 +1,186 @@
+{
+  "SchemaVersion": 1,
+  "LessonCount": 18,
+  "Lessons": [
+    {
+      "Id": "lesson-g7-s0",
+      "Grade": 7,
+      "Subject": 0,
+      "Title": "Zlomky bez hádania",
+      "Explanation": "Zlomok opisuje časť celku. Menovateľ určuje veľkosť dielikov a čitateľ ich počet. Pred sčítaním a odčítaním potrebujeme rovnako veľké dieliky, teda spoločný menovateľ. Pri rozširovaní aj krátení násobíme alebo delíme čitateľa aj menovateľa rovnakým nenulovým číslom.\nPri násobení zlomkov násobíme čitatele navzájom aj menovatele navzájom. Delenie nenulovým zlomkom nahradíme násobením jeho prevrátenou hodnotou. Výsledok skontrolujeme odhadom.",
+      "WorkedExample": "1/3 + 1/6\n1. Spoločný menovateľ je 6.\n2. 1/3 = 2/6.\n3. 2/6 + 1/6 = 3/6 = 1/2.\nKontrola: tretina a šestina spolu tvoria polovicu.",
+      "Takeaway": "Pri sčítaní nesčítavaj menovatele. Pri delení prevráť deliteľa, nie delenec.",
+      "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf"
+    },
+    {
+      "Id": "lesson-g7-s1",
+      "Grade": 7,
+      "Subject": 1,
+      "Title": "Percentá, pomer a mierka",
+      "Explanation": "Percento je stotina základu. Ak poznáme základ, p percent vypočítame ako základ × p/100. Pri pomere rozdelíme celok na súčet pomerových dielov a až potom určíme požadovanú časť.\nMierka 1 : n hovorí, že jedna jednotka na pláne znamená n rovnakých jednotiek v skutočnosti. Pred porovnaním vždy zjednoť jednotky. Pri priamej úmernosti sa obe veličiny menia rovnakým násobkom; pri nepriamej zostáva ich súčin rovnaký.",
+      "WorkedExample": "Rozdeľ 60 mincí v pomere 2 : 3.\n1. Spolu je 2 + 3 = 5 dielov.\n2. Jeden diel je 60 : 5 = 12.\n3. Časti sú 24 a 36 mincí.\nKontrola: 24 + 36 = 60 a 24 : 36 = 2 : 3.",
+      "Takeaway": "Pri zľave odpočítaj percentuálnu časť od základu. Mierka používa rovnaké jednotky na oboch stranách.",
+      "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf"
+    },
+    {
+      "Id": "lesson-g7-s2",
+      "Grade": 7,
+      "Subject": 2,
+      "Title": "Poradie operácií a neznáme číslo",
+      "Explanation": "Najprv riešime zátvorky, potom násobenie a delenie, nakoniec sčítanie a odčítanie. Operácie s rovnakou prednosťou počítame zľava doprava. Zátvorky dokážu výsledok úplne zmeniť.\nPri hľadaní neznámeho čísla môžeme postupovať odzadu. Ku sčítaniu patrí opačné odčítanie a k násobeniu nenulovým číslom delenie. Na konci vyskúšame nájdené číslo v pôvodnom zadaní.",
+      "WorkedExample": "Myslené číslo vynásobíme 4 a pripočítame 6. Výsledok je 34.\n1. Odčítame poslednú zmenu: 34 − 6 = 28.\n2. Zrušíme násobenie: 28 : 4 = 7.\n3. Skúška: 4 × 7 + 6 = 34.",
+      "Takeaway": "Nerieš všetko automaticky zľava doprava. Neznáme číslo over dosadením.",
+      "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf"
+    },
+    {
+      "Id": "lesson-g7-s3",
+      "Grade": 7,
+      "Subject": 3,
+      "Title": "Kocka, kváder a jednotky",
+      "Explanation": "Objem hovorí, koľko priestoru teleso zaberá; zapisujeme ho v kubických jednotkách. Pre kváder V = abc a pre kocku V = a³. Povrch je súčet obsahov všetkých stien, teda pre kváder S = 2(ab + ac + bc).\nJednotky objemu sa nemenia rovnakým násobkom ako jednotky dĺžky: 1 dm³ = 1 000 cm³. Jeden dm³ zároveň zodpovedá jednému litru. Pri skladaní telies bez prekrývania ich objemy sčítame.",
+      "WorkedExample": "Kváder má rozmery 5 dm, 2 dm a 3 dm.\nObjem: V = 5 × 2 × 3 = 30 dm³ = 30 l.\nPovrch: S = 2(10 + 15 + 6) = 62 dm².\nObjem a povrch majú rozdielne jednotky.",
+      "Takeaway": "Povrch meraj v štvorcových a objem v kubických jednotkách.",
+      "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf"
+    },
+    {
+      "Id": "lesson-g7-s4",
+      "Grade": 7,
+      "Subject": 4,
+      "Title": "Počítanie možností",
+      "Explanation": "Možnosti vypisujeme systematicky, napríklad do tabuľky alebo stromu. Ak za prvým výberom vždy nasleduje druhý, počty možností násobíme. Pri oddelených alternatívach, z ktorých zvolíme len jednu, ich sčítame.\nRozhoduje, či na poradí záleží a či sa prvky môžu opakovať. Dvojica Iskra–Volt je pri výbere tímu rovnaká ako Volt–Iskra, ale pri poradí na stupni víťazov sú to rôzne výsledky.",
+      "WorkedExample": "Z troch petov vyber dve rôzne mená do poradia.\nNa prvé miesto sú 3 možnosti, na druhé zostanú 2: 3 × 2 = 6.\nAk na poradí nezáleží, každú dvojicu sme započítali dvakrát: 6 : 2 = 3 dvojice.",
+      "Takeaway": "Pred počítaním sa spýtaj: záleží na poradí a môže sa prvok opakovať?",
+      "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf"
+    },
+    {
+      "Id": "lesson-g7-s5",
+      "Grade": 7,
+      "Subject": 5,
+      "Title": "Matematika na výprave",
+      "Explanation": "Slovnú úlohu začni tým, čo poznáš a čo chceš zistiť. Jednotky preveď na spoločný tvar. Potom zostav výpočet a výsledok vysvetli vetou, nielen číslom. Pomôže odhad: má byť výsledok väčší alebo menší než pôvodná hodnota?\nRecepty a ceny často používajú priamu úmernosť. Pri stálom tempe je rýchlosť dráha delená časom. Ak má výbeh otvor pre bránu, od celého obvodu odčítame šírku otvoru.",
+      "WorkedExample": "Na 4 porcie treba 280 g zmesi. Koľko na 10 porcií?\n1. Jedna porcia: 280 : 4 = 70 g.\n2. Desať porcií: 70 × 10 = 700 g.\nKontrola: porcií je 2,5-krát viac, aj zmesi treba 2,5-krát viac.",
+      "Takeaway": "Výsledok doplň jednotkou a skontroluj, či odpovedá na otázku.",
+      "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf"
+    },
+    {
+      "Id": "lesson-g8-s0",
+      "Grade": 8,
+      "Subject": 0,
+      "Title": "Záporné a racionálne čísla",
+      "Explanation": "Záporné čísla môžu opisovať teplotu pod nulou, dlh alebo zmenu smerom nadol. Pri sčítaní sleduj smer pohybu na číselnej osi. Odčítanie čísla je sčítanie jeho opačného čísla.\nSúčin alebo podiel dvoch čísel s rovnakým znamienkom je kladný; s rôznymi znamienkami záporný. Pravidlá znamienok pri násobení nenahrádzajú pravidlá sčítania. Racionálne čísla môžeme zapisovať zlomkom aj desatinným číslom.",
+      "WorkedExample": "−3/4 + 1/2\nPrevedieme polovicu na štvrtiny: 1/2 = 2/4.\nPotom −3/4 + 2/4 = −1/4.\nNa osi sa z −0,75 posunieme o 0,5 doprava na −0,25.",
+      "Takeaway": "Odlišuj znamienko čísla od znamienka operácie. Zátvorky chránia dosadené záporné čísla.",
+      "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf"
+    },
+    {
+      "Id": "lesson-g8-s1",
+      "Grade": 8,
+      "Subject": 1,
+      "Title": "Zmeny percent a úmernosť",
+      "Explanation": "Percentuálna zmena sa vždy počíta z konkrétneho základu. Zvýšenie o 20 % znamená násobenie 1,20, zníženie o 20 % násobenie 0,80. Pri dvoch zmenách sa druhá počíta už z novej hodnoty, preto rovnaké zvýšenie a zníženie nemusia vrátiť pôvodnú cenu.\nAk poznáme cenu po zmene a hľadáme pôvodnú, delíme príslušným koeficientom. Pri priamej úmernosti y = kx je pomer y/x stály. Pri nepriamej úmernosti je stály súčin xy.",
+      "WorkedExample": "Cena 200 € stúpne o 10 % a následne klesne o 10 %.\n200 × 1,10 = 220 €.\n220 × 0,90 = 198 €.\nPokles sa počíta z 220 €, nie z 200 €.",
+      "Takeaway": "Najprv urč základ percent. Spätný výpočet znamená delenie koeficientom zmeny.",
+      "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf"
+    },
+    {
+      "Id": "lesson-g8-s2",
+      "Grade": 8,
+      "Subject": 2,
+      "Title": "Výrazy s premennou",
+      "Explanation": "Premenná zastupuje číslo. Výraz opisuje výpočet, rovnica tvrdí rovnosť dvoch výrazov. Pri dosadzovaní nahraď každý výskyt premennej rovnakou hodnotou a rešpektuj poradie operácií. Zápornú hodnotu zapisuj do zátvoriek.\nSčítame len podobné členy: 3a + 2a = 5a, ale 3a + 2 sa nedá zmeniť na 5a. Pri roznásobení vynásobíme každý člen v zátvorke, napríklad 2(x + 3) = 2x + 6.",
+      "WorkedExample": "Uprav 5x − 2x + 4 a vypočítaj hodnotu pre x = −2.\nPodobné členy: 5x − 2x = 3x, výraz je 3x + 4.\nDosadíme: 3 × (−2) + 4 = −6 + 4 = −2.",
+      "Takeaway": "Konštantu nemožno pripočítať ku koeficientu premennej. Pri dosadzovaní si ponechaj zátvorky.",
+      "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf"
+    },
+    {
+      "Id": "lesson-g8-s3",
+      "Grade": 8,
+      "Subject": 3,
+      "Title": "Obsahy, kruh a hranol",
+      "Explanation": "Obsah rovnobežníka je av, trojuholníka av/2 a lichobežníka (a + c)v/2. Výška je vždy kolmá na príslušnú základňu; šikmá strana ju nemusí nahradiť.\nPre kruh platí S = πr² a pre dĺžku kružnice o = 2πr. Polomer je polovica priemeru. Pri výpočtoch s približným π dodrž presnosť uvedenú v zadaní. Objem hranola je obsah podstavy krát jeho výška: V = Sₚv.",
+      "WorkedExample": "Kruh má priemer 10 cm, použi π = 3,14.\nPolomer r = 10 : 2 = 5 cm.\nObsah S = 3,14 × 25 = 78,5 cm².\nDĺžka kružnice o = 2 × 3,14 × 5 = 31,4 cm.",
+      "Takeaway": "Pozor na polomer a priemer. Výsledok obsahu má jednotku cm², nie cm.",
+      "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf"
+    },
+    {
+      "Id": "lesson-g8-s4",
+      "Grade": 8,
+      "Subject": 4,
+      "Title": "Pravdepodobnosť a priemer",
+      "Explanation": "Pri rovnako pravdepodobných možnostiach je pravdepodobnosť počet priaznivých možností delený počtom všetkých možností. Pravdepodobnosť je od 0 do 1: nemožný jav má 0 a istý jav 1. Rovnaké šance treba zdôvodniť; nie každý zoznam výsledkov ich automaticky má.\nAritmetický priemer vypočítame ako súčet hodnôt delený ich počtom. Percentuálna početnosť je podiel konkrétnej skupiny k celku krát 100. Priemer nemusí byť jednou z nameraných hodnôt.",
+      "WorkedExample": "Vo vrecku sú 2 červené a 6 modrých rovnakých guličiek.\nSpolu je 8 guličiek, červené sú 2.\nP(červená) = 2/8 = 1/4 = 25 %.\nHodnota 2/6 by porovnávala farby, nie priaznivé možnosti k celku.",
+      "Takeaway": "Menovateľ pravdepodobnosti počíta všetky možnosti, nie iba ostatné možnosti.",
+      "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf"
+    },
+    {
+      "Id": "lesson-g8-s5",
+      "Grade": 8,
+      "Subject": 5,
+      "Title": "Jednotky a praktické vzťahy",
+      "Explanation": "Zvoľ spoločné jednotky skôr, než dosadíš do vzorca. Pre rýchlosť v km/h musí byť čas v hodinách, preto minúty delíme 60. Pri obsahu sa jednotkový násobok umocňuje na druhú: 1 m² = 10 000 cm².\nPriama úmernosť pomáha s cenou za kus alebo gram. Najprv vypočítaj jednotkovú cenu a potom požadovaný počet. Pri hľadaní výšky zo vzorca pre obsah trojuholníka treba obsah najprv vynásobiť dvomi.",
+      "WorkedExample": "Vozidlo ide 60 km/h počas 18 minút.\nČas t = 18/60 h = 0,3 h.\nDráha s = vt = 60 × 0,3 = 18 km.\nOdhad: 18 minút je menej než polhodina, dráha musí byť menej než 30 km.",
+      "Takeaway": "Premena minút na hodiny nie je delenie stovkou. Skontroluj rozmer výsledku.",
+      "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf"
+    },
+    {
+      "Id": "lesson-g9-s0",
+      "Grade": 9,
+      "Subject": 0,
+      "Title": "Mocniny a odmocniny",
+      "Explanation": "Pri násobení mocnín s rovnakým základom exponenty sčítame, pri delení nenulových mocnín ich odčítame. Druhá mocnina zlomku je druhá mocnina čitateľa delená druhou mocninou menovateľa. Záporný exponent vyjadruje prevrátenú hodnotu.\nDruhá odmocnina √a je nezáporné číslo, ktorého druhá mocnina je a. Výraz pod odmocninou vyriešime ako celok: √(a + b) sa všeobecne nerovná √a + √b.",
+      "WorkedExample": "√(9 + 16) = √25 = 5.\nSamostatne √9 + √16 = 3 + 4 = 7: ide o iný výraz.\nPri 10⁻³ je výsledok 1/1000 = 0,001, nie −1000.",
+      "Takeaway": "Odmocninu nerozdeľuj cez súčet. Pri mocninách rozhoduje, na čo sa vzťahujú zátvorky.",
+      "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf"
+    },
+    {
+      "Id": "lesson-g9-s1",
+      "Grade": 9,
+      "Subject": 1,
+      "Title": "Podobnosť a viacstupňové zmeny",
+      "Explanation": "Podobné útvary majú príslušné dĺžky v stálom pomere k. Ich obsahy sa menia v pomere k²; rovnaký násobok pre dĺžku a obsah by bol nesprávny. Pri úlohách s tieňmi si vytvor dvojice zodpovedajúcich výšok a dĺžok tieňov.\nPercentuálne zmeny skladáme násobením koeficientov. Pri jednoduchom úroku sa úrok počíta len z pôvodného vkladu, nie zo skôr získaných úrokov. Podmienky zadania preto menia použitý model.",
+      "WorkedExample": "Plán zväčšíme v mierke dĺžok 3 : 2.\nKoeficient dĺžok je 1,5.\nKoeficient obsahov je 1,5² = 2,25 = 9/4.\nPlocha 20 cm² sa preto zmení na 45 cm².",
+      "Takeaway": "Pri podobnosti odlišuj dĺžku od obsahu. Percentá po sebe majú postupne nové základy.",
+      "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf"
+    },
+    {
+      "Id": "lesson-g9-s2",
+      "Grade": 9,
+      "Subject": 2,
+      "Title": "Rovnice a nerovnice",
+      "Explanation": "Rovnicu riešime ekvivalentnými úpravami: rovnakú hodnotu pripočítame alebo odčítame na oboch stranách; obe strany násobíme alebo delíme rovnakým nenulovým číslom. Najprv odstránime zátvorky a spojíme podobné členy. Výsledok overíme v pôvodnej rovnici.\nPri nerovnici delenej alebo násobenej záporným číslom sa smer nerovnosti obráti. Otvorený znak < nezahŕňa hraničnú hodnotu; znak ≤ ju zahŕňa.",
+      "WorkedExample": "3x − 2 < 10\nPripočítame 2: 3x < 12.\nDelíme kladnou trojkou: x < 4.\nČíslo 3 vyhovuje, číslo 4 nie, lebo 10 < 10 neplatí.",
+      "Takeaway": "Rovnica má riešenie, nerovnica často celú množinu riešení. Otestuj aj hranicu.",
+      "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf"
+    },
+    {
+      "Id": "lesson-g9-s3",
+      "Grade": 9,
+      "Subject": 3,
+      "Title": "Pytagorova veta a telesá",
+      "Explanation": "V pravouhlom trojuholníku platí c² = a² + b², kde c je prepona oproti pravému uhlu. Ak hľadáme odvesnu, od druhej mocniny prepony odčítame druhú mocninu známej odvesny a potom odmocníme. Vetu nepoužijeme na ľubovoľný trojuholník.\nObjem valca je πr²v a objem kužeľa jeho tretina pri rovnakej podstave a výške. Pre guľu V = 4πr³/3. Pri výsledkoch zachovaj kubické jednotky a presnosť π zo zadania.",
+      "WorkedExample": "Rebrík 10 m siaha do výšky 8 m.\nVzdialenosť päty od steny a spĺňa a² = 10² − 8² = 100 − 64 = 36.\nOdmocníme: a = 6 m.\nPrepona 10 m je správne najdlhšia strana.",
+      "Takeaway": "Najprv nájdi pravý uhol a preponu. Nezamieňaj druhú mocninu dĺžky s dĺžkou.",
+      "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf"
+    },
+    {
+      "Id": "lesson-g9-s4",
+      "Grade": 9,
+      "Subject": 4,
+      "Title": "Štatistika a grafy",
+      "Explanation": "Priemer využíva všetky hodnoty. Medián je prostredná hodnota usporiadaného súboru; pri párnom počte hodnôt spriemerujeme dve prostredné. Pred výpočtom mediánu údaje vždy usporiadaj. Relatívna početnosť porovnáva počet výskytov so všetkými záznamami.\nBod grafu má súradnice (x; y). Pri predpise y = kx + q vypočítame y dosadením x; priama úmernosť má q = 0. Pri dvoch kockách rozlišujeme usporiadané výsledky, aby každá základná možnosť mala rovnakú šancu.",
+      "WorkedExample": "Výsledky 12, 3, 8, 14, 8 usporiadame na 3, 8, 8, 12, 14.\nMedián je tretia hodnota 8.\nPriemer je (3 + 8 + 8 + 12 + 14)/5 = 9.\nPriemer a medián sa nemusia rovnať.",
+      "Takeaway": "Graf čítaj podľa osí a jednotiek. Priemer, medián a početnosť opisujú rozdielne vlastnosti dát.",
+      "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf"
+    },
+    {
+      "Id": "lesson-g9-s5",
+      "Grade": 9,
+      "Subject": 5,
+      "Title": "Viackrokové slovné úlohy",
+      "Explanation": "Rozlož praktický problém na menšie kroky a priraď ku každému veličiny a jednotky. Pri pevnom poplatku ho najprv odčítame, až zvyšok delíme cenou za jednotku. Pri kombinácii percentuálnej zľavy a pevného kupónu záleží na poradí.\nPri spoločnom napĺňaní nádrže nesčítame časy: sčítame časti nádrže naplnené za jednotku času. Výsledok overíme odhadom. Dva kohútiky spolu musia byť rýchlejšie než ktorýkoľvek z nich samostatne.",
+      "WorkedExample": "Kohútiky naplnia nádrž samostatne za 6 h a 3 h.\nZa hodinu spolu naplnia 1/6 + 1/3 = 1/2 nádrže.\nCelá nádrž potrebuje 1 : (1/2) = 2 hodiny.\nVýsledok je menší než 3 aj 6 hodín.",
+      "Takeaway": "Sčítaj výkony, nie časy. Odhad odhalí veľa chýb skôr než kalkulačka.",
+      "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf"
+    }
+  ]
+}
