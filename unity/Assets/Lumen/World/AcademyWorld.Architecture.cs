@@ -7,7 +7,7 @@ namespace Lumen.World
         private sealed partial class Builder
         {
             private readonly Color ink = new Color(.10f, .17f, .22f);
-            private readonly Color teal = new Color(.15f, .35f, .36f);
+            private readonly Color teal = new Color(.19f, .27f, .30f);
             private readonly Color brass = new Color(.74f, .55f, .29f);
 
             private void AcademyLandmark()
@@ -37,11 +37,11 @@ namespace Lumen.World
                 for (int rib = 0; rib < 4; rib++)
                     Torus("Dome brass meridian", hall, new Vector3(0, 10.1f, 0), 3.35f, 0.055f, brass, new Vector3(90, rib * 45, 0));
                 Shape("Observatory finial", PrimitiveType.Cylinder, hall, new Vector3(0, 13.3f, 0), new Vector3(0.18f, 0.8f, 0.18f), brass, false, 0.65f, 0.7f);
-                Shape("North star", PrimitiveType.Sphere, hall, new Vector3(0, 14.25f, 0), Vector3.one * 0.65f, brass, false, 0.5f, 0.8f, 0.25f);
+                Shape("North star", PrimitiveType.Sphere, hall, new Vector3(0, 14.25f, 0), Vector3.one * 0.65f, brass, false, 0.5f, 0.8f);
 
                 // A legible facade sign, with a contrasting field instead of floating text in the sky.
-                Shape("Academy nameplate", PrimitiveType.Cube, hall, new Vector3(0, 6.65f, 1.76f), new Vector3(5.5f, 1.04f, 0.13f), ink, false);
-                WorldLabels.Create(hall, "L U M E N", new Vector3(0, 6.77f, 1.85f), 5.8f, cream, false);
+                Shape("Academy nameplate", PrimitiveType.Cube, hall, new Vector3(0, 6.65f, 1.76f), new Vector3(6.8f, 1.04f, 0.13f), ink, false);
+                WorldLabels.Create(hall, "N U M E R I O N", new Vector3(0, 6.77f, 1.85f), 4.8f, cream, false);
                 WorldLabels.Create(hall, "AKADÉMIA OBJAVOV", new Vector3(0, 6.38f, 1.86f), 1.55f, new Color(0.84f, 0.86f, 0.7f), false);
 
                 Torus("Astronomical clock bezel", hall, new Vector3(0, 9.2f, 3.45f), 1.18f, 0.09f, brass, new Vector3(90, 0, 0));
@@ -63,8 +63,8 @@ namespace Lumen.World
                 for (int side = -1; side <= 1; side += 2)
                 {
                     for (int book = 0; book < 5; book++)
-                        Shape("Facade library volume", PrimitiveType.Cube, hall, new Vector3(side * 3.4f + (book - 2) * 0.18f, 1.2f + (book % 2) * 0.1f, 1.5f), new Vector3(0.13f, 0.7f + (book % 3) * 0.13f, 0.27f), LumenMaterials.OutfitColors[(book + 1) % 6], false);
-                    Banner(hall, new Vector3(side * 5.1f, 0, 0.9f), side < 0 ? LumenMaterials.OutfitColors[0] : teal);
+                        Shape("Facade library volume", PrimitiveType.Cube, hall, new Vector3(side * 3.4f + (book - 2) * 0.18f, 1.2f + (book % 2) * 0.1f, 1.5f), new Vector3(0.13f, 0.7f + (book % 3) * 0.13f, 0.27f), CampusAccents[(book + 1) % 6], false);
+                    Banner(hall, new Vector3(side * 5.1f, 0, 0.9f), side < 0 ? CampusAccents[0] : teal);
                 }
                 Torus("Gateway arch gold inner curve", hall, new Vector3(0, 4.95f, 1.65f), 2.5f, 0.11f, brass, new Vector3(90, 0, 0));
             }
@@ -92,7 +92,7 @@ namespace Lumen.World
                         Vector3 p = new Vector3(Mathf.Cos(a) * 10.4f, 0, Mathf.Sin(a) * 10.4f);
                         // Keep the four activity kiosks, spawn lane and observatory doorway open.
                         if (p.z < -5 || p.z > 8 || p.x < -8 && p.z > 3) continue;
-                        Planter(root, p, 1.65f, LumenMaterials.OutfitColors[(i + 2) % 6]);
+                        Planter(root, p, 1.65f, CampusAccents[(i + 2) % 6]);
                     }
                 }
                 CompanionGarden();
@@ -115,17 +115,17 @@ namespace Lumen.World
                 for (int bed = 0; bed < 3; bed++)
                 {
                     Vector3 p = new Vector3((bed - 1) * 1.04f, 0.18f, -1);
-                    Shape("Companion cushion", PrimitiveType.Sphere, garden, p, new Vector3(0.9f, 0.24f, 0.8f), LumenMaterials.OutfitColors[bed], false);
+                    Shape("Companion cushion", PrimitiveType.Sphere, garden, p, new Vector3(0.9f, 0.24f, 0.8f), CampusAccents[bed], false);
                     Shape("Nursery egg sculpture", PrimitiveType.Sphere, garden, p + Vector3.up * 0.49f, new Vector3(0.5f, 0.72f, 0.5f), cream, false, 0, 0.65f);
-                    Torus("Egg species band", garden, p + Vector3.up * 0.42f, 0.25f, 0.035f, LumenMaterials.OutfitColors[bed], Vector3.zero);
+                    Torus("Egg species band", garden, p + Vector3.up * 0.42f, 0.25f, 0.035f, CampusAccents[bed], Vector3.zero);
                 }
-                Torus("Companion training hoop", garden, new Vector3(3.7f, 0.85f, 0.8f), 0.78f, 0.12f, LumenMaterials.OutfitColors[0], new Vector3(90, 0, 0));
+                Torus("Companion training hoop", garden, new Vector3(3.7f, 0.85f, 0.8f), 0.78f, 0.12f, CampusAccents[0], new Vector3(90, 0, 0));
                 Shape("Training hoop foot", PrimitiveType.Cube, garden, new Vector3(3.7f, 0.11f, 0.8f), new Vector3(1.9f, 0.16f, 0.7f), cream, false);
                 for (int toy = 0; toy < 3; toy++)
-                    Shape("Training stepping stone", PrimitiveType.Cylinder, garden, new Vector3(2.5f + toy * 0.65f, 0.1f, 2.4f), new Vector3(0.42f, 0.1f, 0.42f), LumenMaterials.OutfitColors[(toy + 2) % 6], false);
+                    Shape("Training stepping stone", PrimitiveType.Cylinder, garden, new Vector3(2.5f + toy * 0.65f, 0.1f, 2.4f), new Vector3(0.42f, 0.1f, 0.42f), CampusAccents[(toy + 2) % 6], false);
                 Shape("Companion feeding bowl", PrimitiveType.Cylinder, garden, new Vector3(-0.9f, 0.17f, 0.85f), new Vector3(0.62f, 0.13f, 0.62f), brass, false, 0.45f, 0.65f);
                 Shape("Bowl inset", PrimitiveType.Cylinder, garden, new Vector3(-0.9f, 0.3f, 0.85f), new Vector3(0.48f, 0.025f, 0.48f), ink, false);
-                Planter(garden, new Vector3(2.6f, 0, -2), 0.8f, LumenMaterials.OutfitColors[4]);
+                Planter(garden, new Vector3(2.6f, 0, -2), 0.8f, CampusAccents[4]);
                 Lantern(garden, new Vector3(-2.4f, 0, -2));
             }
 
@@ -140,11 +140,11 @@ namespace Lumen.World
                 if (headless) return;
                 for (int beam = 0; beam < 5; beam++)
                     Shape("Studio timber pergola", PrimitiveType.Cube, studio, new Vector3((beam - 2) * 1.18f, 3.5f, -1.3f), new Vector3(0.18f, 0.18f, 3), cream, false);
-                Shape("Studio canopy ribbon", PrimitiveType.Cube, studio, new Vector3(0, 3.43f, -1.3f), new Vector3(5.3f, 0.07f, 2.8f), LumenMaterials.OutfitColors[4], false);
+                Shape("Studio canopy ribbon", PrimitiveType.Cube, studio, new Vector3(0, 3.43f, -1.3f), new Vector3(5.3f, 0.07f, 2.8f), CampusAccents[4], false);
                 WorldLabels.Create(studio, "TVOJ OBJAVITEĽ", new Vector3(0, 4.05f, -0.6f), 2.15f, ink);
                 for (int fabric = 0; fabric < 4; fabric++)
-                    Shape("Studio hanging fabric", PrimitiveType.Cube, studio, new Vector3(-1.75f + fabric * 0.46f, 1.85f, -2.3f), new Vector3(0.35f, 1.3f, 0.13f), LumenMaterials.OutfitColors[fabric], false);
-                Planter(studio, new Vector3(-3.15f, 0, -1.7f), 0.85f, LumenMaterials.OutfitColors[0]);
+                    Shape("Studio hanging fabric", PrimitiveType.Cube, studio, new Vector3(-1.75f + fabric * 0.46f, 1.85f, -2.3f), new Vector3(0.35f, 1.3f, 0.13f), CampusAccents[fabric], false);
+                Planter(studio, new Vector3(-3.15f, 0, -1.7f), 0.85f, CampusAccents[0]);
             }
 
             private void PavilionArchitecture(Transform group, int index, Color accent)
@@ -207,7 +207,7 @@ namespace Lumen.World
                 {
                     for (int shelf = 0; shelf < 2; shelf++)
                         for (int book = 0; book < 7; book++)
-                            Shape("Outdoor library book", PrimitiveType.Cube, group, new Vector3(-7.6f + book * 0.27f, 0.75f + shelf * 1.05f, 2.6f), new Vector3(0.2f, 0.8f + book % 2 * 0.15f, 0.6f), LumenMaterials.OutfitColors[book % 6], false);
+                            Shape("Outdoor library book", PrimitiveType.Cube, group, new Vector3(-7.6f + book * 0.27f, 0.75f + shelf * 1.05f, 2.6f), new Vector3(0.2f, 0.8f + book % 2 * 0.15f, 0.6f), CampusAccents[book % 6], false);
                 }
             }
 
@@ -221,7 +221,7 @@ namespace Lumen.World
                 for (int row = 0; row < 3; row++)
                 {
                     Shape("Directory board", PrimitiveType.Cube, sign, new Vector3(0, 2.5f - row * 0.43f, 0), new Vector3(3.7f, 0.37f, 0.16f), row == 0 ? teal : ink, false);
-                    WorldLabels.Create(sign, row == 0 ? "ŠESŤ OSTROVOV POZNANIA" : row == 1 ? "ZÁHRADA SPOLOČNÍKOV  →" : "←  SPOLOČNÁ VÝPRAVA", new Vector3(0, 2.5f - row * 0.43f, 0.095f), 1.05f, cream, false);
+                    WorldLabels.Create(sign, row == 0 ? "NUMERION / MAPA AKADÉMIE" : row == 1 ? "ZÁHRADA SPOLOČNÍKOV  →" : "←  PORTÁLY EXPEDÍCIÍ", new Vector3(0, 2.5f - row * 0.43f, 0.095f), .95f, cream, false);
                 }
             }
 
