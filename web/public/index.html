@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#192d36"><title>LUMEN · Unity Web</title>
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#192d36;color:#fffdf2;font-family:Inter,system-ui,sans-serif}body{display:flex;flex-direction:column}header{height:54px;flex:none;display:flex;align-items:center;gap:12px;padding:0 18px;background:#142831;border-bottom:1px solid #ffffff14}header strong{font-weight:850;letter-spacing:.16em}header small{color:#bdd7d3;flex:1}button,a{font:inherit;font-size:12px;border:1px solid #ffffff30;border-radius:8px;padding:7px 12px;background:#ffffff0b;color:inherit;text-decoration:none;cursor:pointer}button:hover,a:hover{background:#ffffff20}main{position:relative;flex:1;min-height:0}canvas{width:100%;height:100%;display:block;outline:none;touch-action:none}#loading{position:absolute;inset:0;display:grid;place-items:center;background:radial-gradient(ellipse at 35% 30%,#365c5a,#192d36 70%);z-index:2}.card{max-width:560px;padding:32px;text-align:center}.star{font-size:64px;color:#d5ed8d}.eyebrow{font-size:11px;letter-spacing:.25em;color:#c0b4f1;margin:22px 0}h1{font-size:clamp(30px,5vw,54px);line-height:1.07;margin:0 0 18px;letter-spacing:-.045em}.card p{font-size:15px;line-height:1.6;color:#bcd5d1}.bar{height:6px;margin:28px 0 12px;background:#ffffff14;border-radius:5px;overflow:hidden}.bar i{display:block;width:0;height:100%;background:#d5ed8d;transition:width .2s}#progress{font-size:12px;color:#c7dcd6}#error{white-space:pre-wrap;color:#ffd5cb}#loading.ready{display:none}#mobileNote{display:none}@media(max-width:650px){header{padding:0 10px;gap:7px}header small{font-size:10px}button,a{font-size:10px;padding:7px}#fallback{display:none}#mobileNote{display:block;font-size:11px;color:#c7dcd6}}@media(prefers-reduced-motion:reduce){.bar i{transition:none}}
+  </style>
+</head>
+<body>
+<header><strong>LUMEN</strong><small>UNITY WEB · AKADÉMIA OBJAVOV</small><a id="fallback" href="/classic">Online webový svet</a><button id="touch" type="button" aria-pressed="false">Dotykové ovládanie</button><button id="fullscreen" type="button">Celá obrazovka</button></header>
+<main><canvas id="unity-canvas" tabindex="0" aria-label="LUMEN, vzdelávacia 3D hra v Unity"></canvas><div id="loading"><div class="card"><div class="star">✦</div><div class="eyebrow">VITAJ V AKADÉMII</div><h1>Tvoj svet.<br>Tvoje objavy.</h1><p>Šesť ostrovov vedomostí, vlastná postava a spoločníci na každú výpravu. Načítava sa skutočná Unity hra.</p><div class="bar"><i id="fill"></i></div><div id="progress" role="status" aria-live="polite">Pripravujeme Unity Web…</div><p id="mobileNote">Na menšom displeji pomôže otočiť zariadenie na šírku.</p><p id="error" role="alert"></p></div></div></main>
+<script>
+  const canvas = document.getElementById('unity-canvas');
+  const loading = document.getElementById('loading');
+  let unityInstance = null;
+  let touchEnabled = matchMedia('(pointer:coarse)').matches;
+  const buildUrl = '/unity/Build';
+  const config = {dataUrl:buildUrl+'/WebGL.data.unityweb', frameworkUrl:buildUrl+'/WebGL.framework.js.unityweb', codeUrl:buildUrl+'/WebGL.wasm.unityweb', streamingAssetsUrl:'StreamingAssets', companyName:"Lumen Academy", productName:"LUMEN · Unity Web", productVersion:"6.0.0-web", matchWebGLToCanvasSize:true, devicePixelRatio:window.devicePixelRatio||1, showBanner:(message,type)=>{if(type==='error'){document.getElementById('error').textContent=message;}}};
+  const loader = document.createElement('script'); loader.src=buildUrl+'/WebGL.loader.js';
+  loader.onload = () => createUnityInstance(canvas,config,p=>{document.getElementById('fill').style.width=(p*100)+'%';document.getElementById('progress').textContent=p<.9?'Načítava sa akadémia · '+Math.round(p*100)+' %':'Vstupujeme do akadémie…';}).then(instance=>{unityInstance=instance;window.lumenUnityInstance=instance;loading.classList.add('ready');canvas.focus();setTimeout(()=>instance.SendMessage('LUMEN Web Controls','SetEnabled',touchEnabled?'1':'0'),500);}).catch(error=>{document.getElementById('error').textContent='Unity sa nepodarilo načítať. '+String(error);document.getElementById('progress').textContent='Skús obnoviť stránku alebo aktuálny prehliadač s WebGL 2.';});
+  loader.onerror = () => {document.getElementById('error').textContent='Súbory Unity sa nepodarilo stiahnuť. Obnov stránku a skontroluj pripojenie.';};document.body.appendChild(loader);
+  document.getElementById('fullscreen').onclick=()=>{if(unityInstance)unityInstance.SetFullscreen(1);};
+  document.getElementById('touch').onclick=()=>{touchEnabled=!touchEnabled;document.getElementById('touch').setAttribute('aria-pressed',String(touchEnabled));if(unityInstance)unityInstance.SendMessage('LUMEN Web Controls','SetEnabled',touchEnabled?'1':'0');};
+  document.addEventListener('visibilitychange',()=>{if(document.hidden&&unityInstance)unityInstance.SendMessage('LUMEN Web Platform','SaveNow');});
+  window.addEventListener('pagehide',()=>{if(unityInstance)unityInstance.SendMessage('LUMEN Web Platform','SaveNow');});
+  canvas.addEventListener('contextmenu',event=>event.preventDefault());
+</script>
+</body></html>
