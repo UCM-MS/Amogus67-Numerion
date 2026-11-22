@@ -2,7 +2,7 @@
 
 Tento nový online server nie je automaticky publikovaný na verejnej adrese. Pôvodná hra na `/classic` zostáva zachovaná. PC a Unity Web používajú tie isté miestnosti, matematické otázky pre 7.–9. ročník, súboje a cloudový profil.
 
-Vyžaduje Node.js 24 alebo novší. Z priečinka `work/lumen` spusti:
+Po zostavení webového hráča otvor PowerShell v priečinku `web` tohto repozitára. Server používa Node.js 24 alebo novší.
 
 ```powershell
 $env:PORT='4174'
@@ -21,7 +21,7 @@ node serve.mjs
 
 Na druhom zariadení otvor `http://ADRESA-POCITACA:4174/` s jeho skutočnou súkromnou IPv4 adresou. Rovnakú adresu zadaj do Windows klienta. Počítač musí povoľovať prichádzajúce spojenia aplikácie Node na súkromnej sieti; tento návod nemení firewall ani nenastavuje prístup z internetu. Predvolené spustenie počúva iba na tomto počítači.
 
-Pre dva samostatné Windows profily na jednom počítači pridaj rozdielne voľby `-lumen-profile-suffix hrac1` a `-lumen-profile-suffix hrac2`. Oddeľuje to uloženú hru aj súkromnú cloudovú identitu. Priečinok servera `.sites-runtime` obsahuje lokálnu databázu vrátane súkromných uložených profilov; nepribaľuj ho do verejných ZIP súborov.
+Pre dva samostatné Windows profily na jednom počítači pridaj rozdielne voľby `-lumen-profile-suffix hrac1` a `-lumen-profile-suffix hrac2`. Každý hráč tak dostane vlastnú uloženú hru aj cloudovú identitu. Lokálna databáza so súkromnými profilmi je v `.sites-runtime` a Git ju ignoruje.
 
 Miestnosť podporuje 16 hráčov. Server prijíma autoritatívne snímky pohybu; klient ich posiela päťkrát za sekundu a zobrazenie ostatných hráčov vyhladzuje samostatne. Súboje sú ťahové, odpovede a odmeny vyhodnocuje server. Toto lokálne HTTP pripojenie neposkytuje bezpečný kontext pre WebXR.
 

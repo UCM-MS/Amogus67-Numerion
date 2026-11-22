@@ -1,12 +1,12 @@
-# LUMEN · Akadémia objavov
+# Numerion v prehliadači
 
-LUMEN má Unity WebGL verziu a pôvodný online svet. Hlavná adresa otvára skutočný Unity player; `/classic` zachováva spoločné chodenie, tímové výpravy, živé kvízy a súboje spoločníkov.
+Po [zostavení webovej verzie](../README.md#zostavenie-pre-windows-a-web) sa na hlavnej adrese servera otvorí Numerion v Unity. Používa rovnakých 144 úloh pre 7. až 9. ročník, 18 kapitol a desať spoločníkov ako Windows verzia. Obe verzie sa môžu pridať do rovnakej miestnosti. [Spustenie servera a pripojenie hráčov](UNITY-ONLINE-LOCAL.md)
 
-Unity Web obsahuje rozšírenú akadémiu, menu, úpravu postavy, šesťkrokový tutoriál, 96 otázok podľa štyroch vekových kategórií a zbierku troch spoločníkov s tréningom a vajíčkami. Hrá sólo; UDP multiplayer, HDRP/DXR a PC OpenXR zostávajú vo Windows verzii. Webový postup sa ukladá do IndexedDB nezávisle od ostatných verzií.
+## Klasická webová akadémia
 
-Pôvodný svet tiež dostal nové menu, sprievodcu, šesť vekovo prispôsobených učebných oblastí, album 14 spoločníkov, podrobnejšie modely petov, novú architektúru akadémie a kolízie kamery so strechami. Jeho staré uložené hry zostávajú kompatibilné.
+Na ceste `/classic` beží samostatná verzia akadémie v Three.js. Má vlastné učivo, zbierku spoločníkov a uložený postup. Nasledujúce pravidlá a ovládanie platia pre tento svet. Najstarší hrateľný prototyp má vlastný [návod na spustenie](../prototypy/og/README.md).
 
-## Spoločné hranie
+### Spoločné hranie
 
 Menu → Hrať spolu → Vytvoriť spoločný svet. Kamarát otvorí pozývací odkaz alebo zadá šesťznakový kód. Až osem hráčov chodí v tom istom 3D ostrove; vidíš ich mená, pohyb, skoky, mávanie a spoločníkov. Spojenie pokračuje aj po zatvorení pozývacej karty. Mapa a tlačidlo Najbližší spoločný maják ukážu bezpečnú trasu.
 
@@ -16,7 +16,7 @@ Aréna vytvorí miestnosť s kódom alebo odkazom. Každý hráč sa pripojí z 
 
 V dueli si vyberáš útok, obranu alebo sústredenie. Správna odpoveď aktivuje taktiku. Úlomky získané aktívnym hraním vylepšujú silu, štít a sústredenie na tri stupne. Rebríček obsahuje hráčov s dokončeným zápasom.
 
-## Dobrodružstvo
+### Dobrodružstvo
 
 36 otázok v štyroch predmetoch s nápovedou, vysvetlením, sériami a prehľadom poznatkov. Vajíčka, zbierka spoločníkov, päť úrovní tréningu, pasívny príjem, vylepšenia základne a prestíž. Šesť výprav, dvanásť kryštálov a sedem plošín parkouru s kontrolnými bodmi a osobným rekordom. Mapa naviguje okolo prekážok. Automatická grafika a úsporný režim pomáhajú pomalším zariadeniam.
 
@@ -24,7 +24,7 @@ Ostrov má oceán, vodopád, plávajúce záhrady, odlišné štvrte, pohyb rast
 
 Sólo svet sa ukladá do localStorage (pôvodný kľúč lumen-academy-3d-v2 je zachovaný). V nastaveniach sa dá exportovať a obnoviť JSON záloha. Online profil, výsledky a výbava sú uložené na serveri; prehliadač používa anonymnú HttpOnly cookie, obnovovanú pri online hraní. Záloha sólo sveta neprenáša online profil do iného prehliadača. Postavy s menovkou sú pripojení hráči; ostatné dekoratívne postavy sú NPC. Vajíčka a osobný postup zostávajú každému hráčovi vlastné. Mince a úlomky sú iba herné odmeny.
 
-## Ovládanie
+### Ovládanie
 
 - WASD / šípky: pohyb; Shift: beh; medzerník: skok; E: preskúmať miesto.
 - Ťahanie myšou: kamera; koliesko: priblíženie.
@@ -32,7 +32,7 @@ Sólo svet sa ukladá do localStorage (pôvodný kľúč lumen-academy-3d-v2 je 
 - Escape: otvoriť alebo zavrieť Menu.
 - Mobil: virtuálny ovládač, skok a jedno tlačidlo Menu. Hrať spolu, Aréna aj nastavenia sú v Menu.
 
-## VR režim
+### VR režim
 
 Otvor verejnú HTTPS adresu hry v prehliadači VR headsetu alebo v kompatibilnom prehliadači počítača s pripojeným headsetom. V Menu vyber VR režim, skontroluj dostupnosť a stlač Vstúpiť do VR. Je potrebná podpora WebXR `immersive-vr` a sledované ovládače. Režim používa ten istý ostrov, osobný postup a spoločný svet ako bežné hranie. Pri nedostupnom WebXR zostáva hra ovládateľná na obrazovke.
 
