@@ -1,6 +1,6 @@
 # Učivo a spoločníci
 
-- `curriculum.json` obsahuje 108 otázok. Na každý ročník od 7. po 9. pripadá 36 otázok rozdelených do šiestich tém.
+- `curriculum.json` obsahuje 144 otázok. Na každý ročník od 7. po 9. pripadá 48 otázok rozdelených do šiestich tém.
 - `lessons.json` obsahuje 18 krátkych kapitol s riešenými príkladmi.
 - `pets.json` obsahuje katalóg desiatich spoločníkov a ich matematické zameranie.
 

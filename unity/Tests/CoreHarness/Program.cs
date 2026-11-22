@@ -5,6 +5,7 @@ using Lumen.Core;
 
 internal static class Program
 {
+    private const int QuestionsPerTopic = 8;
     private static readonly DateTime Today = new DateTime(2026, 11, 3, 12, 0, 0, DateTimeKind.Utc);
     private static int assertions;
     private static int Main(string[] args)
@@ -43,25 +44,25 @@ internal static class Program
 
     private static void CatalogChecks(ContentCatalog catalog)
     {
-        Check(catalog.Questions.Count == 108, "108 authored mathematics questions");
+        Check(catalog.Questions.Count == 144, "144 authored mathematics questions");
         Check(catalog.Sections.Count == 6, "Six mathematical strands");
         Check(catalog.Sections.Select(s => s.Id).Distinct().Count() == 6, "Unique section IDs");
-        Check(catalog.Questions.Select(q => q.Id).Distinct().Count() == 108, "Unique question IDs");
-        Check(catalog.Questions.Select(q => q.Prompt).Distinct().Count() == 108, "Unique prompts");
+        Check(catalog.Questions.Select(q => q.Id).Distinct().Count() == catalog.Questions.Count, "Unique question IDs");
+        Check(catalog.Questions.Select(q => q.Prompt).Distinct().Count() == catalog.Questions.Count, "Unique prompts");
         Check(catalog.Questions.All(q => q.AgeBand == AgeBand.Ages13To15), "Legacy age DTO remains coherent with grades 7–9");
         foreach (int grade in new[] { 7, 8, 9 })
         foreach (Subject subject in Enum.GetValues(typeof(Subject)))
         {
             var group = catalog.Questions.Where(q => q.Grade == grade && q.Subject == subject).ToArray();
-            Check(group.Length == 6, "Six questions per grade/strand cell");
-            Check(group.Select(q => q.Difficulty).OrderBy(d => d).SequenceEqual(new[] { 1, 2, 2, 3, 3, 4 }), "Introductory, intermediate and advanced difficulty progression");
+            Check(group.Length == QuestionsPerTopic, "Eight questions per grade/strand cell");
+            Check(group.Select(q => q.Difficulty).OrderBy(d => d).SequenceEqual(new[] { 1, 2, 2, 3, 3, 3, 4, 4 }), "Introductory, intermediate and advanced difficulty progression");
             Check(group.Select(q => q.CorrectOption).Distinct().Count() == 4, "Every answer position used in each grade/strand");
-            Check(group.Select(q => q.Id).OrderBy(id => id).SequenceEqual(Enumerable.Range(1, 6).Select(i => "math-g" + grade + "-s" + (int)subject + "-" + i.ToString("00"))), "Stable complete topic ID range");
+            Check(group.Select(q => q.Id).OrderBy(id => id).SequenceEqual(Enumerable.Range(1, QuestionsPerTopic).Select(i => "math-g" + grade + "-s" + (int)subject + "-" + i.ToString("00"))), "Stable complete topic ID range");
             Check(catalog.Sections.Single(s => s.Subject == subject).Name == CurriculumLabels.SubjectName(subject), "Display label matches the mathematical strand");
         }
         foreach (int grade in new[] { 7, 8, 9 })
             for (int option = 0; option < 4; option++)
-                Check(catalog.Questions.Count(q => q.Grade == grade && q.CorrectOption == option) == 9, "Answer positions balanced over all 36 tasks in grade " + grade);
+                Check(catalog.Questions.Count(q => q.Grade == grade && q.CorrectOption == option) == 12, "Answer positions balanced over all 48 tasks in grade " + grade);
         foreach (var q in catalog.Questions)
         {
             Check(q.Options.Length == 4 && q.Options.Distinct().Count() == 4, "Four distinct plausible options: " + q.Id);
@@ -135,7 +136,7 @@ internal static class Program
         {
             var p = new PlayerProfile { Grade = grade };
             var seen = new System.Collections.Generic.HashSet<string>();
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < QuestionsPerTopic; i++)
             {
                 var question = service.BeginQuestion(p, subject, Today);
                 Check(question != null && question.Grade == grade && question.Subject == subject, "Strict grade/strand filtering");

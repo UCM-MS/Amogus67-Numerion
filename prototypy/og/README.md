@@ -46,4 +46,4 @@ Pri každej časti prototypu je uvedený tímový kontakt a miesto v zdrojovom k
 | Aleksandra Talyzina | Grafika sveta. Priestorové rozloženie ostrova, pavilóny, modely postáv a spoločníkov. | [3D scéna akadémie](dist/scene3d.js) |
 | Alexander Brezina | Rozhranie. Úvodná obrazovka, ukazovatele mincí a poznatkov, panely a dotykové ovládacie prvky. | [Rozloženie obrazovky](dist/index.html) a [vzhľad rozhrania](dist/style.css) |
 
-Zdrojová revízia prototypu je `b5b9d80`. Hra používa knižnicu Three.js. [Licencia MIT](dist/vendor/THREE-LICENSE.txt)
+Zdrojová revízia prototypu je `b5b9d80`. Ivan Beneda ju za tím zverejnil v [commite s pôvodnou akadémiou](https://github.com/UCM-MS/Amogus67-Numerion/commit/e4c6bf5309b92fccadf108675173916fb01083e2). Prototyp používa knižnicu Three.js. [Licencia MIT](dist/vendor/THREE-LICENSE.txt)
