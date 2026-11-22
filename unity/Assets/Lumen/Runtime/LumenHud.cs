@@ -35,22 +35,25 @@ namespace Lumen.Runtime
         private GameObject toastCard, targetCard;
         private float nextRefresh;
         private bool profileRequired;
-        private static readonly Color Cream = new Color(.925f, .895f, .82f);
-        private static readonly Color Ink = new Color(.075f, .12f, .17f);
-        private static readonly Color Muted = new Color(.32f, .36f, .36f);
-        private static readonly Color Purple = new Color(.18f, .39f, .40f);
-        private static readonly Color Lavender = new Color(.81f, .79f, .72f);
-        private static readonly Color Lime = new Color(.75f, .61f, .36f);
-        private static readonly Color Mint = new Color(.76f, .83f, .78f);
+        // Kept as shared semantic aliases so every feature uses the same restrained game palette.
+        private static readonly Color Cream = new Color(.09f, .115f, .14f, .97f);
+        private static readonly Color Ink = new Color(.91f, .93f, .94f);
+        private static readonly Color Muted = new Color(.63f, .68f, .72f);
+        private static readonly Color Purple = new Color(.78f, .82f, .85f);
+        private static readonly Color Lavender = new Color(.16f, .195f, .23f);
+        private static readonly Color Lime = new Color(.91f, .67f, .30f);
+        private static readonly Color Mint = new Color(.12f, .16f, .19f);
+        private static readonly Color Selected = new Color(.245f, .205f, .145f);
+        private static readonly Color ButtonInk = new Color(.065f, .08f, .095f);
 
         public void Initialize(LumenGame owner)
         {
             game = owner;
             font = Resources.Load<Font>("Fonts/BarlowSemiCondensed-Regular") ?? Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             strongFont = Resources.Load<Font>("Fonts/BarlowSemiCondensed-SemiBold") ?? font;
-            headingFont = Resources.Load<Font>("Fonts/CormorantSC-SemiBold") ?? strongFont;
+            headingFont = strongFont;
             CreateRoundedSprite();
-            var root = new GameObject("LUMEN · Native interface", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+            var root = new GameObject("NUMERION · Native interface", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
             root.transform.SetParent(transform, false);
             canvas = root.GetComponent<Canvas>(); canvas.renderMode = RenderModeCanvas(); canvas.sortingOrder = 100;
             var scaler = root.GetComponent<CanvasScaler>();
@@ -58,7 +61,7 @@ namespace Lumen.Runtime
             scaler.referenceResolution = new Vector2(1920, 1080); scaler.matchWidthOrHeight = .5f;
             if (FindFirstObjectByType<EventSystem>() == null)
             {
-                var events = new GameObject("LUMEN · Input", typeof(EventSystem), typeof(InputSystemUIInputModule));
+                var events = new GameObject("NUMERION · Input", typeof(EventSystem), typeof(InputSystemUIInputModule));
                 events.GetComponent<InputSystemUIInputModule>().AssignDefaultActions();
             }
             BuildHud(); ApplyViewportLayout(true); Refresh();
@@ -72,25 +75,26 @@ namespace Lumen.Runtime
             hudRoot = new GameObject("Adventure HUD · safe area", typeof(RectTransform)).GetComponent<RectTransform>();
             hudRoot.SetParent(canvas.transform, false); Stretch(hudRoot, Vector2.zero, Vector2.one);
             hudBrand=HudBlock("Academy signature",SoftInk);
-            Label(hudBrand,"L U M E N",28,Chalk);
+            Label(hudBrand,"NUMERION",28,Chalk);
             hudStats=HudBlock("Progress strip",SoftInk);
             var statsRow=Row(hudStats,32);
-            coins=Label(statsRow,"0 M",22,Chalk);coins.fontSize=22;
-            level=Label(statsRow,"ÚR. 1",22,Brass);level.fontSize=22;
-            xp=Label(statsRow,"0/150 XP",22,Chalk);xp.fontSize=22;
+            coins=Label(statsRow,"0 M",22,Chalk);
+            level=Label(statsRow,"ÚR. 1",22,Brass);
+            xp=Label(statsRow,"0/150 XP",22,Chalk);
             var track=ImageNode("Experience",hudStats,new Color(.4f,.45f,.45f,.5f));SetHeight(track.rectTransform,3);track.raycastTarget=false;
             xpFill=ImageNode("Experience fill",track.transform,Brass);xpFill.raycastTarget=false;
             xpFill.type=Image.Type.Filled;xpFill.fillMethod=Image.FillMethod.Horizontal;Stretch(xpFill.rectTransform,Vector2.zero,Vector2.one);
             hudQuest=HudBlock("Current objective",SoftInk);
-            objective=Label(hudQuest,"Preskúmaj akadémiu",25,Chalk);objective.fontSize=25;
-            status=Label(hudQuest,"Sólo svet",20,new Color(.73f,.77f,.74f));status.fontSize=20;
+            objective=Label(hudQuest,"Preskúmaj akadémiu",25,Chalk);
+            status=Label(hudQuest,"Sólo svet",20,new Color(.73f,.77f,.74f));
             hudControls=HudBlock("Keyboard hints",new Color(.075f,.12f,.17f,.78f));
-            var hint=Label(hudControls,"WASD pohyb    E interakcia    M atlas",20,Chalk);hint.fontSize=20;
+            var hint=Label(hudControls,"WASD · E interakcia · M mapa · K učivo",20,Chalk);
             hudMenu=ButtonNode(hudRoot,"PONUKA",ToggleMenu,Lime,Ink,24).GetComponent<RectTransform>();
+            hudChat=ButtonNode(hudRoot,"Chat ↵",ShowChat,SoftInk,Chalk,23).GetComponent<RectTransform>();
             hudQuickbar=new GameObject("Field shortcuts",typeof(RectTransform),typeof(HorizontalLayoutGroup)).GetComponent<RectTransform>();hudQuickbar.SetParent(hudRoot,false);
             var quick=hudQuickbar.GetComponent<HorizontalLayoutGroup>();quick.spacing=2;quick.childControlWidth=true;quick.childControlHeight=true;quick.childForceExpandWidth=true;
-            ButtonNode(hudQuickbar,"Atlas",ShowMap,SoftInk,Chalk,23);
-            ButtonNode(hudQuickbar,"Učebnica",ShowStudy,SoftInk,Chalk,23);
+            ButtonNode(hudQuickbar,"Mapa",ShowMap,SoftInk,Chalk,23);
+            ButtonNode(hudQuickbar,"Učivo",ShowCurriculum,SoftInk,Chalk,23);
             ButtonNode(hudQuickbar,"Spoločníci",ShowPets,SoftInk,Chalk,23);
             hudInteraction=HudBlock("Nearby interaction",SoftInk);targetCard=hudInteraction.gameObject;
             var interactionRow=Row(hudInteraction,50);
@@ -105,14 +109,19 @@ namespace Lumen.Runtime
             tutorialSkip=ButtonNode(hudGuide,"Odložiť sprievodcu",()=>game.SuspendTutorial(),Lavender,Ink,20);
             tutorialSkip.GetComponent<LumenButtonLayout>().MinimumHeight=44;
             SetHeight(tutorialSkip.GetComponent<RectTransform>(),44);
+            BuildNavigationHud();
         }
 
         public void Refresh()
         {
             if (game == null) return;
             ApplyViewportLayout();
+            RefreshProfileEditor();
             if (Time.unscaledTime < nextRefresh) return;
             nextRefresh = Time.unscaledTime + .12f;
+            RefreshMap();
+            RefreshChat();
+            RefreshNavigation();
             var p = game.Profile.Progress;
             hudRoot.gameObject.SetActive(!titleOpen && !ModalOpen);
             Put(coins, p.Coins.ToString("N0") + " M");
@@ -137,17 +146,18 @@ namespace Lumen.Runtime
                 int step = game.Save.Tutorial.Step;
                 Put(tutorialTitle, (step + 1) + "/6  ·  " + AcademyTutorial.Titles[step]);
                 Put(tutorialText, AcademyTutorial.Instructions[step]);
-                Put(ButtonText(tutorialAction), step < 2 ? "Zobraziť ovládanie" : step < 4 ? "Otvoriť výskumné sekcie" : "Otvoriť spoločníkov");
+                Put(ButtonText(tutorialAction), step < 2 ? "Zobraziť ovládanie" : step < 4 ? "Otvoriť učivo" : "Otvoriť spoločníkov");
             }
         }
 
-        private void TutorialAction() { if (game.Save.Tutorial.Step < 2) ShowTutorial(); else if (game.Save.Tutorial.Step < 4) ShowMap(); else ShowPets(); }
+        private void TutorialAction() { if (game.Save.Tutorial.Step < 2) ShowTutorial(); else if (game.Save.Tutorial.Step < 4) ShowCurriculum(); else ShowPets(); }
         public void ToggleMenu() { if (titleOpen) game.EnterAcademy(); else if (ModalOpen) CloseModal(); else ShowMenu(); }
 
         public void CloseModal()
         {
             if (profileRequired) { game.Notify("Vyber meno a ročník pre svoju výpravu."); return; }
             if (modal != null && !game.Save.HasCreatedProfile) { ShowTitle(); return; }
+            CleanupProfilePreview();
             if (modal != null) { modal.SetActive(false); Destroy(modal); }
             modal = null; body = null; liveNetwork = null; liveRoster = null; liveVR = null; vrStart = null; vrStop = null;
             titleOpen = false; hudRoot.gameObject.SetActive(true);
@@ -163,8 +173,10 @@ namespace Lumen.Runtime
         private void ShowMenuGroup(int section)
         {
             menuSection=Mathf.Clamp(section,0,3);
-            Open("Poľný denník","LUMEN / AKADÉMIA");windowKind=WindowKind.Menu;FeaturePanel="MENU";
+            Open("Ponuka","NUMERION / AKADÉMIA");windowKind=WindowKind.Menu;FeaturePanel="MENU";
+            menuEntryIndex=0;menuEntryRow=null;
             var tabs=new GameObject("Journal sections",typeof(RectTransform),typeof(GridLayoutGroup),typeof(LayoutElement),typeof(LumenMenuTabLayout)).GetComponent<RectTransform>();tabs.SetParent(body,false);
+            tabs.GetComponent<LayoutElement>().minWidth=0;
             var grid=tabs.GetComponent<GridLayoutGroup>();grid.spacing=new Vector2(10,10);grid.constraint=GridLayoutGroup.Constraint.FixedColumnCount;grid.constraintCount=4;
             SetHeight(tabs,64);
             string[] names={"VÝPRAVA","SPOLOČNÍCI","SPOLOČNE","MOŽNOSTI"};
@@ -173,7 +185,9 @@ namespace Lumen.Runtime
             switch(menuSection)
             {
                 case 0:
-                    MenuEntry("Atlas akadémie","Šesť oblastí matematiky a miesta, ktoré už poznáš.",ShowMap);
+                    MenuEntry("Výpravy","Tri ostrovy, portály a ciele podľa učiva.",ShowExpeditions);
+                    MenuEntry("Mapa akadémie","Ostrovy, mosty, portály a tvoja aktuálna poloha.",ShowMap);
+                    MenuEntry("Učivo","Výber matematickej sekcie a voľné precvičovanie.",ShowCurriculum);
                     MenuEntry("Učebnice a testy","Postupy, riešené príklady a test z vybranej témy.",ShowStudy);
                     MenuEntry("Výpravy a denník","Ciele, odmeny a tvoj postup v matematike.",ShowQuests);
                     MenuEntry("Zvládnuté učivo","Prehľad tém, séria a odomknuté tituly.",ShowJournal);
@@ -187,6 +201,7 @@ namespace Lumen.Runtime
                     break;
                 case 2:
                     MenuEntry("Hrať s priateľmi","Spoločný svet pre aplikáciu aj prehliadač.",ShowMultiplayer);
+                    MenuEntry("Chat miestnosti","Správy spoluhráčov a animované reakcie.",ShowChat);
                     MenuEntry("Preniesť postup","Prepoj profil na druhom zariadení.",ShowCloud);
                     MenuEntry("Moja postava",game.Profile.DisplayName+" · "+CurriculumLabels.Grade(game.Profile.Grade),()=>ShowProfile(false));
                     break;
@@ -207,27 +222,26 @@ namespace Lumen.Runtime
 
         public void ShowTitle()
         {
-            Open("L U M E N","AKADÉMIA / MATEMATIKA 7.–9. ROČNÍKA");
+            Open("Numerion","MATEMATICKÁ AKADÉMIA");
             windowKind=WindowKind.Title;FeaturePanel="TITLE";titleOpen=true;hudRoot.gameObject.SetActive(false);
             profileRequired=!game.Save.HasCreatedProfile;
-            modal.GetComponent<Image>().color=new Color(.025f,.055f,.075f,.16f);
-            modalPanel.GetComponent<Image>().color=SoftInk;
-            modalHeading.color=Chalk;modalHeading.fontSize=64;modalHeading.font=ChooseFont(modalHeading.text,headingFont);
-            modalKicker.color=Brass;modalClose.gameObject.SetActive(false);
-            Label(body,"Matematika v živom svete.",30,Chalk);
-            Label(body,"Objavuj akadémiu, trénuj spoločníkov a vyhraj vedomosťami.",25,new Color(.73f,.77f,.74f));
-            Rule(body,Brass);
-            NavigationLink(body,game.Save.HasCreatedProfile?"Pokračovať vo výprave  →":"Vstúpiť do akadémie  →",()=>game.EnterAcademy(),true,true);
-            NavigationLink(body,"Učebnice a testy",ShowStudy,false,true);
-            NavigationLink(body,"Spoločníci a aréna",ShowArena,false,true);
-            NavigationLink(body,"Hrať s priateľmi",ShowMultiplayer,false,true);
-            NavigationLink(body,"Moja postava",()=>ShowProfile(!game.Save.HasCreatedProfile),false,true);
-            NavigationLink(body,"Nastavenia",ShowSettings,false,true);
-            Label(body,"Postup sa ukladá automaticky.",21,new Color(.67f,.72f,.70f));
+            modal.GetComponent<Image>().color=new Color(.025f,.035f,.045f,.06f);
+            modalPanel.GetComponent<Image>().color=new Color(.065f,.085f,.105f,.90f);
+            modalHeading.color=Chalk;modalHeading.fontSize=UiTextSize(64);modalHeading.font=ChooseFont(modalHeading.text,headingFont);
+            modalKicker.color=Muted;modalClose.gameObject.SetActive(false);
+            NavigationLink(body,game.Save.HasCreatedProfile?"POKRAČOVAŤ  →":"HRAŤ  →",()=>game.EnterAcademy(),true,true);
+            NavigationLink(body,"Ponuka a nastavenia",ShowMenu,false,true);
+            titleNavigation=new GameObject("Game navigation",typeof(RectTransform),typeof(GridLayoutGroup),typeof(LayoutElement),typeof(LumenMenuTabLayout)).GetComponent<RectTransform>();
+            titleNavigation.SetParent(modalSafeRoot,false);
+            var titleTabs=titleNavigation.GetComponent<GridLayoutGroup>();titleTabs.spacing=new Vector2(8,8);titleTabs.constraint=GridLayoutGroup.Constraint.FixedColumnCount;titleTabs.constraintCount=4;
+            ButtonNode(titleNavigation,"HRAŤ",ShowTitle,Selected,Ink,24);
+            ButtonNode(titleNavigation,"VÝPRAVY",ShowExpeditions,SoftInk,Ink,24);
+            ButtonNode(titleNavigation,"SPOLOČNÍCI",ShowArena,SoftInk,Ink,24);
+            ButtonNode(titleNavigation,"KNIŽNICA",ShowStudy,SoftInk,Ink,24);
             var player=ImageNode("Explorer identity",modalSafeRoot,SoftInk);titlePlayerCard=player.gameObject;
             Anchor(player.rectTransform,new Vector2(1,1),new Vector2(1,1),new Vector2(-70,-70),new Vector2(340,172));
             var identity=Stack(player.rectTransform,22,8);
-            Label(identity,game.Save.HasCreatedProfile?"TVOJA VÝPRAVA":"NOVÝ OBJAVITEĽ",20,Brass);
+            Label(identity,game.Save.HasCreatedProfile?"TVOJ PROFIL":"NOVÝ HRÁČ",20,Muted);
             Label(identity,game.Save.HasCreatedProfile?game.Profile.DisplayName:"Vitaj v akadémii",30,Chalk);
             Label(identity,CurriculumLabels.Grade(game.Profile.Grade)+" · úroveň "+game.Profile.Progress.Level,23,Chalk);
             ApplyViewportLayout(true);
@@ -235,8 +249,8 @@ namespace Lumen.Runtime
 
         public void ShowTutorial()
         {
-            Open("Tvoje prvé objavy", "SPRIEVODCA / AKADÉMIA");
-            Label(body, "Ovládanie: WASD alebo šípky = pohyb · medzerník = skok · Shift = beh · pravé tlačidlo myši = kamera · E = kiosk · M = mapa · Esc = menu.", 25, Ink);
+            Open("Sprievodca", "OVLÁDANIE / AKADÉMIA");
+            Label(body, "Ovládanie: WASD alebo šípky = pohyb · medzerník = skok · Shift = beh · pravé tlačidlo myši = kamera · E = kiosk · M = mapa · K = učivo · Esc = menu.", 25, Ink);
             for (int i = 0; i < 6; i++)
             {
                 var card = Card(body, i < game.Save.Tutorial.Step ? Mint : Cream);
@@ -252,43 +266,7 @@ namespace Lumen.Runtime
             }
         }
 
-        public void ShowProfile(bool initial)
-        {
-            Open(initial ? "Tvoja výprava sa začína." : "Tvoja postava", "OBJAVITEĽ / PROFIL");
-            profileRequired = initial && !game.Save.HasCreatedProfile;
-            Label(body, "Meno vidia aj ostatní hráči. Ročník vyberá matematické učivo; postavu a spoločníkov si ponecháš aj pri jeho zmene.", 24, Muted);
-            var name = Input(body, "Meno objaviteľa", game.Profile.DisplayName, false, 20);
-            int grade = CurriculumLabels.NormalizeGrade(game.Profile.Grade);
-            Label(body, "Matematika · ročník základnej školy", 26, Ink);
-            var gradeRow = Row(body, 76);
-            var gradeButtons = new List<Button>();
-            for (int option = 7; option <= 9; option++)
-            {
-                int chosen = option;
-                var button = ButtonNode(gradeRow, CurriculumLabels.Grade(chosen), () =>
-                {
-                    grade = chosen;
-                    for (int i = 0; i < gradeButtons.Count; i++) Tint(gradeButtons[i], i + 7 == grade ? Lavender : Color.white);
-                }, chosen == grade ? Lavender : Color.white, Ink, 24);
-                gradeButtons.Add(button);
-            }
-            Label(body, "Každý ročník má šesť matematických oblastí, učebnicu s príkladmi a vlastné tematické testy.", 22, Muted);
-            int skin = game.Profile.Appearance.SkinTone, outfit = game.Profile.Appearance.OutfitColor;
-            int hair = game.Profile.Appearance.HairStyle, accessory = game.Profile.Appearance.Accessory;
-            Palette(body, "Odtieň pokožky", LumenMaterials.SkinColors, skin, value => skin = value);
-            Palette(body, "Farba oblečenia", LumenMaterials.OutfitColors, outfit, value => outfit = value);
-            Label(body, "Účes", 26, Ink);
-            var hairButton = ButtonNode(body, HairLabel(hair), null, Lavender);
-            hairButton.onClick.AddListener(() => { hair = (hair + 1) % 4; ButtonText(hairButton).text = HairLabel(hair); });
-            Label(body, "Doplnok", 26, Ink);
-            var accessoryButton = ButtonNode(body, AccessoryLabel(accessory), null, Lavender);
-            accessoryButton.onClick.AddListener(() => { accessory = (accessory + 1) % 4; ButtonText(accessoryButton).text = AccessoryLabel(accessory); });
-            ButtonNode(body, initial ? "Ideme objavovať  →" : "Uložiť postavu", () =>
-            {
-                game.ApplyProfile(name.text, AgeBand.Ages13To15, skin, outfit, hair, accessory, grade);
-                profileRequired = false; CloseModal(); if (initial) game.EnterAcademy(true);
-            }, Lime);
-        }
+        public void ShowProfile(bool initial) { ShowProfileEditor(initial); }
 
         public void ShowQuestion(Question question)
         {
@@ -302,15 +280,16 @@ namespace Lumen.Runtime
             Label(body, CurriculumLabels.Grade(question.Grade) + "  ·  náročnosť " + question.Difficulty + "/4" + (game.OnlineQuestion ? "  ·  overuje server" : ""), 22, Purple);
             Label(body, question.Prompt, 34, Ink);
             if (game.Save.Options.PetHelp) ButtonNode(body, "Pomoc od spoločníka", ShowPetHelper, Mint, Ink, 23);
-            var answerButtons = new List<Button>();
+            var answerButtons = new List<Button>();RectTransform answerRow=null;
             for (int i = 0; i < question.Options.Length; i++)
             {
                 int answer = i;
-                var button = ButtonNode(body, ((char)('A' + i)) + "   " + question.Options[i], () =>
+                if(i%2==0)answerRow=Row(body,0);
+                var button = ButtonNode(answerRow, ((char)('A' + i)) + "   " + question.Options[i], () =>
                 {
                     foreach (var b in answerButtons) b.interactable = false;
                     game.Answer(answer);
-                }, i % 2 == 0 ? Lavender : Mint, Ink, 26);
+                }, Lavender, Ink, 26);
                 answerButtons.Add(button);
             }
             Label(body, "Premysli si postup. Po odpovedi uvidíš vysvetlenie a správne riešenie.", 22, Muted);
@@ -318,7 +297,7 @@ namespace Lumen.Runtime
 
         public void ShowAnswer(AnswerResult answer)
         {
-            Open(answer.Accepted ? answer.Correct ? "Výborne. Objav je tvoj!" : "Každý pokus učí." : "Odpoveď sa neuložila", "VÝSLEDOK / VÝSKUM");
+            Open(answer.Accepted ? answer.Correct ? "Správna odpoveď" : "Nesprávna odpoveď" : "Odpoveď sa neuložila", "VÝSLEDOK / VÝSKUM");
             if (!answer.Accepted)
             {
                 Label(body, answer.Error, 28, Ink);
@@ -344,10 +323,13 @@ namespace Lumen.Runtime
             ButtonNode(body, "Vrátiť sa na ostrov", CloseModal, Lavender);
         }
 
-        public void ShowMap()
+        public void ShowCurriculum()
         {
-            Open("Ostrov možností", "MAPA / VÝSKUMNÉ SEKCIE");
-            Label(body, "Vyraz ku kioskom na ostrove alebo začni vybranú výzvu priamo tu. Obsah sa prispôsobí tvojmu veku.", 24, Muted);
+            Open("Učivo", "MATEMATIKA / VÝSKUMNÉ SEKCIE");
+            Label(body, "Vyber matematickú sekciu pre svoj ročník alebo vstúp do výpravy cez portál.", 24, Muted);
+            var shortcuts=CSSRow(body);
+            ButtonNode(shortcuts,"Mapa",ShowMap,Lavender);
+            ButtonNode(shortcuts,"Výpravy a portály",ShowExpeditions,Lime);
             foreach (var section in game.Catalog.Sections)
             {
                 Subject subject = section.Subject;
@@ -362,14 +344,16 @@ namespace Lumen.Runtime
 
         public void ShowJournal()
         {
-            Open("Tvoje poznanie rastie.", "DENNÍK / ZVLÁDNUTIE TÉM");
+            Open("Zvládnuté učivo", "DENNÍK / POSTUP");
             var p = game.Profile.Progress;
             Label(body, game.Profile.DisplayName + " · úroveň " + p.Level + " · " + p.XP + " XP", 30, Ink);
             Label(body, "Najlepšia séria " + p.BestStreak + "  ·  nové vyriešené otázky " + p.Attempts.Count + "  ·  dokončené sekcie " + game.Learning.CompletedSections(game.Profile) + "/6", 24, Muted);
+            RectTransform masteryRow=null;int masteryIndex=0;
             foreach (Subject subject in Enum.GetValues(typeof(Subject)))
             {
                 var m = game.Learning.GetMastery(game.Profile, subject);
-                var card = Card(body, Cream);
+                if(masteryIndex++%2==0)masteryRow=CardRow(body);
+                var card = Card(masteryRow, Cream);
                 Label(card, CurriculumLabels.SubjectName(subject), 28, Ink);
                 Label(card, $"Zvládnutie {m.Score}%  ·  správne {m.CorrectAnswers}/{m.TotalAnswers}  ·  ďalšia náročnosť {m.TargetDifficulty}/4", 24, Muted);
                 ProgressBar(card, m.Score / 100f, Purple);
@@ -380,16 +364,18 @@ namespace Lumen.Runtime
 
         public void ShowPets()
         {
-            Open("Malí parťáci. Veľké objavy.", "SPOLOČNÍCI / ZBIERKA A LIAHNUTIE");
+            Open("Spoločníci", "ZBIERKA / TRÉNING / LIAHNUTIE");
             var collection = game.Save.Companions;
             Label(body, "Zbierka " + collection.Owned.Count + "/" + CompanionRules.Species.Length + "  ·  " + collection.Eggs + " vajíčok  ·  " + game.Profile.Progress.Coins + " mincí", 28, Purple);
             if (!collection.StarterClaimed) Label(body, "Vyber si prvého spoločníka zadarmo. Ďalších objavíš vo vajíčkach. Pri prvých liahnutiach vždy získaš druh, ktorý ešte nemáš.", 25, Ink);
+            RectTransform companionRow=null;int companionIndex=0;
             foreach (var species in CompanionRules.Species)
             {
                 string speciesId = species.Id;
                 var owned = collection.Owned.FirstOrDefault(p => p.SpeciesId == speciesId);
                 bool equipped = collection.EquippedId == speciesId;
-                var card = Card(body, equipped ? Mint : owned != null ? Lavender : Cream);
+                if(companionIndex++%2==0) companionRow=CardRow(body);
+                var card = Card(companionRow, equipped ? Selected : Cream);
                 PetPortrait(card, speciesId, owned == null);
                 Label(card, (owned?.Nickname ?? species.Name) + (equipped ? "  ·  NA VÝPRAVE" : owned == null ? "  ·  NEOBJAVENÝ" : "  ·  V ZBIERKE"), 30, Ink);
                 Label(card, species.Specialty + "\n" + species.Description, 24, Muted);
@@ -423,6 +409,7 @@ namespace Lumen.Runtime
                 var hatch = ButtonNode(eggs, "Vyliahnuť vajíčko  ·  máš " + collection.Eggs, () => game.HatchCompanion(), Lime); hatch.interactable = collection.Eggs > 0;
                 var buy = ButtonNode(eggs, "Vajíčko za 200 herných mincí", () => game.BuyCompanionEgg(), Cream); buy.interactable = game.Profile.Progress.Coins >= CompanionRules.EggCost;
             }
+            if (collection.Owned.Count > 0) ButtonNode(body, "Zostava a tréning v aréne", ShowArena, Lavender);
             ButtonNode(body, "Späť na výpravu", CloseModal, Lime);
         }
 
@@ -438,7 +425,7 @@ namespace Lumen.Runtime
 
         public void ShowQuests()
         {
-            Open("Každý objav sa počíta.", "VÝPRAVY / ODMENY");
+            Open("Výpravy a odmeny", "DENNÍK / CIELE");
             Label(body, "Denné výpravy sa obnovujú o polnoci UTC. Sekcie dokončuješ osobitne pre svoju vekovú kategóriu.", 24, Muted);
             foreach (var quest in game.Learning.GetQuests(game.Profile, DateTime.UtcNow))
             {
@@ -454,7 +441,7 @@ namespace Lumen.Runtime
 
         private void ShowLegacyLAN()
         {
-            Open("Objavujte spolu.", "MULTIPLAYER / SPOLOČNÝ OSTROV");
+            Open("Hrať spolu", "MULTIPLAYER / SPOLOČNÝ OSTROV");
             liveNetwork = Label(body, NetworkSummary(), 28, Purple);
             Label(body, "Stretnite sa na rovnakom ostrove, zbierajte spoločné majáky a riešte otázky overované hostiteľom. Mená a vzhľad postáv sa prenášajú ostatným.", 26, Ink);
             if (game.Session.State != SessionState.Offline)
@@ -540,7 +527,7 @@ namespace Lumen.Runtime
 
         public void ShowVR()
         {
-            Open("Vstúp priamo do akadémie.", "VIRTUÁLNA REALITA / PC OPENXR");
+            Open("Virtuálna realita", "PC / OPENXR");
             liveVR = Label(body, game.VR != null ? game.VR.Status : "VR nie je dostupné v tomto spustení.", 26, Ink);
             Label(body, "Pripoj PC OpenXR headset a nastav jeho aktívny runtime. Režim sa zapne až po rozpoznaní bežiaceho displeja a sledovanej polohy headsetu.", 24, Muted);
             vrStart = ButtonNode(body, "Spustiť PC VR", () => game.VR?.StartXR(), Lime);
@@ -563,30 +550,32 @@ namespace Lumen.Runtime
 
         private void Open(string title, string eyebrow)
         {
+            CleanupProfilePreview();
             FeaturePanel="";windowKind=WindowKind.Page;titleOpen=false;hudRoot.gameObject.SetActive(false);
             if(modal!=null){modal.SetActive(false);Destroy(modal);}
-            titlePlayerCard=null;liveNetwork=null;liveRoster=null;liveVR=null;vrStart=null;vrStop=null;profileRequired=false;
-            modal=new GameObject("LUMEN · "+title,typeof(RectTransform),typeof(Image));modal.transform.SetParent(canvas.transform,false);
-            modal.GetComponent<Image>().color=new Color(.035f,.065f,.08f,.72f);Stretch(modal.GetComponent<RectTransform>(),Vector2.zero,Vector2.one);
+            titlePlayerCard=null;titleNavigation=null;liveNetwork=null;liveRoster=null;liveVR=null;vrStart=null;vrStop=null;profileRequired=false;
+            modal=new GameObject("NUMERION · "+title,typeof(RectTransform),typeof(Image));modal.transform.SetParent(canvas.transform,false);
+            modal.GetComponent<Image>().color=new Color(.025f,.035f,.045f,.52f);Stretch(modal.GetComponent<RectTransform>(),Vector2.zero,Vector2.one);
             modalSafeRoot=new GameObject("Window safe area",typeof(RectTransform)).GetComponent<RectTransform>();modalSafeRoot.SetParent(modal.transform,false);Stretch(modalSafeRoot,Vector2.zero,Vector2.one);
             var panel=ImageNode("Atlas page",modalSafeRoot,Cream);modalPanel=panel.rectTransform;
-            var frame=panel.gameObject.AddComponent<Outline>();frame.effectColor=Brass;frame.effectDistance=new Vector2(1,-1);frame.useGraphicAlpha=true;
-            var stack=Stack(modalPanel,32,16);
-            modalKicker=Label(stack,eyebrow,20,Purple);
-            var header=Row(stack,70);
+            var frame=panel.gameObject.AddComponent<Outline>();frame.effectColor=Frame;frame.effectDistance=new Vector2(1,-1);frame.useGraphicAlpha=true;
+            var stack=Stack(modalPanel,16,8);
+            modalKicker=Label(stack,eyebrow,18,Muted);
+            var header=Row(stack,64);
             modalHeading=Label(header,title,38,Ink);modalHeading.font=ChooseFont(title,headingFont);
-            modalClose=ButtonNode(header,"Späť",CloseModal,Lavender,Ink,22);SetWidth(modalClose.GetComponent<RectTransform>(),CompactViewport?112:100);
-            Rule(stack,Brass);
-            var scrollObject=new GameObject("Scrollable content",typeof(RectTransform),typeof(ScrollRect));scrollObject.transform.SetParent(stack,false);
+            modalClose=ButtonNode(header,"Späť",CloseModal,Lavender,Ink,22);SetWidth(modalClose.GetComponent<RectTransform>(),72);
+            Rule(stack,Frame);
+            var scrollObject=new GameObject("Scrollable content",typeof(RectTransform),typeof(LumenScrollRect));scrollObject.transform.SetParent(stack,false);
             var flex=scrollObject.AddComponent<LayoutElement>();flex.flexibleHeight=1;flex.minHeight=60;
             var viewport=new GameObject("Viewport",typeof(RectTransform),typeof(RectMask2D),typeof(Image));viewport.transform.SetParent(scrollObject.transform,false);
             viewport.GetComponent<Image>().color=Color.clear;
             var viewportRect=viewport.GetComponent<RectTransform>();Stretch(viewportRect,Vector2.zero,Vector2.one);
             var content=new GameObject("Content",typeof(RectTransform));content.transform.SetParent(viewport.transform,false);
             body=content.GetComponent<RectTransform>();body.anchorMin=new Vector2(0,1);body.anchorMax=Vector2.one;body.pivot=new Vector2(.5f,1);body.sizeDelta=Vector2.zero;
-            Stack(body,2,14);content.AddComponent<ContentSizeFitter>().verticalFit=ContentSizeFitter.FitMode.PreferredSize;
+            Stack(body,2,6);content.AddComponent<ContentSizeFitter>().verticalFit=ContentSizeFitter.FitMode.PreferredSize;
             var scroll=scrollObject.GetComponent<ScrollRect>();scroll.viewport=viewportRect;scroll.content=body;scroll.horizontal=false;scroll.vertical=true;
             scroll.movementType=ScrollRect.MovementType.Clamped;scroll.scrollSensitivity=44;
+            AddScrollIndicator(scroll,scrollObject.transform,viewportRect);
             Cursor.lockState=CursorLockMode.None;Cursor.visible=true;nextRefresh=0;
             ApplyViewportLayout(true);
         }
@@ -606,7 +595,10 @@ namespace Lumen.Runtime
 
         private RectTransform Card(Transform parent, Color color)
         {
-            var image = ImageNode("Card", parent, color); var result = Stack(image.rectTransform, 20, 12);
+            var image = ImageNode("Card", parent, color);
+            var sizing=image.gameObject.AddComponent<LayoutElement>();sizing.flexibleWidth=1;sizing.minWidth=0;
+            var frame=image.gameObject.AddComponent<Outline>();frame.effectColor=color==Selected?Brass:Frame;frame.effectDistance=new Vector2(1,-1);frame.useGraphicAlpha=true;
+            var result = Stack(image.rectTransform, 10, 6);
             return result;
         }
 
@@ -619,16 +611,21 @@ namespace Lumen.Runtime
 
         private RectTransform Row(Transform parent, float height)
         {
-            var row = new GameObject("Row", typeof(RectTransform), typeof(HorizontalLayoutGroup)); row.transform.SetParent(parent, false);
-            var group = row.GetComponent<HorizontalLayoutGroup>(); group.spacing = 12; group.childControlWidth = true; group.childControlHeight = true;
+            var row = new GameObject("Row", typeof(RectTransform), typeof(LumenAdaptiveRow)); row.transform.SetParent(parent, false);
+            var group = row.GetComponent<LumenAdaptiveRow>(); group.spacing = 8; group.childControlWidth = true; group.childControlHeight = true;
             group.childForceExpandWidth = false; group.childForceExpandHeight = true; group.childAlignment = TextAnchor.MiddleLeft;
-            var rect = row.GetComponent<RectTransform>(); SetHeight(rect, height); row.AddComponent<LumenAdaptiveRow>().BaseHeight=height; return rect;
+            group.BaseHeight=height*.68f;
+            // The group owns its measured height. A fixed preferred height would clip stacked touch buttons.
+            var sizing=row.AddComponent<LayoutElement>();sizing.minHeight=-1;sizing.preferredHeight=-1;sizing.flexibleHeight=0;
+            return row.GetComponent<RectTransform>();
         }
+
+        private static int UiTextSize(int designSize) => Mathf.Max(12,Mathf.RoundToInt(designSize*.68f));
 
         private Text Label(Transform parent, string value, int size, Color color)
         {
             var obj = new GameObject("Text", typeof(RectTransform), typeof(Text)); obj.transform.SetParent(parent, false);
-            var text = obj.GetComponent<Text>(); text.font = ChooseFont(value,font); text.fontSize = CompactViewport ? Mathf.Max(30,size) : size; text.color = color; text.text = value ?? "";
+            var text = obj.GetComponent<Text>(); text.font = ChooseFont(value,size>=28?strongFont:font); text.fontSize = UiTextSize(size); text.color = color; text.text = value ?? "";
             text.supportRichText = false; text.raycastTarget = false; text.alignment = TextAnchor.MiddleLeft;
             text.horizontalOverflow = HorizontalWrapMode.Wrap; text.verticalOverflow = VerticalWrapMode.Overflow; text.lineSpacing = 1.08f;
             var element = obj.AddComponent<LayoutElement>(); element.minHeight = text.fontSize * 1.3f; element.flexibleWidth = 1;
@@ -637,37 +634,42 @@ namespace Lumen.Runtime
 
         private Button ButtonNode(Transform parent, string label, Action action, Color background, Color? foreground = null, int fontSize = 26)
         {
+            if(background==Color.white) background=Lavender;
             var image = ImageNode("Button · " + label, parent, background);
             var button = image.gameObject.AddComponent<Button>(); button.targetGraphic = image;
-            var colors = button.colors; colors.highlightedColor = new Color(.92f,.88f,.77f); colors.pressedColor = new Color(.74f,.72f,.64f);
-            colors.selectedColor = new Color(.95f,.86f,.65f); colors.disabledColor = new Color(.64f,.64f,.60f,.65f); colors.fadeDuration = .09f; button.colors = colors;
+            var colors = button.colors; colors.highlightedColor = new Color(1.22f,1.22f,1.22f); colors.pressedColor = new Color(.76f,.76f,.76f);
+            colors.selectedColor = new Color(1.16f,1.16f,1.16f); colors.disabledColor = new Color(.7f,.7f,.7f,1); colors.fadeDuration = .08f; button.colors = colors;
             if (action != null) button.onClick.AddListener(() => { game.Audio?.Click(); action(); });
-            var text = Label(image.transform, label, fontSize, foreground ?? Ink); text.alignment = TextAnchor.MiddleCenter;
-            Stretch(text.rectTransform, Vector2.zero, Vector2.one); text.rectTransform.offsetMin = new Vector2(18,10); text.rectTransform.offsetMax = new Vector2(-18,-10);
-            var element = image.gameObject.AddComponent<LayoutElement>(); element.minHeight = CompactViewport ? 92 : 64; element.flexibleWidth = 1;
-            var buttonLayout=image.gameObject.AddComponent<LumenButtonLayout>();buttonLayout.Caption=text;buttonLayout.MinimumHeight=CompactViewport?92:64;
+            var text = Label(image.transform, label, fontSize, background==Lime?ButtonInk:foreground ?? Ink); text.alignment = TextAnchor.MiddleLeft;
+            Stretch(text.rectTransform, Vector2.zero, Vector2.one); text.rectTransform.offsetMin = new Vector2(12,6); text.rectTransform.offsetMax = new Vector2(-12,-6);
+            var element = image.gameObject.AddComponent<LayoutElement>(); element.minHeight = MinimumTargetSize; element.flexibleWidth = 1;
+            var buttonLayout=image.gameObject.AddComponent<LumenButtonLayout>();buttonLayout.Caption=text;buttonLayout.MinimumHeight=MinimumTargetSize;
+            var border=image.gameObject.AddComponent<Outline>();border.effectDistance=new Vector2(1,-1);border.useGraphicAlpha=true;
+            var feedback=image.gameObject.AddComponent<LumenButtonFocus>();feedback.Initialize(button,text,border,background==Selected,Brass,Frame);
             return button;
         }
 
         private InputField Input(Transform parent, string label, string value, bool number, int limit)
         {
             Label(parent, label, 24, Ink);
-            var image = ImageNode("Input · " + label, parent, Color.white);
+            var image = ImageNode("Input · " + label, parent, new Color(.055f,.075f,.095f));
+            var border=image.gameObject.AddComponent<Outline>();border.effectColor=Frame;border.effectDistance=new Vector2(1,-1);
             var field = image.gameObject.AddComponent<InputField>(); field.targetGraphic = image;
             var text = Label(image.transform, "", 28, Ink); Stretch(text.rectTransform, Vector2.zero, Vector2.one);
             text.rectTransform.offsetMin = new Vector2(18,8); text.rectTransform.offsetMax = new Vector2(-18,-8);
             field.textComponent = text; field.characterLimit = limit; field.lineType = InputField.LineType.SingleLine;
             field.contentType = number ? InputField.ContentType.IntegerNumber : InputField.ContentType.Standard;
-            field.text = value; field.selectionColor = new Color(.18f,.39f,.40f,.3f);
-            var element = image.gameObject.AddComponent<LayoutElement>(); element.minHeight = 74; element.preferredHeight = 78;
+            field.text = value; field.selectionColor = new Color(.91f,.67f,.30f,.35f);
+            var element = image.gameObject.AddComponent<LayoutElement>(); element.minHeight = MinimumTargetSize; element.preferredHeight = Mathf.Max(MinimumTargetSize,48);
             return field;
         }
 
         private Toggle CheckBox(Transform parent, string label, bool initial)
         {
-            var row = Row(parent, 72);
-            var square = ImageNode("Toggle", row, Color.white); SetWidth(square.rectTransform, 60);
-            var check = ImageNode("Check", square.transform, Purple); Stretch(check.rectTransform, new Vector2(.20f,.20f), new Vector2(.8f,.8f));
+            var row = CSSRow(parent, MinimumTargetSize, true);
+            var square = ImageNode("Toggle", row, Lavender); SetWidth(square.rectTransform, MinimumTargetSize);
+            square.GetComponent<LayoutElement>().minHeight=MinimumTargetSize;
+            var check = ImageNode("Check", square.transform, Brass); Stretch(check.rectTransform, new Vector2(.20f,.20f), new Vector2(.8f,.8f));
             var toggle = square.gameObject.AddComponent<Toggle>(); toggle.targetGraphic = square; toggle.graphic = check; toggle.isOn = initial;
             Label(row, label, 24, Ink);
             return toggle;
@@ -675,22 +677,23 @@ namespace Lumen.Runtime
 
         private void Palette(Transform parent, string label, Color[] colors, int current, Action<int> change)
         {
-            Label(parent, label, 26, Ink); var row = Row(parent, 74); var buttons = new List<Button>();
+            Label(parent, label, 26, Ink); RectTransform row=null; var buttons = new List<Button>();
             for (int i = 0; i < colors.Length; i++)
             {
+                if(i%4==0) row=CSSRow(parent,MinimumTargetSize,true);
                 int chosen = i;
                 var button = ButtonNode(row, i == current ? "✓" : "", () =>
                 {
                     for (int k = 0; k < buttons.Count; k++) ButtonText(buttons[k]).text = k == chosen ? "✓" : "";
                     change(chosen);
-                }, colors[i], colors[i].grayscale > .55f ? Ink : Color.white, 30);
+                }, colors[i], colors[i].grayscale > .55f ? ButtonInk : Color.white, 30);
                 buttons.Add(button);
             }
         }
 
         private void ProgressBar(Transform parent, float value, Color color)
         {
-            var track = ImageNode("Progress", parent, Lavender); SetHeight(track.rectTransform, 14);
+            var track = ImageNode("Progress", parent, Lavender); SetHeight(track.rectTransform, 6);
             var fill = ImageNode("Progress fill", track.transform, color); fill.type = Image.Type.Filled; fill.fillMethod = Image.FillMethod.Horizontal; fill.fillAmount = Mathf.Clamp01(value);
             Stretch(fill.rectTransform, Vector2.zero, Vector2.one);
         }
@@ -705,7 +708,7 @@ namespace Lumen.Runtime
         private void CreateRoundedSprite()
         {
             const int size = 64; const float radius = 2;
-            roundedTexture = new Texture2D(size,size,TextureFormat.RGBA32,false) { name = "LUMEN UI corners", filterMode = FilterMode.Bilinear };
+            roundedTexture = new Texture2D(size,size,TextureFormat.RGBA32,false) { name = "NUMERION UI corners", filterMode = FilterMode.Bilinear };
             var pixels = new Color[size * size];
             for (int y = 0; y < size; y++) for (int x = 0; x < size; x++)
             {
@@ -728,7 +731,7 @@ namespace Lumen.Runtime
         { var layout = rect.GetComponent<LayoutElement>() ?? rect.gameObject.AddComponent<LayoutElement>(); layout.minWidth = width; layout.preferredWidth = width; layout.flexibleWidth = 0; }
         private static void Put(Text text, string value) { if (text != null && text.text != value) { text.font=ChooseFont(value,text.font);text.text=value??""; } }
         private static Text ButtonText(Button button) => button.GetComponentInChildren<Text>();
-        private static void Tint(Button button, Color color) => button.GetComponent<Image>().color = color;
+        private static void Tint(Button button, Color color) { button.GetComponent<Image>().color=color;var feedback=button.GetComponent<LumenButtonFocus>();if(feedback)feedback.MarkActive(color==Selected); }
         private static string HairLabel(int value) { return new[] { "Účes: krátky s ofinou", "Účes: rozstrapatený", "Účes: dlhý s drdolom", "Účes: bez vlasov" }[Mathf.Clamp(value,0,3)] + "  ·  zmeniť →"; }
         private static string AccessoryLabel(int value) { return new[] { "Doplnok: bez doplnku", "Doplnok: čiapka", "Doplnok: batoh", "Doplnok: akademický klobúk" }[Mathf.Clamp(value,0,3)] + "  ·  zmeniť →"; }
         private static string FrameLabel(int value) => value <= 0 ? "Limit FPS: odomknutý" : "Limit FPS: " + value;
@@ -749,7 +752,7 @@ namespace Lumen.Runtime
         public float preferredWidth => -1;
         public float flexibleWidth => -1;
         public float minHeight => MinimumHeight;
-        public float preferredHeight => Mathf.Max(MinimumHeight, Caption != null ? Caption.preferredHeight + 24 : MinimumHeight);
+        public float preferredHeight => Mathf.Max(MinimumHeight, Caption != null ? Caption.preferredHeight + 14 : MinimumHeight);
         public float flexibleHeight => -1;
         public int layoutPriority => 1;
     }

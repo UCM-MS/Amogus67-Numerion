@@ -27,9 +27,11 @@ namespace Lumen.Runtime
             var sorted = inventory.Items.OrderByDescending(i => i.EquippedTo == artifactPet && !string.IsNullOrEmpty(artifactPet)).ThenByDescending(i => i.Rarity).ThenByDescending(i => i.Level).ToArray();
             const int perPage = 12; int pages = System.Math.Max(1, (sorted.Length + perPage - 1) / perPage); artifactPage = Mathf.Clamp(artifactPage, 0, pages - 1);
             if (pages > 1) { var row = Row(body, 70); ButtonNode(row, "←", () => { artifactPage--; ShowArtifacts(); }, Lavender); Label(row, (artifactPage + 1) + "/" + pages, 24, Ink); ButtonNode(row, "→", () => { artifactPage++; ShowArtifacts(); }, Lavender); }
+            RectTransform artifactRow=null;int artifactIndex=0;
             foreach (var item in sorted.Skip(artifactPage * perPage).Take(perPage))
             {
-                string id = item.Id; var card = Card(body, item.Rarity >= 3 ? Lavender : Cream);
+                if(artifactIndex++%2==0)artifactRow=CardRow(body);
+                string id = item.Id; var card = Card(artifactRow, Cream);
                 Label(card, ArtifactRules.RarityName(item.Rarity) + " · " + ArtifactRules.Name(item) + "  +" + item.Level, 27, Ink);
                 Label(card, ArtifactRules.StatName(item.MainStat) + " +" + item.MainValue + "\n" + string.Join(" · ", item.Substats.Select(s => ArtifactRules.StatName(s.Stat) + " +" + s.Value)), 24, Purple);
                 Label(card, string.IsNullOrEmpty(item.EquippedTo) ? "Voľný artefakt" : "Nosí: " + (owned.FirstOrDefault(p => p.SpeciesId == item.EquippedTo)?.Nickname ?? item.EquippedTo), 22, Muted);
