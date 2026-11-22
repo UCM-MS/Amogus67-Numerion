@@ -6,9 +6,7 @@ Unity Web obsahuje rozšírenú akadémiu, menu, úpravu postavy, šesťkrokový
 
 Pôvodný svet tiež dostal nové menu, sprievodcu, šesť vekovo prispôsobených učebných oblastí, album 14 spoločníkov, podrobnejšie modely petov, novú architektúru akadémie a kolízie kamery so strechami. Jeho staré uložené hry zostávajú kompatibilné.
 
-## Verejná hra
-
-https://legacy-numerion.example.invalid
+## Spoločné hranie
 
 Menu → Hrať spolu → Vytvoriť spoločný svet. Kamarát otvorí pozývací odkaz alebo zadá šesťznakový kód. Až osem hráčov chodí v tom istom 3D ostrove; vidíš ich mená, pohyb, skoky, mávanie a spoločníkov. Spojenie pokračuje aj po zatvorení pozývacej karty. Mapa a tlačidlo Najbližší spoločný maják ukážu bezpečnú trasu.
 
@@ -58,8 +56,6 @@ pnpm test preverí engine, fyziku pri 10/20/60 FPS, kameru, dosiahnuteľnosť sv
 
 Produkčné zostavenie: pnpm build. Zachovaný Vinext Sites build plugin kopíruje identitu, D1 binding a Drizzle migrácie do dist/.openai. Frontend zdroje sú v public/, serverová logika vo worker/, API vstup v app/api/multiplayer. Deploy sa robí cez Sites na pôvodný projekt a verejnú adresu.
 
-## Tímové oblasti
-
-Commity rozdeľujú štyri oblasti práce: grafika rozhrania, grafika sveta, programovanie pravidiel a servera, programovanie klienta a integrácia. Ide o roly Codexu, nie štyroch ľudských vývojárov; percentá označujú rozdelenie zodpovednosti.
+## Licencia knižnice
 
 Three.js je MIT; licencia je v public/vendor/THREE-LICENSE.txt.
