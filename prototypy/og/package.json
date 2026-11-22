@@ -1,0 +1,1 @@
+{"name":"lumen-akademia-3d","version":"2.0.0","type":"module","private":true,"description":"Original educational 3D browser academy game","scripts":{"start":"node serve.mjs","test":"node tests/academy-engine.test.mjs"}}
