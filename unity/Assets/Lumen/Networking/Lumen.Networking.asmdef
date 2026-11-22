@@ -1,0 +1,6 @@
+{
+  "name": "Lumen.Networking",
+  "rootNamespace": "Lumen.Networking",
+  "references": ["Lumen.Core", "Unity.Netcode.Runtime", "Unity.Networking.Transport", "Unity.Collections"],
+  "autoReferenced": true
+}
