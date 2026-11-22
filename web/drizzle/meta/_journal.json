@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1791473746310,
+      "tag": "0000_familiar_tempest",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1791486614103,
+      "tag": "0001_sour_hairball",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1793620800000,
+      "tag": "0002_unity_online",
+      "breakpoints": true
+    }
+  ]
+}

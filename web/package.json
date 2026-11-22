@@ -1,0 +1,40 @@
+{
+  "name": "lumen-akademia-3d",
+  "version": "6.0.0",
+  "type": "module",
+  "private": true,
+  "packageManager": "pnpm@11.25.0",
+  "description": "Shared educational 3D academy with cooperative expeditions, live quizzes and pet duels",
+  "scripts": {
+    "dev": "node serve.mjs",
+    "start": "node serve.mjs",
+    "build": "node scripts/run-framework.mjs build",
+    "test": "node tests/academy-engine.test.mjs && node tests/physics3d.test.mjs && node tests/world3d.test.mjs && node tests/party3d.test.mjs && node tests/multiplayer.test.mjs && node tests/multiplayer-ui.test.mjs && node tests/explore.test.mjs && node tests/co-op-ui.test.mjs && node tests/vr-mode.test.mjs && node tests/vr-panel.test.mjs && node tests/academy-journey.test.mjs",
+    "db:generate": "drizzle-kit generate"
+  },
+  "dependencies": {
+    "drizzle-orm": "0.45.2",
+    "next": "16.3.4",
+    "react": "19.2.6",
+    "react-dom": "19.2.6"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "1.37.1",
+    "@cloudflare/workers-types": "4.20260515.1",
+    "@types/node": "22.19.19",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-rsc": "0.5.26",
+    "drizzle-kit": "0.31.10",
+    "react-server-dom-webpack": "19.2.6",
+    "typescript": "5.9.3",
+    "vinext": "1.0.0-beta.5",
+    "vite": "8.0.13",
+    "wrangler": "4.92.0"
+  },
+  "overrides": {
+    "miniflare": {
+      "sharp": "0.35.4"
+    }
+  }
+}
