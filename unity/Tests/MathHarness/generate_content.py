@@ -7,6 +7,8 @@ from pathlib import Path
 from fractions import Fraction
 import ast
 import json
+import hashlib
+import math
 import operator
 import re
 
@@ -28,7 +30,7 @@ def q(grade, strand, prompt, correct, distractors, explanation, expression=None)
     options = list(map(str, distractors))
     options.insert(position, str(correct))
     row = dict(Id=f'math-g{grade}-s{strand}-{index:02}', Grade=grade,
-               Subject=strand, AgeBand=2, Difficulty=[1, 2, 2, 3, 3, 4][index-1],
+               Subject=strand, AgeBand=2, Difficulty=[1, 2, 2, 3, 3, 4, 3, 4][index-1],
                SectionId=f'section-{strand}', Prompt=prompt, Options=options,
                CorrectOption=position, Explanation=explanation, SourceUrl=SOURCE)
     if expression:
@@ -167,6 +169,47 @@ q(9,5,'Valcová nádrž má polomer 2 dm a výšku 5 dm. Použi π = 3,14. Koľk
 q(9,5,'Z ceny 100 € najprv odpočítajú 15 % a potom kupón 5 €. Koľko eur zaplatíš?', '80',['85','95','75'],'Percentuálna zľava je 15 €. Po nej cena klesne na 85 € a kupón ju zníži na 85 − 5 = 80 €.', '100*(1-15/100)-5')
 q(9,5,'Jeden kohútik naplní nádrž za 6 hodín, druhý za 3 hodiny. Za koľko hodín ju naplnia spolu pri stálom prietoku?', '2',['9','4,5','3'],'Za hodinu naplnia 1/6 + 1/3 = 1/2 nádrže. Celú nádrž preto naplnia za 1 : (1/2) = 2 hodiny.', '1/(1/6+1/3)')
 
+# Numerion expansion: append two multistep tasks to each grade/topic. Existing
+# 01..06 IDs, prompts, options, answer positions and explanations stay untouched.
+q(7,0,'Zo 48 kryštálov použiješ najprv 3/8. Potom použiješ 1/5 zo zvyšných kryštálov. Koľko kryštálov ti zostane?', '24',['18','30','12'],'Najprv použiješ 48 × 3/8 = 18 kryštálov, takže zostane 30. Z nich použiješ 30 × 1/5 = 6. Nakoniec zostane 30 − 6 = 24 kryštálov.', '(48-48*3/8)*(1-1/5)')
+q(7,0,'V nádobe je 1 a 1/2 litra vody. Odoberieš 2/5 litra vody a pridáš 3/4 litra vody. Potom odleješ 2/3 vody z nádoby. Koľko litrov vody zostane?', '37/60',['37/30','17/60','3/5'],'Najprv počítame 3/2 − 2/5 + 3/4 = 30/20 − 8/20 + 15/20 = 37/20 litra. Po odliatí 2/3 zostáva 1/3 vody. Preto zostane 37/20 × 1/3 = 37/60 litra.', '(3/2-2/5+3/4)*(1-2/3)')
+q(7,1,'Chodník na mape s mierkou 1 : 20 000 meria 3 cm. Spiatočná cesta je o 25 % dlhšia než tento chodník v skutočnosti. Koľko metrov meria spiatočná cesta?', '750',['625','450','1500'],'Chodník meria v skutočnosti 3 × 20 000 = 60 000 cm = 600 m. Štvrtina zo 600 je 150. Spiatočná cesta je dlhšia o 150 m, teda meria 600 + 150 = 750 m.', '3*20000/100*(1+25/100)')
+q(7,1,'Batoh po zľave 20 % stojí 72 €. Prilba stojí jednu tretinu pôvodnej ceny batoha. Koľko eur stojí prilba?', '30',['24','18','36'],'Cena 72 € predstavuje 80 % pôvodnej ceny batoha. Pôvodná cena je 72 : 0,8 = 90 €. Prilba stojí tretinu z 90 €, teda 90 : 3 = 30 €.', '72/(1-20/100)/3')
+q(7,2,'Neznáme číslo zväčšíš o 4, výsledok vydelíš tromi a potom pripočítaš 2. Dostaneš 9. Aké bolo neznáme číslo?', '17',['11','21','25'],'Postupujeme odzadu: 9 − 2 = 7, potom 7 × 3 = 21 a nakoniec 21 − 4 = 17. Skúška je (17 + 4) : 3 + 2 = 7 + 2 = 9.', '(9-2)*3-4')
+q(7,2,'Za štyri rovnaké balíčky a jednu tubu za 7 € zaplatíš spolu 39 €. Koľko eur stojí šesť takých balíčkov bez tuby?', '48',['39','42','56'],'Od celkovej ceny odčítame tubu: 39 − 7 = 32 €. Jeden balíček stojí 32 : 4 = 8 €. Šesť balíčkov preto stojí 6 × 8 = 48 €.', '(39-7)/4*6')
+q(7,3,'Akvárium má vnútorné rozmery 60 cm, 40 cm a 30 cm. Naplníš ho do 3/4 jeho objemu. Koľko litrov vody je v akváriu?', '54',['72','18','540'],'Celý objem je 60 × 40 × 30 = 72 000 cm³. Tri štvrtiny sú 54 000 cm³. Keďže jeden liter má 1 000 cm³, v akváriu je 54 000 : 1 000 = 54 litrov.', '60*40*30*3/4/1000')
+q(7,3,'Dvor má tvar obdĺžnika 14 m × 10 m. Celý záhon s rozmermi 8 m × 6 m leží vnútri dvora a nedláždi sa. Koľko štvorcových dlaždíc s hranou 0,5 m treba na zvyšok, ak nevzniká odpad?', '368',['92','184','560'],'Dvor má obsah 140 m² a záhon 48 m², takže sa dláždi 92 m². Jedna dlaždica má obsah 0,5 × 0,5 = 0,25 m². Počet dlaždíc je 92 : 0,25 = 368.', '(14*10-8*6)/(0.5*0.5)')
+q(7,4,'Máš tri rôzne tričká, dvoje rôzne nohavice a dve rôzne čiapky. Dve tričká možno kombinovať s oboma nohavicami, tretie iba s jednými. Ku každej dovolenej dvojici vyberieš jednu čiapku. Koľko rôznych súprav vytvoríš?', '10',['8','12','6'],'Prvé dve tričká dávajú 2 × 2 = 4 dvojice s nohavicami. Tretie tričko pridá jednu dvojicu, spolu ich je 5. Každá má dve možnosti čiapky, preto existuje 5 × 2 = 10 súprav.', '(2*2+1)*2')
+q(7,4,'Zo štyroch detí vyberáš kapitána a jeho zástupcu. Mila nemôže byť kapitánkou, ale zástupkyňou byť môže. Jedno dieťa nemôže mať obe úlohy. Koľko rôznych rozdelení úloh existuje?', '9',['6','12','8'],'Kapitána vyberieme z troch detí, pretože Mila túto úlohu mať nemôže. Pre každého kapitána zostanú tri možnosti zástupcu vrátane Mily. Dostaneme 3 × 3 = 9 rozdelení; na funkciách záleží.', '(4-1)*(4-1)')
+q(7,5,'Trasa má 32 km. Ráno prejdeš 3/8 celej trasy a popoludní 1/4 celej trasy. Zvyšok ideš autobusom za 0,40 € za kilometer plus pevný poplatok 1,20 €. Koľko eur zaplatíš?', '6',['4,8','9,2','14'],'Pešo prejdeš 32 × 3/8 = 12 km a 32 × 1/4 = 8 km, spolu 20 km. Autobusu zostane 12 km. Cena je 12 × 0,40 + 1,20 = 4,80 + 1,20 = 6 €.', '(32-32*3/8-32*1/4)*0.4+1.2')
+q(7,5,'Každý z 24 žiakov dostane 0,5 litra džúsu. Džús sa predáva iba v 1,5-litrových fľašiach po 2,40 €. Koľko eur sa vráti z 20 €, ak kúpiš presne potrebný počet fliaš?', '0,80',['1,20','2,40','8'],'Treba 24 × 0,5 = 12 litrov džúsu, čiže 12 : 1,5 = 8 fliaš. Cena je 8 × 2,40 = 19,20 €. Z dvadsiatich eur sa vráti 20 − 19,20 = 0,80 €.', '20-24*0.5/1.5*2.4')
+
+q(8,0,'Vypočítaj −2,5 + 3/4 × 8 − (−1,5).', '5',['2','−5','3,5'],'Najprv násobíme: 3/4 × 8 = 6. Odčítanie záporného čísla znamená pripočítať 1,5. Dostaneme −2,5 + 6 + 1,5 = 5.', '-2.5+3/4*8-(-1.5)')
+q(8,0,'Vypočítaj (−3/4 + 1/2) : (−5/6) − 1/5.', '1/10',['−1/2','−1/10','1/2'],'V zátvorke je −3/4 + 2/4 = −1/4. Delíme záporným zlomkom: (−1/4) × (−6/5) = 3/10. Odčítame 1/5 = 2/10 a získame 1/10.', '(-3/4+1/2)/(-5/6)-1/5')
+q(8,1,'Tovar stojí 200 €. Najprv dostaneš zľavu 15 % a potom ďalšiu zľavu 10 % z už zníženej ceny. Nakoniec pripočítajú dopravu 5 €. Koľko eur zaplatíš?', '158',['155','165','153'],'Po prvej zľave je cena 200 × 0,85 = 170 €. Druhá zľava sa počíta zo 170 €, takže cena klesne na 170 × 0,9 = 153 €. S dopravou zaplatíš 153 + 5 = 158 €.', '200*(1-15/100)*(1-10/100)+5')
+q(8,1,'Päť rovnako výkonných pracovníkov dokončí prácu za 12 dní pri 8 hodinách denne. Za koľko dní ju dokončí osem pracovníkov pri 6 hodinách denne, ak sa výkon každého nemení?', '10',['8','12','15'],'Celá práca potrebuje 5 × 12 × 8 = 480 pracovných hodín jedného človeka. Nová skupina urobí denne 8 × 6 = 48 takých hodín. Práca potrvá 480 : 48 = 10 dní.', '5*12*8/(8*6)')
+q(8,2,'Rieš rovnicu 3(2x − 1) − 2(x + 4) = 17. Aké je x?', '7',['5','8','4'],'Roznásobíme zátvorky: 6x − 3 − 2x − 8 = 17. Spojíme členy na 4x − 11 = 17, preto 4x = 28. Po vydelení štyrmi dostaneme x = 7.', '(17+3+8)/(6-2)')
+q(8,2,'Obdĺžnik má obvod 50 cm. Dlhšia strana je o 1 cm väčšia než trojnásobok kratšej. Aký je jeho obsah v cm²?', '114',['120','150','108'],'Kratšiu stranu označíme x a dlhšiu 3x + 1. Z obvodu dostaneme 2(x + 3x + 1) = 50, teda 8x = 48 a x = 6 cm. Dlhšia strana má 19 cm, preto obsah je 6 × 19 = 114 cm².', '((50/2-1)/4)*(3*((50/2-1)/4)+1)')
+q(8,3,'Lichobežníkový dvor má základne 8 m a 14 m a výšku 5 m. Vydláždi sa 60 % jeho obsahu za 12 € za m². Koľko eur stojí dláždenie?', '396',['660','330','792'],'Obsah lichobežníka je (8 + 14) × 5 : 2 = 55 m². Dláždi sa 55 × 0,6 = 33 m². Cena je 33 × 12 = 396 €.', '(8+14)*5/2*60/100*12')
+q(8,3,'Hranol má trojuholníkovú podstavu so základňou 6 cm a príslušnou výškou 4 cm. Výška hranola je 15 cm. Odoberie sa z neho 30 cm³ materiálu. Aký objem v cm³ zostane?', '150',['180','330','90'],'Obsah podstavy je 6 × 4 : 2 = 12 cm². Objem celého hranola je 12 × 15 = 180 cm³. Po odobratí materiálu zostáva 180 − 30 = 150 cm³.', '6*4/2*15-30')
+q(8,4,'Aritmetický priemer štyroch meraní je 12. Po pridaní piateho merania je priemer všetkých piatich 13. Aká je hodnota piateho merania?', '17',['13','14','16'],'Prvé štyri merania majú súčet 4 × 12 = 48. Päť meraní musí mať súčet 5 × 13 = 65. Piate meranie preto má hodnotu 65 − 48 = 17.', '5*13-4*12')
+q(8,4,'Vo vrecku sú tri modré a dve červené guľôčky. Náhodne vytiahneš postupne dve bez vrátenia, vždy s rovnakou šancou pre každú zostávajúcu guľôčku. Aká je pravdepodobnosť, že obe budú modré?', '3/10',['9/25','2/5','1/5'],'Všetkých usporiadaných dvojíc je 5 × 4 = 20, pretože prvú guľôčku nevraciame. Modré dvojice môžeme vytvoriť 3 × 2 = 6 spôsobmi. Pravdepodobnosť je 6/20 = 3/10.', '3*2/(5*4)')
+q(8,5,'Izba má rozmery 5 m × 4 m. K jej obsahu pripočítaš 10 % podlahy ako rezervu. Jedno celé balenie pokryje 2 m² a stojí 18 €. Doprava stojí 15 €. Koľko eur zaplatíš?', '213',['198','195','231'],'Izba má 20 m², s desaťpercentnou rezervou treba 22 m². To je 22 : 2 = 11 celých balení. Podlaha stojí 11 × 18 = 198 € a s dopravou 198 + 15 = 213 €.', '(5*4)*(1+10/100)/2*18+15')
+q(8,5,'Autobus ide 54 km rýchlosťou 72 km/h. Potom prejdeš pešo 1,8 km rýchlosťou 4,5 km/h. Koľko minút trvá celá cesta bez čakania a prestávok?', '69',['60','84','93'],'Autobus ide 54 : 72 = 0,75 hodiny, teda 45 minút. Peší úsek trvá 1,8 : 4,5 = 0,4 hodiny, teda 24 minút. Spolu je to 45 + 24 = 69 minút.', '(54/72+1.8/4.5)*60')
+
+q(9,0,'Vypočítaj (√196 − 2³)² + 3².', '45',['15','27','117'],'Odmocnina zo 196 je 14 a 2³ = 8. V zátvorke zostane 6, jeho druhá mocnina je 36. Pripočítame 3² = 9, takže výsledok je 36 + 9 = 45.', '(196**0.5-2**3)**2+3**2')
+q(9,0,'Vypočítaj (6 × 10⁵) : (3 × 10⁻²) − 5 × 10⁶.', '15000000',['1500000','19500000','25000000'],'Podiel koeficientov je 2 a exponent pri desiatke je 5 − (−2) = 7. Podiel je teda 2 × 10⁷ = 20 000 000. Po odčítaní 5 000 000 dostaneme 15 000 000.', '(6*10**5)/(3*10**(-2))-5*10**6')
+q(9,1,'Po zľave 10 % a následnej ďalšej zľave 20 % z už zníženej ceny stojí bunda 72 €. Aká bola jej pôvodná cena v eurách?', '100',['90','96','104'],'Po oboch zľavách zostáva 0,9 × 0,8 = 0,72 pôvodnej ceny, čiže 72 %. Pôvodná cena je 72 : 0,72 = 100 €. Skúška: 100 × 0,9 × 0,8 = 72 €.', '72/((1-10/100)*(1-20/100))')
+q(9,1,'Model nádoby má všetky dĺžkové rozmery 50-krát menšie než skutočná nádoba s objemom 4 m³. Aký objem má model v cm³?', '32',['80000','1600','8'],'Objem sa zmenší 50³ = 125 000-krát. Skutočná nádoba má objem 4 000 000 cm³, pretože 1 m³ = 1 000 000 cm³. Model má objem 4 000 000 : 125 000 = 32 cm³.', '4*1000000/50**3')
+q(9,2,'Rieš rovnicu (x − 2)/3 + (x + 1)/2 = 7. Aké je x?', '8,6',['8,2','7','9'],'Obe strany vynásobíme šiestimi: 2(x − 2) + 3(x + 1) = 42. Po úprave je 5x − 1 = 42, teda 5x = 43. Výsledok je x = 43/5 = 8,6.', '(7*6+4-3)/(2+3)')
+q(9,2,'Súčet dvoch čísel je 52. Ak väčšie číslo zmenšíme o 4, dostaneme trojnásobok menšieho. Urči väčšie číslo.', '40',['36','39','44'],'Menšie číslo označíme x a väčšie je 52 − x. Platí 52 − x − 4 = 3x, teda 48 = 4x a x = 12. Väčšie číslo je 52 − 12 = 40; kontrola: 40 − 4 = 3 × 12.', '52-(52-4)/(1+3)')
+q(9,3,'Pravouhlý trojuholník má odvesny 9 cm a 12 cm. Aký je jeho obvod v centimetroch?', '36',['30','42','108'],'Najprv určíme preponu: c = √(9² + 12²) = √225 = 15 cm. Obvod je súčet všetkých troch strán: 9 + 12 + 15 = 36 cm.', '9+12+(9**2+12**2)**0.5')
+q(9,3,'Valcová nádoba s polomerom 3 cm a výškou 12 cm je naplnená vodou do 2/3 výšky. Koľko plných kužeľových nádob s rovnakým polomerom a výškou 6 cm možno touto vodou naplniť bez strát?', '4',['2','3','6'],'Výška vody vo valci je 12 × 2/3 = 8 cm, jej objem je π × 3² × 8 = 72π cm³. Jeden kužeľ má objem π × 3² × 6 : 3 = 18π cm³. Podiel 72π : 18π = 4, takže naplníme štyri nádoby.', '(3**2*12*2/3)/(3**2*6/3)')
+q(9,4,'Dvanásť žiakov má priemerný výsledok 7,5 bodu a ďalších osem žiakov má priemer 9 bodov. Aký je priemerný počet bodov celej dvadsaťčlennej skupiny?', '8,1',['8,25','8,4','8'],'Prvá skupina získala spolu 12 × 7,5 = 90 bodov a druhá 8 × 9 = 72 bodov. Celkový súčet 162 delíme všetkými 20 žiakmi: 162 : 20 = 8,1 bodu. Priemery skupín nemožno iba sčítať a deliť dvomi.', '(12*7.5+8*9)/(12+8)')
+q(9,4,'Hodíš dvoma nezávislými spravodlivými šesťstennými kockami. Aká je pravdepodobnosť, že aspoň na jednej padne šestka?', '11/36',['1/3','1/6','25/36'],'Spolu je 6 × 6 = 36 rovnako pravdepodobných usporiadaných výsledkov. Bez šestky je ich 5 × 5 = 25. Aspoň jednu šestku má preto 36 − 25 = 11 výsledkov, teda pravdepodobnosť je 11/36.', '(6*6-5*5)/(6*6)')
+q(9,5,'Požičovňa A účtuje 6 € plus 2 € za hodinu. Požičovňa B účtuje iba 3,50 € za hodinu. Na koľko celých hodín si požičiaš bicykel, aby bola A presne o 3 € lacnejšia než B?', '6',['4','5','8'],'Cenu A zapíšeme 6 + 2h a cenu B ako 3,5h. Rozdiel B − A má byť 3 €, takže 3,5h − (6 + 2h) = 3. Dostaneme 1,5h = 9 a h = 6. Skúška: A stojí 18 € a B 21 €.', '(3+6)/(3.5-2)')
+q(9,5,'Otvorená nádrž má vnútornú dĺžku 4 m, šírku 3 m a hĺbku 2 m. Zvnútra sa natiera dno a všetky štyri steny dvoma vrstvami. Jedna vrstva spotrebuje 0,25 litra na m² a liter náteru stojí 10 €. Koľko eur stojí potrebný náter bez odpadu?', '200',['120','240','400'],'Dno má 4 × 3 = 12 m² a steny spolu 2 × 4 × 2 + 2 × 3 × 2 = 28 m², celkom 40 m². Dve vrstvy spotrebujú 40 × 2 × 0,25 = 20 litrov. Náter preto stojí 20 × 10 = 200 €.', '(4*3+2*4*2+2*3*2)*2*0.25*10')
+
 def calculate(node):
     if isinstance(node, ast.Expression): return calculate(node.body)
     if isinstance(node, ast.Constant) and isinstance(node.value, (int,float)):
@@ -175,7 +218,14 @@ def calculate(node):
         return calculate(node.operand) * (-1 if isinstance(node.op,ast.USub) else 1)
     if isinstance(node, ast.BinOp):
         a,b=calculate(node.left),calculate(node.right)
-        if isinstance(node.op,ast.Pow): return float(a) ** float(b)
+        if isinstance(node.op,ast.Pow):
+            if b.denominator == 1:
+                return a ** int(b)
+            if b == Fraction(1,2) and a >= 0:
+                numerator,denominator=math.isqrt(a.numerator),math.isqrt(a.denominator)
+                if numerator*numerator==a.numerator and denominator*denominator==a.denominator:
+                    return Fraction(numerator,denominator)
+            raise ValueError('A proof root must have an exact rational result')
         operations={ast.Add:operator.add,ast.Sub:operator.sub,ast.Mult:operator.mul,ast.Div:operator.truediv}
         if type(node.op) in operations: return operations[type(node.op)](a,b)
     raise ValueError('Unsupported mathematical proof')
@@ -183,8 +233,24 @@ def calculate(node):
 def number(value):
     return Fraction(value.replace('−','-').replace(',','.'))
 
+def fingerprint(value):
+    canonical=json.dumps(value,sort_keys=True,ensure_ascii=False,separators=(',',':')).encode('utf-8')
+    return hashlib.sha256(canonical).hexdigest()
+
+def legacy_snapshot():
+    return json.loads(Path(__file__).with_name('legacy_108_fingerprints.json').read_text(encoding='utf-8-sig'))
+
 def validate():
-    assert len(ROWS)==108 and len({r['Id'] for r in ROWS})==108
+    assert len(ROWS)==144 and len({r['Id'] for r in ROWS})==144
+    original=legacy_snapshot()
+    current={r['Id']:r for r in ROWS}
+    assert original['QuestionCount']==108 and len(original['Questions'])==108
+    for question_id,digest in original['Questions'].items():
+        assert question_id in current and fingerprint(current[question_id])==digest, ('legacy question changed',question_id)
+    added=[r for r in ROWS if r['Id'] not in original['Questions']]
+    expected_added={f'math-g{g}-s{s}-{i:02}' for g in (7,8,9) for s in range(6) for i in (7,8)}
+    assert {r['Id'] for r in added}==expected_added and all(r.get('MathProof') for r in added)
+    assert len({r['Prompt'] for r in ROWS})==144, 'Repeated task wording'
     proofs=0
     for r in ROWS:
         assert len(r['Options'])==4 and len(set(r['Options']))==4, r['Id']
@@ -192,16 +258,16 @@ def validate():
         if r.get('MathProof'):
             expected=calculate(ast.parse(r['MathProof'],mode='eval'))
             actual=number(r['Options'][r['CorrectOption']])
-            assert abs(float(expected)-float(actual))<1e-8, (r['Id'],expected,actual)
+            assert expected==actual, (r['Id'],expected,actual)
             for i,opt in enumerate(r['Options']):
                 if i != r['CorrectOption']:
-                    assert abs(float(number(opt))-float(expected))>1e-8, ('equivalent distractor',r['Id'],opt)
+                    assert number(opt)!=expected, ('equivalent distractor',r['Id'],opt)
             proofs+=1
     for grade in (7,8,9):
         entries=[r for r in ROWS if r['Grade']==grade]
-        assert len(entries)==36
-        assert all(sum(r['Subject']==s for r in entries)==6 for s in range(6))
-        assert all(sum(r['CorrectOption']==i for r in entries)==9 for i in range(4))
+        assert len(entries)==48
+        assert all(sum(r['Subject']==s for r in entries)==8 for s in range(6))
+        assert all(sum(r['CorrectOption']==i for r in entries)==12 for i in range(4))
         assert {r['Difficulty'] for r in entries}=={1,2,3,4}
     return proofs
 
@@ -222,10 +288,14 @@ def main():
         lessons.append(dict(Id=f'lesson-g{grade}-s{subject}',Grade=grade,Subject=subject,
                             Title=values[0],Explanation=values[1],WorkedExample=values[2],Takeaway=values[3],SourceUrl=SOURCE))
     assert len(lessons)==18 and len({l['Id'] for l in lessons})==18
+    assert fingerprint(lessons)==legacy_snapshot()['LessonsSHA256'], 'The existing 18 lessons changed'
     data['Lessons']=lessons
     target=ROOT/'Assets/Lumen/Resources/Content/curriculum.json'
     target.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
-    (target.parent/'lessons.json').write_text(json.dumps(dict(SchemaVersion=1,LessonCount=18,Lessons=lessons),ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+    lesson_target=target.parent/'lessons.json'
+    lesson_text=json.dumps(dict(SchemaVersion=1,LessonCount=18,Lessons=lessons),ensure_ascii=False,indent=2)+'\n'
+    if not lesson_target.exists() or lesson_target.read_text(encoding='utf-8')!=lesson_text:
+        lesson_target.write_text(lesson_text,encoding='utf-8')
     quote=lambda value:json.dumps(value,ensure_ascii=False)
     lines=['// Generated from original authored tasks in Tests/MathHarness/generate_content.py.',
            '// Regenerate with that script; arithmetic proofs are validated before emission.',
@@ -238,6 +308,6 @@ def main():
         lines.append(f'                CorrectOption = {r["CorrectOption"]}, Explanation = {quote(r["Explanation"])}, SourceUrl = {quote(SOURCE)} }});')
     lines+=['        }','    }','}']
     (ROOT/'Assets/Lumen/Core/QuestionBank.cs').write_text('\n'.join(lines)+'\n',encoding='utf-8')
-    print(f'LUMEN_MATH_CONTENT_VALIDATED: 108 questions, 36 per grade, 18 textbook chapters, {proofs} independent arithmetic proofs, unique non-equivalent numeric distractors.')
+    print(f'NUMERION_MATH_CONTENT_VALIDATED: 144 questions, 48 per grade, 8 per strand, 18 unchanged textbook chapters, {proofs} exact independent arithmetic proofs (all 36 additions), 108 legacy fingerprints unchanged, unique non-equivalent numeric distractors.')
 
 if __name__=='__main__': main()

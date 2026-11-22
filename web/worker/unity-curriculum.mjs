@@ -2046,5 +2046,689 @@ export default [
     "Explanation": "Za hodinu naplnia 1/6 + 1/3 = 1/2 nádrže. Celú nádrž preto naplnia za 1 : (1/2) = 2 hodiny.",
     "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
     "MathProof": "1/(1/6+1/3)"
+  },
+  {
+    "Id": "math-g7-s0-07",
+    "Grade": 7,
+    "Subject": 0,
+    "AgeBand": 2,
+    "Difficulty": 3,
+    "SectionId": "section-0",
+    "Prompt": "Zo 48 kryštálov použiješ najprv 3/8. Potom použiješ 1/5 zo zvyšných kryštálov. Koľko kryštálov ti zostane?",
+    "Options": [
+      "18",
+      "24",
+      "30",
+      "12"
+    ],
+    "CorrectOption": 1,
+    "Explanation": "Najprv použiješ 48 × 3/8 = 18 kryštálov, takže zostane 30. Z nich použiješ 30 × 1/5 = 6. Nakoniec zostane 30 − 6 = 24 kryštálov.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "(48-48*3/8)*(1-1/5)"
+  },
+  {
+    "Id": "math-g7-s0-08",
+    "Grade": 7,
+    "Subject": 0,
+    "AgeBand": 2,
+    "Difficulty": 4,
+    "SectionId": "section-0",
+    "Prompt": "V nádobe je 1 a 1/2 litra vody. Odoberieš 2/5 litra vody a pridáš 3/4 litra vody. Potom odleješ 2/3 vody z nádoby. Koľko litrov vody zostane?",
+    "Options": [
+      "37/30",
+      "17/60",
+      "37/60",
+      "3/5"
+    ],
+    "CorrectOption": 2,
+    "Explanation": "Najprv počítame 3/2 − 2/5 + 3/4 = 30/20 − 8/20 + 15/20 = 37/20 litra. Po odliatí 2/3 zostáva 1/3 vody. Preto zostane 37/20 × 1/3 = 37/60 litra.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "(3/2-2/5+3/4)*(1-2/3)"
+  },
+  {
+    "Id": "math-g7-s1-07",
+    "Grade": 7,
+    "Subject": 1,
+    "AgeBand": 2,
+    "Difficulty": 3,
+    "SectionId": "section-1",
+    "Prompt": "Chodník na mape s mierkou 1 : 20 000 meria 3 cm. Spiatočná cesta je o 25 % dlhšia než tento chodník v skutočnosti. Koľko metrov meria spiatočná cesta?",
+    "Options": [
+      "625",
+      "450",
+      "1500",
+      "750"
+    ],
+    "CorrectOption": 3,
+    "Explanation": "Chodník meria v skutočnosti 3 × 20 000 = 60 000 cm = 600 m. Štvrtina zo 600 je 150. Spiatočná cesta je dlhšia o 150 m, teda meria 600 + 150 = 750 m.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "3*20000/100*(1+25/100)"
+  },
+  {
+    "Id": "math-g7-s1-08",
+    "Grade": 7,
+    "Subject": 1,
+    "AgeBand": 2,
+    "Difficulty": 4,
+    "SectionId": "section-1",
+    "Prompt": "Batoh po zľave 20 % stojí 72 €. Prilba stojí jednu tretinu pôvodnej ceny batoha. Koľko eur stojí prilba?",
+    "Options": [
+      "30",
+      "24",
+      "18",
+      "36"
+    ],
+    "CorrectOption": 0,
+    "Explanation": "Cena 72 € predstavuje 80 % pôvodnej ceny batoha. Pôvodná cena je 72 : 0,8 = 90 €. Prilba stojí tretinu z 90 €, teda 90 : 3 = 30 €.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "72/(1-20/100)/3"
+  },
+  {
+    "Id": "math-g7-s2-07",
+    "Grade": 7,
+    "Subject": 2,
+    "AgeBand": 2,
+    "Difficulty": 3,
+    "SectionId": "section-2",
+    "Prompt": "Neznáme číslo zväčšíš o 4, výsledok vydelíš tromi a potom pripočítaš 2. Dostaneš 9. Aké bolo neznáme číslo?",
+    "Options": [
+      "11",
+      "17",
+      "21",
+      "25"
+    ],
+    "CorrectOption": 1,
+    "Explanation": "Postupujeme odzadu: 9 − 2 = 7, potom 7 × 3 = 21 a nakoniec 21 − 4 = 17. Skúška je (17 + 4) : 3 + 2 = 7 + 2 = 9.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "(9-2)*3-4"
+  },
+  {
+    "Id": "math-g7-s2-08",
+    "Grade": 7,
+    "Subject": 2,
+    "AgeBand": 2,
+    "Difficulty": 4,
+    "SectionId": "section-2",
+    "Prompt": "Za štyri rovnaké balíčky a jednu tubu za 7 € zaplatíš spolu 39 €. Koľko eur stojí šesť takých balíčkov bez tuby?",
+    "Options": [
+      "39",
+      "42",
+      "48",
+      "56"
+    ],
+    "CorrectOption": 2,
+    "Explanation": "Od celkovej ceny odčítame tubu: 39 − 7 = 32 €. Jeden balíček stojí 32 : 4 = 8 €. Šesť balíčkov preto stojí 6 × 8 = 48 €.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "(39-7)/4*6"
+  },
+  {
+    "Id": "math-g7-s3-07",
+    "Grade": 7,
+    "Subject": 3,
+    "AgeBand": 2,
+    "Difficulty": 3,
+    "SectionId": "section-3",
+    "Prompt": "Akvárium má vnútorné rozmery 60 cm, 40 cm a 30 cm. Naplníš ho do 3/4 jeho objemu. Koľko litrov vody je v akváriu?",
+    "Options": [
+      "72",
+      "18",
+      "540",
+      "54"
+    ],
+    "CorrectOption": 3,
+    "Explanation": "Celý objem je 60 × 40 × 30 = 72 000 cm³. Tri štvrtiny sú 54 000 cm³. Keďže jeden liter má 1 000 cm³, v akváriu je 54 000 : 1 000 = 54 litrov.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "60*40*30*3/4/1000"
+  },
+  {
+    "Id": "math-g7-s3-08",
+    "Grade": 7,
+    "Subject": 3,
+    "AgeBand": 2,
+    "Difficulty": 4,
+    "SectionId": "section-3",
+    "Prompt": "Dvor má tvar obdĺžnika 14 m × 10 m. Celý záhon s rozmermi 8 m × 6 m leží vnútri dvora a nedláždi sa. Koľko štvorcových dlaždíc s hranou 0,5 m treba na zvyšok, ak nevzniká odpad?",
+    "Options": [
+      "368",
+      "92",
+      "184",
+      "560"
+    ],
+    "CorrectOption": 0,
+    "Explanation": "Dvor má obsah 140 m² a záhon 48 m², takže sa dláždi 92 m². Jedna dlaždica má obsah 0,5 × 0,5 = 0,25 m². Počet dlaždíc je 92 : 0,25 = 368.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "(14*10-8*6)/(0.5*0.5)"
+  },
+  {
+    "Id": "math-g7-s4-07",
+    "Grade": 7,
+    "Subject": 4,
+    "AgeBand": 2,
+    "Difficulty": 3,
+    "SectionId": "section-4",
+    "Prompt": "Máš tri rôzne tričká, dvoje rôzne nohavice a dve rôzne čiapky. Dve tričká možno kombinovať s oboma nohavicami, tretie iba s jednými. Ku každej dovolenej dvojici vyberieš jednu čiapku. Koľko rôznych súprav vytvoríš?",
+    "Options": [
+      "8",
+      "10",
+      "12",
+      "6"
+    ],
+    "CorrectOption": 1,
+    "Explanation": "Prvé dve tričká dávajú 2 × 2 = 4 dvojice s nohavicami. Tretie tričko pridá jednu dvojicu, spolu ich je 5. Každá má dve možnosti čiapky, preto existuje 5 × 2 = 10 súprav.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "(2*2+1)*2"
+  },
+  {
+    "Id": "math-g7-s4-08",
+    "Grade": 7,
+    "Subject": 4,
+    "AgeBand": 2,
+    "Difficulty": 4,
+    "SectionId": "section-4",
+    "Prompt": "Zo štyroch detí vyberáš kapitána a jeho zástupcu. Mila nemôže byť kapitánkou, ale zástupkyňou byť môže. Jedno dieťa nemôže mať obe úlohy. Koľko rôznych rozdelení úloh existuje?",
+    "Options": [
+      "6",
+      "12",
+      "9",
+      "8"
+    ],
+    "CorrectOption": 2,
+    "Explanation": "Kapitána vyberieme z troch detí, pretože Mila túto úlohu mať nemôže. Pre každého kapitána zostanú tri možnosti zástupcu vrátane Mily. Dostaneme 3 × 3 = 9 rozdelení; na funkciách záleží.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "(4-1)*(4-1)"
+  },
+  {
+    "Id": "math-g7-s5-07",
+    "Grade": 7,
+    "Subject": 5,
+    "AgeBand": 2,
+    "Difficulty": 3,
+    "SectionId": "section-5",
+    "Prompt": "Trasa má 32 km. Ráno prejdeš 3/8 celej trasy a popoludní 1/4 celej trasy. Zvyšok ideš autobusom za 0,40 € za kilometer plus pevný poplatok 1,20 €. Koľko eur zaplatíš?",
+    "Options": [
+      "4,8",
+      "9,2",
+      "14",
+      "6"
+    ],
+    "CorrectOption": 3,
+    "Explanation": "Pešo prejdeš 32 × 3/8 = 12 km a 32 × 1/4 = 8 km, spolu 20 km. Autobusu zostane 12 km. Cena je 12 × 0,40 + 1,20 = 4,80 + 1,20 = 6 €.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "(32-32*3/8-32*1/4)*0.4+1.2"
+  },
+  {
+    "Id": "math-g7-s5-08",
+    "Grade": 7,
+    "Subject": 5,
+    "AgeBand": 2,
+    "Difficulty": 4,
+    "SectionId": "section-5",
+    "Prompt": "Každý z 24 žiakov dostane 0,5 litra džúsu. Džús sa predáva iba v 1,5-litrových fľašiach po 2,40 €. Koľko eur sa vráti z 20 €, ak kúpiš presne potrebný počet fliaš?",
+    "Options": [
+      "0,80",
+      "1,20",
+      "2,40",
+      "8"
+    ],
+    "CorrectOption": 0,
+    "Explanation": "Treba 24 × 0,5 = 12 litrov džúsu, čiže 12 : 1,5 = 8 fliaš. Cena je 8 × 2,40 = 19,20 €. Z dvadsiatich eur sa vráti 20 − 19,20 = 0,80 €.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "20-24*0.5/1.5*2.4"
+  },
+  {
+    "Id": "math-g8-s0-07",
+    "Grade": 8,
+    "Subject": 0,
+    "AgeBand": 2,
+    "Difficulty": 3,
+    "SectionId": "section-0",
+    "Prompt": "Vypočítaj −2,5 + 3/4 × 8 − (−1,5).",
+    "Options": [
+      "2",
+      "−5",
+      "5",
+      "3,5"
+    ],
+    "CorrectOption": 2,
+    "Explanation": "Najprv násobíme: 3/4 × 8 = 6. Odčítanie záporného čísla znamená pripočítať 1,5. Dostaneme −2,5 + 6 + 1,5 = 5.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "-2.5+3/4*8-(-1.5)"
+  },
+  {
+    "Id": "math-g8-s0-08",
+    "Grade": 8,
+    "Subject": 0,
+    "AgeBand": 2,
+    "Difficulty": 4,
+    "SectionId": "section-0",
+    "Prompt": "Vypočítaj (−3/4 + 1/2) : (−5/6) − 1/5.",
+    "Options": [
+      "−1/2",
+      "−1/10",
+      "1/2",
+      "1/10"
+    ],
+    "CorrectOption": 3,
+    "Explanation": "V zátvorke je −3/4 + 2/4 = −1/4. Delíme záporným zlomkom: (−1/4) × (−6/5) = 3/10. Odčítame 1/5 = 2/10 a získame 1/10.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "(-3/4+1/2)/(-5/6)-1/5"
+  },
+  {
+    "Id": "math-g8-s1-07",
+    "Grade": 8,
+    "Subject": 1,
+    "AgeBand": 2,
+    "Difficulty": 3,
+    "SectionId": "section-1",
+    "Prompt": "Tovar stojí 200 €. Najprv dostaneš zľavu 15 % a potom ďalšiu zľavu 10 % z už zníženej ceny. Nakoniec pripočítajú dopravu 5 €. Koľko eur zaplatíš?",
+    "Options": [
+      "158",
+      "155",
+      "165",
+      "153"
+    ],
+    "CorrectOption": 0,
+    "Explanation": "Po prvej zľave je cena 200 × 0,85 = 170 €. Druhá zľava sa počíta zo 170 €, takže cena klesne na 170 × 0,9 = 153 €. S dopravou zaplatíš 153 + 5 = 158 €.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "200*(1-15/100)*(1-10/100)+5"
+  },
+  {
+    "Id": "math-g8-s1-08",
+    "Grade": 8,
+    "Subject": 1,
+    "AgeBand": 2,
+    "Difficulty": 4,
+    "SectionId": "section-1",
+    "Prompt": "Päť rovnako výkonných pracovníkov dokončí prácu za 12 dní pri 8 hodinách denne. Za koľko dní ju dokončí osem pracovníkov pri 6 hodinách denne, ak sa výkon každého nemení?",
+    "Options": [
+      "8",
+      "10",
+      "12",
+      "15"
+    ],
+    "CorrectOption": 1,
+    "Explanation": "Celá práca potrebuje 5 × 12 × 8 = 480 pracovných hodín jedného človeka. Nová skupina urobí denne 8 × 6 = 48 takých hodín. Práca potrvá 480 : 48 = 10 dní.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "5*12*8/(8*6)"
+  },
+  {
+    "Id": "math-g8-s2-07",
+    "Grade": 8,
+    "Subject": 2,
+    "AgeBand": 2,
+    "Difficulty": 3,
+    "SectionId": "section-2",
+    "Prompt": "Rieš rovnicu 3(2x − 1) − 2(x + 4) = 17. Aké je x?",
+    "Options": [
+      "5",
+      "8",
+      "7",
+      "4"
+    ],
+    "CorrectOption": 2,
+    "Explanation": "Roznásobíme zátvorky: 6x − 3 − 2x − 8 = 17. Spojíme členy na 4x − 11 = 17, preto 4x = 28. Po vydelení štyrmi dostaneme x = 7.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "(17+3+8)/(6-2)"
+  },
+  {
+    "Id": "math-g8-s2-08",
+    "Grade": 8,
+    "Subject": 2,
+    "AgeBand": 2,
+    "Difficulty": 4,
+    "SectionId": "section-2",
+    "Prompt": "Obdĺžnik má obvod 50 cm. Dlhšia strana je o 1 cm väčšia než trojnásobok kratšej. Aký je jeho obsah v cm²?",
+    "Options": [
+      "120",
+      "150",
+      "108",
+      "114"
+    ],
+    "CorrectOption": 3,
+    "Explanation": "Kratšiu stranu označíme x a dlhšiu 3x + 1. Z obvodu dostaneme 2(x + 3x + 1) = 50, teda 8x = 48 a x = 6 cm. Dlhšia strana má 19 cm, preto obsah je 6 × 19 = 114 cm².",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "((50/2-1)/4)*(3*((50/2-1)/4)+1)"
+  },
+  {
+    "Id": "math-g8-s3-07",
+    "Grade": 8,
+    "Subject": 3,
+    "AgeBand": 2,
+    "Difficulty": 3,
+    "SectionId": "section-3",
+    "Prompt": "Lichobežníkový dvor má základne 8 m a 14 m a výšku 5 m. Vydláždi sa 60 % jeho obsahu za 12 € za m². Koľko eur stojí dláždenie?",
+    "Options": [
+      "396",
+      "660",
+      "330",
+      "792"
+    ],
+    "CorrectOption": 0,
+    "Explanation": "Obsah lichobežníka je (8 + 14) × 5 : 2 = 55 m². Dláždi sa 55 × 0,6 = 33 m². Cena je 33 × 12 = 396 €.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "(8+14)*5/2*60/100*12"
+  },
+  {
+    "Id": "math-g8-s3-08",
+    "Grade": 8,
+    "Subject": 3,
+    "AgeBand": 2,
+    "Difficulty": 4,
+    "SectionId": "section-3",
+    "Prompt": "Hranol má trojuholníkovú podstavu so základňou 6 cm a príslušnou výškou 4 cm. Výška hranola je 15 cm. Odoberie sa z neho 30 cm³ materiálu. Aký objem v cm³ zostane?",
+    "Options": [
+      "180",
+      "150",
+      "330",
+      "90"
+    ],
+    "CorrectOption": 1,
+    "Explanation": "Obsah podstavy je 6 × 4 : 2 = 12 cm². Objem celého hranola je 12 × 15 = 180 cm³. Po odobratí materiálu zostáva 180 − 30 = 150 cm³.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "6*4/2*15-30"
+  },
+  {
+    "Id": "math-g8-s4-07",
+    "Grade": 8,
+    "Subject": 4,
+    "AgeBand": 2,
+    "Difficulty": 3,
+    "SectionId": "section-4",
+    "Prompt": "Aritmetický priemer štyroch meraní je 12. Po pridaní piateho merania je priemer všetkých piatich 13. Aká je hodnota piateho merania?",
+    "Options": [
+      "13",
+      "14",
+      "17",
+      "16"
+    ],
+    "CorrectOption": 2,
+    "Explanation": "Prvé štyri merania majú súčet 4 × 12 = 48. Päť meraní musí mať súčet 5 × 13 = 65. Piate meranie preto má hodnotu 65 − 48 = 17.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "5*13-4*12"
+  },
+  {
+    "Id": "math-g8-s4-08",
+    "Grade": 8,
+    "Subject": 4,
+    "AgeBand": 2,
+    "Difficulty": 4,
+    "SectionId": "section-4",
+    "Prompt": "Vo vrecku sú tri modré a dve červené guľôčky. Náhodne vytiahneš postupne dve bez vrátenia, vždy s rovnakou šancou pre každú zostávajúcu guľôčku. Aká je pravdepodobnosť, že obe budú modré?",
+    "Options": [
+      "9/25",
+      "2/5",
+      "1/5",
+      "3/10"
+    ],
+    "CorrectOption": 3,
+    "Explanation": "Všetkých usporiadaných dvojíc je 5 × 4 = 20, pretože prvú guľôčku nevraciame. Modré dvojice môžeme vytvoriť 3 × 2 = 6 spôsobmi. Pravdepodobnosť je 6/20 = 3/10.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "3*2/(5*4)"
+  },
+  {
+    "Id": "math-g8-s5-07",
+    "Grade": 8,
+    "Subject": 5,
+    "AgeBand": 2,
+    "Difficulty": 3,
+    "SectionId": "section-5",
+    "Prompt": "Izba má rozmery 5 m × 4 m. K jej obsahu pripočítaš 10 % podlahy ako rezervu. Jedno celé balenie pokryje 2 m² a stojí 18 €. Doprava stojí 15 €. Koľko eur zaplatíš?",
+    "Options": [
+      "213",
+      "198",
+      "195",
+      "231"
+    ],
+    "CorrectOption": 0,
+    "Explanation": "Izba má 20 m², s desaťpercentnou rezervou treba 22 m². To je 22 : 2 = 11 celých balení. Podlaha stojí 11 × 18 = 198 € a s dopravou 198 + 15 = 213 €.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "(5*4)*(1+10/100)/2*18+15"
+  },
+  {
+    "Id": "math-g8-s5-08",
+    "Grade": 8,
+    "Subject": 5,
+    "AgeBand": 2,
+    "Difficulty": 4,
+    "SectionId": "section-5",
+    "Prompt": "Autobus ide 54 km rýchlosťou 72 km/h. Potom prejdeš pešo 1,8 km rýchlosťou 4,5 km/h. Koľko minút trvá celá cesta bez čakania a prestávok?",
+    "Options": [
+      "60",
+      "69",
+      "84",
+      "93"
+    ],
+    "CorrectOption": 1,
+    "Explanation": "Autobus ide 54 : 72 = 0,75 hodiny, teda 45 minút. Peší úsek trvá 1,8 : 4,5 = 0,4 hodiny, teda 24 minút. Spolu je to 45 + 24 = 69 minút.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "(54/72+1.8/4.5)*60"
+  },
+  {
+    "Id": "math-g9-s0-07",
+    "Grade": 9,
+    "Subject": 0,
+    "AgeBand": 2,
+    "Difficulty": 3,
+    "SectionId": "section-0",
+    "Prompt": "Vypočítaj (√196 − 2³)² + 3².",
+    "Options": [
+      "15",
+      "27",
+      "117",
+      "45"
+    ],
+    "CorrectOption": 3,
+    "Explanation": "Odmocnina zo 196 je 14 a 2³ = 8. V zátvorke zostane 6, jeho druhá mocnina je 36. Pripočítame 3² = 9, takže výsledok je 36 + 9 = 45.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "(196**0.5-2**3)**2+3**2"
+  },
+  {
+    "Id": "math-g9-s0-08",
+    "Grade": 9,
+    "Subject": 0,
+    "AgeBand": 2,
+    "Difficulty": 4,
+    "SectionId": "section-0",
+    "Prompt": "Vypočítaj (6 × 10⁵) : (3 × 10⁻²) − 5 × 10⁶.",
+    "Options": [
+      "15000000",
+      "1500000",
+      "19500000",
+      "25000000"
+    ],
+    "CorrectOption": 0,
+    "Explanation": "Podiel koeficientov je 2 a exponent pri desiatke je 5 − (−2) = 7. Podiel je teda 2 × 10⁷ = 20 000 000. Po odčítaní 5 000 000 dostaneme 15 000 000.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "(6*10**5)/(3*10**(-2))-5*10**6"
+  },
+  {
+    "Id": "math-g9-s1-07",
+    "Grade": 9,
+    "Subject": 1,
+    "AgeBand": 2,
+    "Difficulty": 3,
+    "SectionId": "section-1",
+    "Prompt": "Po zľave 10 % a následnej ďalšej zľave 20 % z už zníženej ceny stojí bunda 72 €. Aká bola jej pôvodná cena v eurách?",
+    "Options": [
+      "90",
+      "100",
+      "96",
+      "104"
+    ],
+    "CorrectOption": 1,
+    "Explanation": "Po oboch zľavách zostáva 0,9 × 0,8 = 0,72 pôvodnej ceny, čiže 72 %. Pôvodná cena je 72 : 0,72 = 100 €. Skúška: 100 × 0,9 × 0,8 = 72 €.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "72/((1-10/100)*(1-20/100))"
+  },
+  {
+    "Id": "math-g9-s1-08",
+    "Grade": 9,
+    "Subject": 1,
+    "AgeBand": 2,
+    "Difficulty": 4,
+    "SectionId": "section-1",
+    "Prompt": "Model nádoby má všetky dĺžkové rozmery 50-krát menšie než skutočná nádoba s objemom 4 m³. Aký objem má model v cm³?",
+    "Options": [
+      "80000",
+      "1600",
+      "32",
+      "8"
+    ],
+    "CorrectOption": 2,
+    "Explanation": "Objem sa zmenší 50³ = 125 000-krát. Skutočná nádoba má objem 4 000 000 cm³, pretože 1 m³ = 1 000 000 cm³. Model má objem 4 000 000 : 125 000 = 32 cm³.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "4*1000000/50**3"
+  },
+  {
+    "Id": "math-g9-s2-07",
+    "Grade": 9,
+    "Subject": 2,
+    "AgeBand": 2,
+    "Difficulty": 3,
+    "SectionId": "section-2",
+    "Prompt": "Rieš rovnicu (x − 2)/3 + (x + 1)/2 = 7. Aké je x?",
+    "Options": [
+      "8,2",
+      "7",
+      "9",
+      "8,6"
+    ],
+    "CorrectOption": 3,
+    "Explanation": "Obe strany vynásobíme šiestimi: 2(x − 2) + 3(x + 1) = 42. Po úprave je 5x − 1 = 42, teda 5x = 43. Výsledok je x = 43/5 = 8,6.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "(7*6+4-3)/(2+3)"
+  },
+  {
+    "Id": "math-g9-s2-08",
+    "Grade": 9,
+    "Subject": 2,
+    "AgeBand": 2,
+    "Difficulty": 4,
+    "SectionId": "section-2",
+    "Prompt": "Súčet dvoch čísel je 52. Ak väčšie číslo zmenšíme o 4, dostaneme trojnásobok menšieho. Urči väčšie číslo.",
+    "Options": [
+      "40",
+      "36",
+      "39",
+      "44"
+    ],
+    "CorrectOption": 0,
+    "Explanation": "Menšie číslo označíme x a väčšie je 52 − x. Platí 52 − x − 4 = 3x, teda 48 = 4x a x = 12. Väčšie číslo je 52 − 12 = 40; kontrola: 40 − 4 = 3 × 12.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "52-(52-4)/(1+3)"
+  },
+  {
+    "Id": "math-g9-s3-07",
+    "Grade": 9,
+    "Subject": 3,
+    "AgeBand": 2,
+    "Difficulty": 3,
+    "SectionId": "section-3",
+    "Prompt": "Pravouhlý trojuholník má odvesny 9 cm a 12 cm. Aký je jeho obvod v centimetroch?",
+    "Options": [
+      "30",
+      "36",
+      "42",
+      "108"
+    ],
+    "CorrectOption": 1,
+    "Explanation": "Najprv určíme preponu: c = √(9² + 12²) = √225 = 15 cm. Obvod je súčet všetkých troch strán: 9 + 12 + 15 = 36 cm.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "9+12+(9**2+12**2)**0.5"
+  },
+  {
+    "Id": "math-g9-s3-08",
+    "Grade": 9,
+    "Subject": 3,
+    "AgeBand": 2,
+    "Difficulty": 4,
+    "SectionId": "section-3",
+    "Prompt": "Valcová nádoba s polomerom 3 cm a výškou 12 cm je naplnená vodou do 2/3 výšky. Koľko plných kužeľových nádob s rovnakým polomerom a výškou 6 cm možno touto vodou naplniť bez strát?",
+    "Options": [
+      "2",
+      "3",
+      "4",
+      "6"
+    ],
+    "CorrectOption": 2,
+    "Explanation": "Výška vody vo valci je 12 × 2/3 = 8 cm, jej objem je π × 3² × 8 = 72π cm³. Jeden kužeľ má objem π × 3² × 6 : 3 = 18π cm³. Podiel 72π : 18π = 4, takže naplníme štyri nádoby.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "(3**2*12*2/3)/(3**2*6/3)"
+  },
+  {
+    "Id": "math-g9-s4-07",
+    "Grade": 9,
+    "Subject": 4,
+    "AgeBand": 2,
+    "Difficulty": 3,
+    "SectionId": "section-4",
+    "Prompt": "Dvanásť žiakov má priemerný výsledok 7,5 bodu a ďalších osem žiakov má priemer 9 bodov. Aký je priemerný počet bodov celej dvadsaťčlennej skupiny?",
+    "Options": [
+      "8,25",
+      "8,4",
+      "8",
+      "8,1"
+    ],
+    "CorrectOption": 3,
+    "Explanation": "Prvá skupina získala spolu 12 × 7,5 = 90 bodov a druhá 8 × 9 = 72 bodov. Celkový súčet 162 delíme všetkými 20 žiakmi: 162 : 20 = 8,1 bodu. Priemery skupín nemožno iba sčítať a deliť dvomi.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "(12*7.5+8*9)/(12+8)"
+  },
+  {
+    "Id": "math-g9-s4-08",
+    "Grade": 9,
+    "Subject": 4,
+    "AgeBand": 2,
+    "Difficulty": 4,
+    "SectionId": "section-4",
+    "Prompt": "Hodíš dvoma nezávislými spravodlivými šesťstennými kockami. Aká je pravdepodobnosť, že aspoň na jednej padne šestka?",
+    "Options": [
+      "11/36",
+      "1/3",
+      "1/6",
+      "25/36"
+    ],
+    "CorrectOption": 0,
+    "Explanation": "Spolu je 6 × 6 = 36 rovnako pravdepodobných usporiadaných výsledkov. Bez šestky je ich 5 × 5 = 25. Aspoň jednu šestku má preto 36 − 25 = 11 výsledkov, teda pravdepodobnosť je 11/36.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "(6*6-5*5)/(6*6)"
+  },
+  {
+    "Id": "math-g9-s5-07",
+    "Grade": 9,
+    "Subject": 5,
+    "AgeBand": 2,
+    "Difficulty": 3,
+    "SectionId": "section-5",
+    "Prompt": "Požičovňa A účtuje 6 € plus 2 € za hodinu. Požičovňa B účtuje iba 3,50 € za hodinu. Na koľko celých hodín si požičiaš bicykel, aby bola A presne o 3 € lacnejšia než B?",
+    "Options": [
+      "4",
+      "6",
+      "5",
+      "8"
+    ],
+    "CorrectOption": 1,
+    "Explanation": "Cenu A zapíšeme 6 + 2h a cenu B ako 3,5h. Rozdiel B − A má byť 3 €, takže 3,5h − (6 + 2h) = 3. Dostaneme 1,5h = 9 a h = 6. Skúška: A stojí 18 € a B 21 €.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "(3+6)/(3.5-2)"
+  },
+  {
+    "Id": "math-g9-s5-08",
+    "Grade": 9,
+    "Subject": 5,
+    "AgeBand": 2,
+    "Difficulty": 4,
+    "SectionId": "section-5",
+    "Prompt": "Otvorená nádrž má vnútornú dĺžku 4 m, šírku 3 m a hĺbku 2 m. Zvnútra sa natiera dno a všetky štyri steny dvoma vrstvami. Jedna vrstva spotrebuje 0,25 litra na m² a liter náteru stojí 10 €. Koľko eur stojí potrebný náter bez odpadu?",
+    "Options": [
+      "120",
+      "240",
+      "200",
+      "400"
+    ],
+    "CorrectOption": 2,
+    "Explanation": "Dno má 4 × 3 = 12 m² a steny spolu 2 × 4 × 2 + 2 × 3 × 2 = 28 m², celkom 40 m². Dve vrstvy spotrebujú 40 × 2 × 0,25 = 20 litrov. Náter preto stojí 20 × 10 = 200 €.",
+    "SourceUrl": "https://www.statpedu.sk/files/articles/dokumenty/inovovany-statny-vzdelavaci-program/matematika_nsv_2014.pdf",
+    "MathProof": "(4*3+2*4*2+2*3*2)*2*0.25*10"
   }
 ];

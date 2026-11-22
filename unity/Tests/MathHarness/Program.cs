@@ -13,8 +13,8 @@ internal static class Program
     public static void Main()
     {
         var catalog = ContentCatalog.CreateDefault(); var learning = new LearningService(catalog);
-        Check(catalog.Questions.Count == 108 && catalog.Sections.Count == 6, "108 mathematics challenges and six strands");
-        Check(catalog.Questions.Select(q => q.Id).Distinct().Count() == 108, "unique stable question IDs");
+        Check(catalog.Questions.Count == 144 && catalog.Sections.Count == 6, "144 mathematics challenges and six strands");
+        Check(catalog.Questions.Select(q => q.Id).Distinct().Count() == 144, "unique stable question IDs");
         Check(catalog.Questions.All(q => q.Id.StartsWith("math-g") && q.Grade >= 7 && q.Grade <= 9), "all questions belong to the new math curriculum");
         Check(LessonCatalog.All.Length == 18, "eighteen textbook chapters");
         foreach (var lesson in LessonCatalog.All)
@@ -26,15 +26,15 @@ internal static class Program
 
         foreach (int grade in new[] { 7, 8, 9 })
         {
-            Check(catalog.Questions.Count(q => q.Grade == grade) == 36, "36 questions per grade");
-            for (int i = 0; i < 4; i++) Check(catalog.Questions.Count(q => q.Grade == grade && q.CorrectOption == i) == 9, "balanced answer positions");
+            Check(catalog.Questions.Count(q => q.Grade == grade) == 48, "48 questions per grade");
+            for (int i = 0; i < 4; i++) Check(catalog.Questions.Count(q => q.Grade == grade && q.CorrectOption == i) == 12, "balanced answer positions");
             foreach (Subject strand in Enum.GetValues(typeof(Subject)))
             {
                 var pool = catalog.Questions.Where(q => q.Grade == grade && q.Subject == strand).ToArray();
-                Check(pool.Length == 6 && pool.Select(q => q.Difficulty).Distinct().Count() == 4, "topic has six questions across four difficulty levels");
+                Check(pool.Length == 8 && pool.Select(q => q.Difficulty).Distinct().Count() == 4, "topic has eight questions across four difficulty levels");
                 var p = new PlayerProfile { Grade = grade };
                 var seen = new HashSet<string>();
-                for (int n = 0; n < 6; n++)
+                for (int n = 0; n < 8; n++)
                 {
                     var q = learning.BeginQuestion(p, strand, Now);
                     Check(q != null && q.Grade == grade && q.Subject == strand && seen.Add(q.Id), "adaptive selection stays in grade/topic without repeating");
@@ -54,7 +54,34 @@ internal static class Program
                 Check(!learning.ClaimQuest(p, quest.Id, Now).Claimed, "topic expedition reward exactly once");
                 int mastery = learning.GetMastery(p, strand).TotalAnswers;
                 p.Grade = grade == 9 ? 7 : grade + 1;
-                Check(learning.GetMastery(p, strand).TotalAnswers == 0 && mastery == 6, "mastery is independent between grades");
+                Check(learning.GetMastery(p, strand).TotalAnswers == 0 && mastery == 8, "mastery is independent between grades");
+
+                // A real content upgrade must keep completed saves useful without
+                // reopening their old rewards or losing the six historical IDs.
+                var imported = new PlayerProfile { Grade = grade, SchemaVersion = 2 };
+                imported.Progress.XP = 410; imported.Progress.Coins = 217;
+                string questId = "math.g" + grade + ".s" + (int)strand;
+                imported.Progress.ClaimedQuestIds.Add(questId);
+                var originalIds = Enumerable.Range(1, 6).Select(i => "math-g" + grade + "-s" + (int)strand + "-" + i.ToString("00")).ToArray();
+                foreach (string id in originalIds)
+                    imported.Progress.Attempts.Add(new QuestionAttempt { QuestionId = id, Grade = grade, Subject = strand, Correct = true });
+                var newIds = new HashSet<string>();
+                for (int i = 0; i < 2; i++)
+                {
+                    var added = learning.BeginQuestion(imported, strand, Now);
+                    Check(added != null && (added.Id.EndsWith("-07") || added.Id.EndsWith("-08")) && newIds.Add(added.Id),
+                        "completed legacy topic receives only distinct added tasks");
+                    Check(learning.SubmitAnswer(imported, added.Id, added.CorrectOption, Now).Correct,
+                        "new task remains rewardable after importing original six answers");
+                }
+                Check(learning.BeginQuestion(imported, strand, Now) == null && imported.Progress.Attempts.Count == 8,
+                    "expanded pool completes after two added answers without replaying original work");
+                Check(originalIds.All(id => imported.Progress.Attempts.Count(a => a.QuestionId == id) == 1)
+                    && imported.Progress.XP > 410 && imported.Progress.Coins > 217,
+                    "upgrade preserves historical answers and existing balances");
+                var importedBalance = Snapshot(imported.Progress);
+                Check(!learning.ClaimQuest(imported, questId, Now).Claimed && Snapshot(imported.Progress) == importedBalance,
+                    "catalog expansion cannot reopen an already claimed topic reward");
             }
         }
 
@@ -66,20 +93,22 @@ internal static class Program
             "legacy migration defaults grade while preserving earned progression");
         Check(learning.GetQuests(legacy, Now).First(q => q.Id == "math.g7.s0").Current == 0, "old non-math attempts do not complete new grade quests");
         var switchProfile = new PlayerProfile { Grade = 7 };
-        var completed = learning.BeginQuestion(switchProfile, Subject.Mathematics, Now);
-        Check(learning.SubmitAnswer(switchProfile, completed.Id, completed.CorrectOption, Now).Accepted,
-            "grade seven records an attempt before switching");
         var oldActive = learning.BeginQuestion(switchProfile, Subject.Mathematics, Now);
-        var beforeSwitch = Snapshot(switchProfile.Progress);
         switchProfile.Grade = 9;
-        Check(!learning.SubmitAnswer(switchProfile, oldActive.Id, oldActive.CorrectOption, Now).Accepted,
-            "grade switch invalidates an old active answer");
-        Check(Snapshot(switchProfile.Progress) == beforeSwitch, "rejected old answer preserves XP, coins and attempt count");
-        var next = learning.BeginQuestion(switchProfile, Subject.Mathematics, Now);
-        Check(next.Grade == 9, "new grade selects its own content");
-        Check(learning.SubmitAnswer(switchProfile, next.Id, next.CorrectOption, Now).Accepted
-            && switchProfile.Progress.Attempts.Select(attempt => attempt.Grade).SequenceEqual(new[] { 7, 9 }),
-            "history retains one attempt per completed grade");
+        Check(!learning.SubmitAnswer(switchProfile, oldActive.Id, oldActive.CorrectOption, Now).Accepted, "grade switch invalidates an old active answer");
+        Check(learning.BeginQuestion(switchProfile, Subject.Mathematics, Now).Grade == 9, "new grade selects its own content");
+
+        var pendingLegacy = new PlayerProfile { Grade = 8 };
+        foreach (int index in Enumerable.Range(1, 5))
+            pendingLegacy.Progress.Attempts.Add(new QuestionAttempt { QuestionId = "math-g8-s2-" + index.ToString("00"),
+                Grade = 8, Subject = Subject.Nature, Correct = true });
+        pendingLegacy.Progress.ActiveQuestionId = "math-g8-s2-06";
+        var pendingQuestion = learning.BeginQuestion(pendingLegacy, Subject.Nature, Now);
+        Check(pendingQuestion.Id == "math-g8-s2-06", "an unanswered original active question survives the bank expansion");
+        Check(learning.SubmitAnswer(pendingLegacy, pendingQuestion.Id, pendingQuestion.CorrectOption, Now).Accepted,
+            "pending original question remains answerable under its stable mapping");
+        Check(learning.BeginQuestion(pendingLegacy, Subject.Nature, Now).Id.EndsWith("-07"),
+            "finishing the pending original question unlocks the new multistep content");
 
         var tests = new StudyTestService(catalog); var profile = new PlayerProfile { Grade = 8 };
         var test = tests.CreateTest(profile, Subject.History, 42);
@@ -115,7 +144,41 @@ internal static class Program
         var another = tests.CreateTest(profile, Subject.Nature, 8); Complete(tests, another, true); profile.Grade = 7;
         Check(!tests.ClaimReward(profile, another).Claimed, "test cannot award under the wrong grade");
         profile.Grade = 8; Check(tests.ClaimReward(profile, another).Claimed, "returning to test grade permits its legitimate first pass reward");
-        Console.WriteLine("LUMEN_MATH_HARNESS_PASS: " + checks + " assertions; 108 questions, 18 lessons, adaptive grades, anti-replay progression and topic tests.");
+
+        var oldStudy = new StudyTest { Id = "saved-before-numerion-expansion", Grade = 7, Subject = Subject.Mathematics,
+            QuestionIds = Enumerable.Range(1, 6).Select(i => "math-g7-s0-" + i.ToString("00")).ToArray(),
+            Answers = Enumerable.Repeat(-1, 6).ToArray() };
+        Check(tests.CurrentQuestion(oldStudy)?.Id == "math-g7-s0-01", "saved six-question test remains valid in the expanded eight-question pool");
+        Complete(tests, oldStudy, true);
+        Check(tests.Results(oldStudy).CorrectCount == 6 && tests.Results(oldStudy).Percent == 100,
+            "saved original test grades against unchanged historical question values");
+        var oldStudyProfile = new PlayerProfile { Grade = 7 };
+        Check(tests.ClaimReward(oldStudyProfile, oldStudy).Claimed, "completed pre-expansion test still receives its legitimate first reward");
+        var oldRewardBalance = Snapshot(oldStudyProfile.Progress);
+        var replacement = tests.CreateTest(oldStudyProfile, Subject.Mathematics, 91); Complete(tests, replacement, true);
+        Check(!tests.ClaimReward(oldStudyProfile, replacement).Claimed && Snapshot(oldStudyProfile.Progress) == oldRewardBalance,
+            "added question IDs cannot farm the old grade-topic test reward");
+        var sampled = new HashSet<string>();
+        for (int seed = 1; seed <= 32; seed++)
+        {
+            var sample = tests.CreateTest(new PlayerProfile { Grade = 9 }, Subject.History, seed);
+            Check(sample.QuestionIds.Length == 6 && sample.QuestionIds.Distinct().Count() == 6,
+                "default topic tests remain six unique questions after bank expansion");
+            foreach (string id in sample.QuestionIds) sampled.Add(id);
+        }
+        Check(sampled.Count == 8 && sampled.Contains("math-g9-s3-07") && sampled.Contains("math-g9-s3-08"),
+            "seeded topic tests can draw both added questions as well as all original ones");
+        var boundaryProfile = new PlayerProfile { Grade = 9 };
+        var boundary = tests.CreateTest(boundaryProfile, Subject.Science, 13);
+        for (int i = 0; i < 6; i++)
+        {
+            var q = tests.CurrentQuestion(boundary);
+            Check(tests.Submit(boundary, q.Id, i < 4 ? q.CorrectOption : (q.CorrectOption + 1) % 4).Accepted,
+                "boundary test records four correct and two incorrect answers");
+        }
+        Check(tests.Results(boundary).Percent == 66 && !tests.Results(boundary).Passed && !tests.ClaimReward(boundaryProfile, boundary).Claimed,
+            "four of six remains below the unchanged seventy-percent reward threshold");
+        Console.WriteLine("NUMERION_MATH_HARNESS_PASS: " + checks + " assertions; 144 questions, 18 unchanged lessons, saved-topic/test migration, adaptive grades and anti-replay rewards.");
     }
 
     private static void Complete(StudyTestService tests, StudyTest test, bool correct)
