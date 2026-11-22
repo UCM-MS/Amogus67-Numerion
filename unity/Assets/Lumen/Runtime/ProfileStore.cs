@@ -47,6 +47,11 @@ namespace Lumen.Runtime
                 string[] args = Environment.GetCommandLineArgs();
                 int index = Array.IndexOf(args, "-lumen-profile-directory");
                 string directory = index >= 0 && index + 1 < args.Length ? Path.GetFullPath(args[index + 1]) : Application.persistentDataPath;
+#if UNITY_STANDALONE_WIN && !UNITY_EDITOR
+                // Keep the existing save directory when the displayed product becomes Numerion.
+                // Explicit QA directories remain isolated and Web keeps its original storage key.
+                if (index < 0) directory = Path.Combine(Path.GetDirectoryName(directory), "LUMEN · Akadémia objavov");
+#endif
                 if (ProfileSuffix.Length > 0) directory = Path.Combine(directory, "profiles", ProfileSuffix);
                 return Path.Combine(directory, "lumen-native-v1.json");
             }

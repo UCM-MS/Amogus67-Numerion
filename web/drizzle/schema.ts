@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, index, primaryKey } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, index, uniqueIndex, primaryKey } from 'drizzle-orm/sqlite-core';
 
 export const multiplayerPlayers = sqliteTable('mp_players', {
   id: text('id').primaryKey(),
@@ -82,3 +82,13 @@ export const unityBattleRewards=sqliteTable('unity_battle_rewards',{
   battleId:text('battle_id').notNull(),playerId:text('player_id').notNull().references(()=>unityProfiles.id,{onDelete:'cascade'}),
   xp:integer('xp').notNull(),coins:integer('coins').notNull(),petXp:integer('pet_xp').notNull(),createdAt:integer('created_at').notNull(),
 },table=>[primaryKey({columns:[table.battleId,table.playerId]})]);
+
+export const unityRoomMessages=sqliteTable('unity_room_messages',{
+  id:integer('id').primaryKey({autoIncrement:true}),roomCode:text('room_code').notNull().references(()=>unityRooms.code,{onDelete:'cascade'}),
+  authorId:text('author_id').notNull().references(()=>unityProfiles.id,{onDelete:'cascade'}),authorName:text('author_name').notNull(),
+  text:text('text').notNull().default(''),emoteId:text('emote_id').notNull().default(''),clientId:text('client_id').notNull(),createdAt:integer('created_at').notNull(),
+},table=>[uniqueIndex('unity_chat_client_dedup').on(table.roomCode,table.authorId,table.clientId),index('unity_chat_room_cursor').on(table.roomCode,table.id),index('unity_chat_expiry').on(table.createdAt)]);
+export const unityChatLimits=sqliteTable('unity_chat_limits',{
+  roomCode:text('room_code').notNull().references(()=>unityRooms.code,{onDelete:'cascade'}),playerId:text('player_id').notNull().references(()=>unityProfiles.id,{onDelete:'cascade'}),
+  lastAt:integer('last_at').notNull(),windowAt:integer('window_at').notNull(),windowCount:integer('window_count').notNull(),nonce:text('nonce').notNull(),
+},table=>[primaryKey({columns:[table.roomCode,table.playerId]}),index('unity_chat_limits_expiry').on(table.lastAt)]);

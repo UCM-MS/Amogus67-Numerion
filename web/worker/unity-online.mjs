@@ -1,9 +1,12 @@
 import {SPECIES,cleanParty,createBattle,actionId,availability,submit,forfeit} from './unity-battle.mjs';
+import {createRoomChatHandler,CHAT_TTL_MS,CHAT_BODY_LIMIT} from './unity-chat.mjs';
 
 const BASE='/api/unity',PRESENCE_MS=15000,ROOM_TTL=30*60*1000,CHALLENGE_MS=40000,TURN_MS=60000,MAX_BODY=196608;
 const encoder=new TextEncoder(),ALPHABET='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const BEACONS=[[0,0,40],[42,0,16],[42,0,-32],[0,0,-56],[-42,0,-32],[-42,0,16]];
 const COURSE=Array.from({length:9},(_,i)=>[Math.floor(i/3)===1?25.4-(i%3)*2.7:20+(i%3)*2.7,.4+i*.4,22+Math.floor(i/3)*3.3]);
+// Portals select a server-owned anchor, never coordinates supplied by a client.
+const EXPEDITIONS=[[-70,.15,58],[70,.15,58],[-70,.15,-58],[0,.15,12]];
 const MATH_TOPICS=['Čísla a zlomky','Percentá a pomer','Výrazy a rovnice','Geometria','Dáta a pravdepodobnosť','Praktická matematika'];
 class ApiError extends Error{constructor(status,error,message){super(message);this.status=status;this.error=error;}}
 const fail=(status,error,message)=>{throw new ApiError(status,error,message);};
@@ -38,17 +41,18 @@ function saveJson(raw){
   function bounded(v,depth=0){if(depth>12)fail(400,'invalid_save','Profil je príliš vnorený.');if(typeof v==='number'&&!Number.isFinite(v))fail(400,'invalid_save','Profil obsahuje neplatné číslo.');if(typeof v==='string'&&v.length>12000)fail(400,'invalid_save','Text v profile je príliš dlhý.');if(Array.isArray(v)){if(v.length>2000)fail(400,'invalid_save','Profil obsahuje príliš veľa záznamov.');for(const item of v)bounded(item,depth+1);}else if(object(v))for(const [k,item]of Object.entries(v)){if(forbidden.includes(k))fail(400,'invalid_save','Neplatné pole profilu.');bounded(item,depth+1);}}
   bounded(save);save.Profile.DisplayName=name(save.Profile.DisplayName);return JSON.stringify(save);
 }
-async function body(request){
+async function body(request,maxBody=MAX_BODY){
   if(!request.headers.get('Content-Type')?.toLowerCase().startsWith('application/json'))fail(415,'json_required','Požiadavka musí obsahovať JSON.');
-  if(Number(request.headers.get('Content-Length'))>MAX_BODY)fail(413,'body_too_large','Požiadavka je príliš veľká.');
+  if(Number(request.headers.get('Content-Length'))>maxBody)fail(413,'body_too_large','Požiadavka je príliš veľká.');
   const chunks=[];let length=0;const reader=request.body?.getReader();
-  if(reader)for(;;){const {done,value}=await reader.read();if(done)break;length+=value.byteLength;if(length>MAX_BODY){await reader.cancel();fail(413,'body_too_large','Požiadavka je príliš veľká.');}chunks.push(value);}
+  if(reader)for(;;){const {done,value}=await reader.read();if(done)break;length+=value.byteLength;if(length>maxBody){await reader.cancel();fail(413,'body_too_large','Požiadavka je príliš veľká.');}chunks.push(value);}
   const bytes=new Uint8Array(length);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length;}
   let data;try{data=length?JSON.parse(new TextDecoder().decode(bytes)):{};}catch{fail(400,'invalid_json','JSON sa nepodarilo prečítať.');}if(!object(data))fail(400,'invalid_json','Očakáva sa objekt JSON.');return data;
 }
 
 export function createUnityOnlineApi({questions=[],now=()=>Date.now()}={}){
   const bank=questions.filter(q=>q&&[7,8,9].includes(q.Grade)&&q.Options?.length===4&&Number.isInteger(q.CorrectOption)&&q.CorrectOption>=0&&q.CorrectOption<4);
+  const roomChat=createRoomChatHandler({fail,cleanName:name});
   let lastCleanup=-Infinity;
   async function auth(request,db){const token=request.headers.get('Authorization')?.match(/^Bearer ([0-9a-f-]{36})\.([0-9a-f]{64})$/i);if(!token)fail(401,'identity_required','Najprv vytvor alebo prepoj cloudový profil.');const player=await db.prepare('SELECT * FROM unity_profiles WHERE id=? AND secret_hash=?').bind(token[1],await hash(token[2])).first();if(!player)fail(401,'identity_invalid','Súkromný kód profilu neplatí. Prepoj ho znova.');return player;}
   const profileReply=p=>({identityId:p.id,profileRevision:p.revision,saveJson:p.save_json});
@@ -56,6 +60,8 @@ export function createUnityOnlineApi({questions=[],now=()=>Date.now()}={}){
     db.prepare('UPDATE unity_profiles SET active_room=NULL WHERE active_room IN (SELECT code FROM unity_rooms WHERE updated_at<?)').bind(time-ROOM_TTL),
     db.prepare('DELETE FROM unity_rooms WHERE updated_at<?').bind(time-ROOM_TTL),
     db.prepare('DELETE FROM unity_battles WHERE updated_at<?').bind(time-24*60*60*1000),
+    db.prepare('DELETE FROM unity_room_messages WHERE created_at<?').bind(time-CHAT_TTL_MS),
+    db.prepare('DELETE FROM unity_chat_limits WHERE last_at<?').bind(time-CHAT_TTL_MS),
   ]);}
   async function member(db,player,code,time){
     if(typeof code!=='string'||!/^[A-Z2-9]{6}$/.test(code))fail(400,'invalid_code','Kód miestnosti má šesť písmen alebo číslic.');
@@ -131,7 +137,7 @@ export function createUnityOnlineApi({questions=[],now=()=>Date.now()}={}){
       if(!env?.DB)fail(503,'database_unavailable','Spoločný svet sa pripravuje. Sólo hranie je dostupné.');
       const origin=request.headers.get('Origin');if(origin&&origin!==url.origin||request.headers.get('Sec-Fetch-Site')==='cross-site')fail(403,'cross_origin','Použi adresu hry.');
       if(request.method!=='POST')fail(405,'method_not_allowed','Online protokol používa POST.');
-      const data=await body(request),path=url.pathname.slice(BASE.length+1),db=env.DB,time=now();await cleanup(db,time);
+      const path=url.pathname.slice(BASE.length+1),data=await body(request,path==='rooms/chat'||path==='rooms/chat/send'?CHAT_BODY_LIMIT:MAX_BODY),db=env.DB,time=now();await cleanup(db,time);
       if(path==='profile/create'){
         const recent=await db.prepare('SELECT COUNT(*) AS count FROM unity_profiles WHERE created_at>?').bind(time-60000).first();if(recent.count>=100)fail(429,'too_many_profiles','Vzniká veľa profilov. Skús to o minútu.');
         const saved=saveJson(data.saveJson),id=crypto.randomUUID(),secret=hex(random(32));
@@ -166,11 +172,13 @@ export function createUnityOnlineApi({questions=[],now=()=>Date.now()}={}){
       const code=typeof data.code==='string'?data.code.trim().toUpperCase():'';
       if(path==='rooms/leave'){if(code)await leave(db,player,code,time);return json({message:'Zo spoločného sveta si odpojený.'});}
       const own=await member(db,player,code,time);
+      const chatResponse=await roomChat(path,data,db,player,own,code,time);if(chatResponse)return json(chatResponse);
       if(path==='rooms/respawn'){
         const p=JSON.parse(own.presence_json);let destination;
         if(data.destination==='spawn'){destination=[0,0,12];p.courseCheckpoint=-1;}
         else if(data.destination==='course'){destination=COURSE[0];p.courseCheckpoint=0;}
         else if(data.destination==='checkpoint'&&Number.isInteger(data.checkpoint)&&data.checkpoint>=0&&data.checkpoint<9&&data.checkpoint<=p.courseCheckpoint)destination=COURSE[data.checkpoint];
+        else if(data.destination==='expedition'&&Number.isInteger(data.checkpoint)&&data.checkpoint>=0&&data.checkpoint<EXPEDITIONS.length){destination=EXPEDITIONS[data.checkpoint];p.courseCheckpoint=-1;}
         else fail(400,'invalid_destination','Vyber štart alebo už dosiahnutý kontrolný bod.');
         [p.x,p.y,p.z]=destination;await db.prepare('UPDATE unity_room_members SET presence_json=?,last_seen=? WHERE room_code=? AND player_id=?').bind(JSON.stringify(p),time,code,player.id).run();
         return json({room:await snapshot(db,code,player,time)});

@@ -33,7 +33,8 @@ if ($Action -eq 'Test') {
     $method = @{Prepare='Prepare';Validate='Validate';Build='BuildWindows'}[$Action]
     $arguments += @('-quit','-executeMethod',('Lumen.Editor.LumenProjectBuilder.'+$method))
 }
-$process = Start-Process -FilePath $UnityPath -ArgumentList $arguments -WindowStyle Hidden -Wait -PassThru
+$process = Start-Process -FilePath $UnityPath -ArgumentList $arguments -WindowStyle Hidden -PassThru
+$process.WaitForExit()
 $process.Refresh()
 if ($process.ExitCode -ne 0) { throw "Unity skončilo s kódom $($process.ExitCode). Diagnostika: $log" }
 Write-Output "Unity ${Action}: $log"

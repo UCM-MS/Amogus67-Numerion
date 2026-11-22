@@ -17,7 +17,7 @@ namespace Lumen.Editor
     {
         public const string ScenePath = "Assets/Lumen/Generated/AcademyWeb.unity";
 
-        [MenuItem("LUMEN Web/Prepare Academy")]
+        [MenuItem("Numerion Web/Prepare Academy")]
         public static void Prepare()
         {
             Directory.CreateDirectory("Assets/Lumen/Generated");
@@ -49,7 +49,10 @@ namespace Lumen.Editor
             {
                 string path = AssetDatabase.GUIDToAssetPath(guid);
                 var importer = (TextureImporter)AssetImporter.GetAtPath(path);
-                importer.maxTextureSize = 4096;
+                // Packed masks contain broad material response; albedo and normals retain 4K detail.
+                // A 1K mask avoids allocating four additional 4K RGBA maps on school tablets.
+                int textureLimit = path.Contains("-mask") ? 1024 : 4096;
+                importer.maxTextureSize = textureLimit;
                 importer.mipmapEnabled = true;
                 importer.streamingMipmaps = false;
                 importer.anisoLevel = 4;
@@ -57,7 +60,7 @@ namespace Lumen.Editor
                 importer.compressionQuality = 70;
                 if (path.Contains("-normal")) importer.textureType = TextureImporterType.NormalMap;
                 var platform = importer.GetPlatformTextureSettings("WebGL");
-                platform.overridden = true; platform.maxTextureSize = 4096;
+                platform.overridden = true; platform.maxTextureSize = textureLimit;
                 platform.format = TextureImporterFormat.Automatic;
                 platform.compressionQuality = 70;
                 importer.SetPlatformTextureSettings(platform);
@@ -65,8 +68,8 @@ namespace Lumen.Editor
             }
 
             PlayerSettings.companyName = "Lumen Academy";
-            PlayerSettings.productName = "LUMEN · Unity Web";
-            PlayerSettings.bundleVersion = "6.6.0-web";
+            PlayerSettings.productName = "Numerion";
+            PlayerSettings.bundleVersion = "0.11.0-web";
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.WebGL, "sk.lumen.academy.web");
             PlayerSettings.SetScriptingBackend(NamedBuildTarget.WebGL, ScriptingImplementation.IL2CPP);
             PlayerSettings.SetManagedStrippingLevel(NamedBuildTarget.WebGL, ManagedStrippingLevel.Low);
@@ -104,7 +107,7 @@ namespace Lumen.Editor
             Debug.Log("LUMEN_WEB_READY: shared gameplay and HTTPS online/cloud, Built-in Forward, WebGL 2, up to 4K textures with selectable 2K/4K quality, IndexedDB saves.");
         }
 
-        [MenuItem("LUMEN Web/Build WebGL Player")]
+        [MenuItem("Numerion Web/Build WebGL Player")]
         public static void Build()
         {
             Prepare();

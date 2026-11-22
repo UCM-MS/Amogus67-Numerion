@@ -70,7 +70,7 @@ WEB_VR = '''public void ShowVR()
         {
             Open("Hraj na obrazovke.", "UNITY WEB / OVLÁDANIE");
             Label(body, game.VR.Status, 26, Ink);
-            Label(body, "WASD alebo šípky: pohyb. Medzerník: skok. Pravé tlačidlo myši: kamera. E: interakcia. M: mapa. J: denník. Esc: menu. Podporovaný je aj gamepad.", 24, Muted);
+            Label(body, "WASD alebo šípky: pohyb. Medzerník: skok. Pravé tlačidlo myši: kamera. E: interakcia. M: mapa. K: učivo. J: denník. Esc: menu. Podporovaný je aj gamepad.", 24, Muted);
             Label(body, "Na dotykovom displeji zapni ovládanie v hornej lište. Ľavá páčka ovláda pohyb, pravá kameru a tlačidlá skok a objavovanie.", 24, Muted);
             ButtonNode(body, "Pokračovať v akadémii", CloseModal, Lime);
         }'''
@@ -95,11 +95,20 @@ WEB_SURFACE = '''public static Material GetSurface(string surface, Color tint, f
             var material = Get(key, Color.Lerp(Color.white, tint, surface == "grass" ? 0.4f : 0.66f), metallic, smoothness);
             var albedo = Resources.Load<Texture2D>("Textures/" + surface + "-albedo");
             var normal = Resources.Load<Texture2D>("Textures/" + surface + "-normal");
+            var mask = Resources.Load<Texture2D>("Textures/" + surface + "-mask");
             var scale = Vector2.one * Mathf.Max(.5f, tiles);
             if (albedo) { material.mainTexture = albedo; material.mainTextureScale = scale; }
             if (normal) {
                 material.SetTexture("_BumpMap", normal); material.SetTextureScale("_BumpMap", scale);
                 material.SetFloat("_BumpScale", surface == "grass" ? .35f : .55f); material.EnableKeyword("_NORMALMAP");
+            }
+            // Our linear HDRP masks also pack Standard's metallic(R), occlusion(G), smoothness(A).
+            if (mask) {
+                material.SetTexture("_OcclusionMap", mask); material.SetTextureScale("_OcclusionMap", scale);
+                material.SetFloat("_OcclusionStrength", .8f);
+                material.SetTexture("_MetallicGlossMap", mask); material.SetTextureScale("_MetallicGlossMap", scale);
+                material.SetFloat("_GlossMapScale", surface == "grass" ? .65f : .9f);
+                material.EnableKeyword("_METALLICGLOSSMAP");
             }
             return material;
         }'''
@@ -177,11 +186,6 @@ def main() -> None:
             if path.suffix in (".cs", ".meta", ".asmdef"): copy(path)
     for folder in ("Content", "Textures", "Fonts"):
         for path in (source / "Assets/Lumen/Resources" / folder).rglob("*"):
-            if folder == "Textures" and "-mask.png" in path.name:
-                # HDRP mask channels are not sampled by the shared Web forward materials.
-                obsolete = destination / path.relative_to(source)
-                if obsolete.is_file(): obsolete.unlink()
-                continue
             if path.is_file(): copy(path)
     for name in ("Explorer.prefab", "Explorer.prefab.meta"):
         copy(source / "Assets/Lumen/Resources/Generated" / name)

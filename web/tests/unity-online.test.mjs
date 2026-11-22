@@ -42,6 +42,20 @@ try{
   await request('rooms/respawn',{code,destination:'checkpoint',checkpoint:8},alice.identityToken,400);
   respawn=await request('rooms/respawn',{code,destination:'spawn'},alice.identityToken);
   equal(respawn.room.players.find(p=>p.id===alice.identityId).z,12,'server spawn reset');
+  for(const [index,anchor]of [[0,[-70,.15,58]],[1,[70,.15,58]],[2,[-70,.15,-58]],[3,[0,.15,12]]]){
+    respawn=await request('rooms/respawn',{code,destination:'expedition',checkpoint:index,x:999,y:999,z:999},alice.identityToken);
+    const approved=respawn.room.players.find(p=>p.id===alice.identityId);
+    equal([approved.x,approved.y,approved.z],anchor,'portal '+index+' uses canonical anchor and ignores injected coordinates');
+    equal(approved.courseCheckpoint,-1,'portal leaves parkour checkpoint state');
+    time+=200;
+    const returned=await pulse(alice,code,10+index,{...presence('Alica'),x:anchor[0]+.5,y:anchor[1],z:anchor[2]});
+    equal(returned.room.players.find(p=>p.id===alice.identityId).x,anchor[0]+.5,'ordinary walking works after portal '+index);
+  }
+  await request('rooms/respawn',{code,destination:'expedition',checkpoint:4},alice.identityToken,400);
+  await request('rooms/respawn',{code,destination:'expedition',checkpoint:-1},alice.identityToken,400);
+  await request('rooms/respawn',{code,destination:'expedition',checkpoint:'0'},alice.identityToken,400);
+  await request('rooms/respawn',{code,destination:'expedition',checkpoint:0},stranger.identityToken,404);
+  time+=200;await request('rooms/pulse',{code,sequence:14,presence:{...presence(),x:85}},alice.identityToken,400);
 
   let room=(await request('battle/challenge',{code,targetId:bob.identityId},alice.identityToken)).room;
   let duel=room.battle;
@@ -67,10 +81,10 @@ try{
     await request('battle/action',{code,battleId:action.id,round,kind,targetSlot:0,optionIndex:internal.answer,questionId:action.question.id,actionId:`${action.id}:${round}:0`},alice.identityToken);
     action=(await request('battle/action',{code,battleId:action.id,round,kind:0,targetSlot:0,optionIndex:(internal.answer+1)%4,questionId:action.question.id,actionId:`${action.id}:${round}:1`},bob.identityToken)).room.battle;
   }
-  const win=(await pulse(alice,code,4)).room.battle;
+  const win=(await pulse(alice,code,20)).room.battle;
   equal(win.state.Winner,0,'math attacks win');equal(win.rewardXP,60,'winner gets canonical XP');equal(win.rewardCoins,100,'winner gets canonical coins');
   check(win.rewardId.startsWith('online-duel:'),'stable reward key enables persistent replay guard');
-  const again=(await pulse(alice,code,5)).room.battle;equal(again.rewardId,win.rewardId,'repeated snapshot same reward id');
+  const again=(await pulse(alice,code,21)).room.battle;equal(again.rewardId,win.rewardId,'repeated snapshot same reward id');
   equal((await db.prepare('SELECT COUNT(*) AS count FROM unity_battle_rewards WHERE battle_id=?').bind(win.id).first()).count,1,'server ledger never duplicates victory reward');
 
   time+=200;duel=(await request('battle/challenge',{code,targetId:bob.identityId},alice.identityToken)).room.battle;
@@ -79,13 +93,13 @@ try{
   const quick=(await request('battle/action',{code,battleId:duel.id,round:1,kind:5,targetSlot:0,optionIndex:-1,questionId:'',actionId:`${duel.id}:1:1`},bob.identityToken)).room.battle;
   equal(quick.state.Teams[0].Pets[0].HP,92,'quick attack works without mathematics');equal(quick.artifactRewards.length,0,'quick attack grants no mathematical artifacts');
   await request('battle/forfeit',{code,battleId:duel.id},bob.identityToken);
-  const noMath=(await pulse(alice,code,6)).room.battle;equal(noMath.rewardXP,0,'zero correct answers cannot farm forfeit rewards');
+  const noMath=(await pulse(alice,code,22)).room.battle;equal(noMath.rewardXP,0,'zero correct answers cannot farm forfeit rewards');
 
   // Parallel occupancy is decided by a single INSERT SELECT, not a racy read then insert.
   const extra=[];for(let i=0;i<15;i++)extra.push(await identity('Spolužiak'+i));
   const replies=await Promise.all(extra.map(person=>api(new Request('https://lumen.test/api/unity/rooms/join',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+person.identityToken},body:JSON.stringify({code,presence:presence()})}),{DB:db})));
   equal(replies.filter(r=>r.status===200).length,14,'only remaining room slots join concurrently');equal(replies.filter(r=>r.status===409).length,1,'seventeenth player rejected');
-  time+=16000;await request('rooms/pulse',{code,sequence:7,presence:presence()},alice.identityToken,410);
+  time+=16000;await request('rooms/pulse',{code,sequence:23,presence:presence()},alice.identityToken,410);
   const rejoin=await request('rooms/join',{code,presence:presence('Alica')},alice.identityToken);equal(rejoin.room.players.length,1,'expired members are absent and identity can rejoin');
 
   // Integer combat vectors independent of API serialization.

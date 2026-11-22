@@ -35,8 +35,8 @@ namespace Lumen.Graphics
             QualitySettings.softParticles = false;
             RenderSettings.ambientMode = AmbientMode.Trilight;
             RenderSettings.ambientSkyColor = new Color(.59f, .72f, .8f);
-            RenderSettings.ambientEquatorColor = new Color(.56f, .59f, .58f);
-            RenderSettings.ambientGroundColor = new Color(.3f, .33f, .35f);
+            RenderSettings.ambientEquatorColor = new Color(.43f, .49f, .50f);
+            RenderSettings.ambientGroundColor = new Color(.22f, .27f, .29f);
             RenderSettings.ambientIntensity = 1;
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.ExponentialSquared;
@@ -45,15 +45,15 @@ namespace Lumen.Graphics
 
             var lightObject = new GameObject("Lumen / Afternoon sun");
             lightObject.transform.SetParent(holder.transform, false);
-            lightObject.transform.rotation = Quaternion.Euler(43, -32, 0);
+            lightObject.transform.rotation = Quaternion.Euler(38, -32, 0);
             var sun = lightObject.AddComponent<Light>();
             sun.type = LightType.Directional;
-            sun.color = new Color(1, .94f, .83f);
-            sun.intensity = 1.18f;
+            sun.color = new Color(1, .93f, .81f);
+            sun.intensity = 1.12f;
             sun.shadows = LightShadows.Soft;
             sun.shadowStrength = .7f;
             sun.shadowBias = .045f;
-            sun.shadowNormalBias = .3f;
+            sun.shadowNormalBias = .2f;
             RenderSettings.sun = sun;
             var skyShader = Shader.Find("Skybox/Procedural");
             if (skyShader)

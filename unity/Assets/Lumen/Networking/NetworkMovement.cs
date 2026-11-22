@@ -62,17 +62,16 @@ namespace Lumen.Networking
         public static ExplorerSnapshot Simulate(CharacterController controller, ExplorerSnapshot state, ExplorerInput command)
         {
             bool grounded = controller.isGrounded || (state.Grounded && state.VerticalSpeed <= 0f);
-            float vertical = grounded && state.VerticalSpeed < 0f ? -2f : state.VerticalSpeed;
+            float vertical = grounded && state.VerticalSpeed < 0f ? ExplorerPhysics.GroundStickSpeed : state.VerticalSpeed;
             if (command.Jump && grounded) vertical = JumpSpeed;
-            vertical = Mathf.Max(vertical + Gravity * Step, -36f);
+            vertical = Mathf.Max(vertical + Gravity * Step, ExplorerPhysics.TerminalSpeed);
             Vector3 direction = Quaternion.Euler(0f, command.Yaw, 0f) * new Vector3(command.Move.x, 0f, command.Move.y);
             Vector3 motion = direction * (command.Sprint ? SprintSpeed : WalkSpeed);
             motion.y = vertical;
             CollisionFlags flags = controller.Move(motion * Step);
-            if ((flags & CollisionFlags.Above) != 0 && vertical > 0f) vertical = 0f;
             state.Position = controller.transform.position;
             state.Grounded = (flags & CollisionFlags.Below) != 0 || controller.isGrounded;
-            state.VerticalSpeed = state.Grounded && vertical < 0f ? -2f : vertical;
+            state.VerticalSpeed = ExplorerPhysics.ResolveVerticalSpeed(vertical, flags, state.Grounded);
             if (command.Move.sqrMagnitude > .001f)
                 state.Yaw = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
             state.AcknowledgedInput = command.Sequence;

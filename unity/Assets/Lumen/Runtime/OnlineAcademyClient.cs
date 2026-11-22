@@ -53,11 +53,11 @@ namespace Lumen.Runtime
     /// interpolates remote players independently of rendering. No browser UDP or hidden host.
     /// Cloud writes use a revision so opening another device cannot silently overwrite progress.
     /// </summary>
-    public sealed class OnlineAcademyClient : MonoBehaviour
+    public sealed partial class OnlineAcademyClient : MonoBehaviour
     {
-        public const string ProductionOrigin = "https://legacy-numerion.example.invalid";
+        public const string ProductionOrigin = "https://numerion.example.invalid";
         public const string LocalOrigin = "http://127.0.0.1:4174";
-        public string BaseUrl = LocalOrigin;
+        public string BaseUrl = ProductionOrigin;
         public string IdentityId { get; private set; } = "";
         public string PairingCode => identityToken;
         public bool HasLocalBackup => PlayerPrefs.HasKey(StorageKey + "-before-cloud");
@@ -102,7 +102,8 @@ namespace Lumen.Runtime
         private void Awake()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            string rememberedOrigin = PlayerPrefs.GetString("lumen-server-origin-v1-" + ProfileStore.ProfileSuffix, LocalOrigin);
+            string rememberedOrigin = PlayerPrefs.GetString("lumen-server-origin-v1-" + ProfileStore.ProfileSuffix, ProductionOrigin);
+            if (rememberedOrigin == "https://legacy-numerion.example.invalid") rememberedOrigin = ProductionOrigin;
             if (ValidOrigin(rememberedOrigin)) BaseUrl = rememberedOrigin;
 #endif
 #if UNITY_WEBGL && !UNITY_EDITOR
@@ -129,6 +130,7 @@ namespace Lumen.Runtime
                 var current = save?.Invoke();
                 if (current != null && lastCloudJson.Length > 0 && SaveNormalization.ToJson(current) != lastCloudJson) SaveCloud();
             }
+            TickRoomChat();
         }
 
         public void CreateRoom() => CommandAfterIdentity("rooms/create", () => new RequestBody { presence = Presence() });
@@ -137,6 +139,7 @@ namespace Lumen.Runtime
         {
             if (Room == null) return;
             string code = Room.code; Room = null; generation++; pulseInFlight = false;
+            SyncChatRoom();
             RoomChanged?.Invoke(null); BattleChanged?.Invoke(null); battleSignature = "";
             StartCoroutine(Command("rooms/leave", new RequestBody { code = code }, false));
             SetStatus("Pokračuješ v sólo svete. Cloudový profil zostáva prepojený.");
@@ -185,6 +188,7 @@ namespace Lumen.Runtime
             var selected = (origin ?? "").Trim().TrimEnd('/');
             if (!ValidOrigin(selected)) { SetStatus("Použi HTTPS alebo adresu lokálneho servera vrátane portu."); return false; }
             BaseUrl = selected; generation++; sequence = 0; lastCloudJson = ""; CloudConflict = false; LoadIdentityForOrigin();
+            SyncChatRoom();
 #if !UNITY_WEBGL || UNITY_EDITOR
             PlayerPrefs.SetString("lumen-server-origin-v1-" + ProfileStore.ProfileSuffix, selected); PlayerPrefs.Save();
 #endif
@@ -238,7 +242,7 @@ namespace Lumen.Runtime
                 if (requestGeneration != generation) return;
                 failures++;
                 if (status == 401 || status == 403 || status == 404 || status == 410) {
-                    Room = null; RoomChanged?.Invoke(null); BattleChanged?.Invoke(null); battleSignature = "";
+                    Room = null; SyncChatRoom(); RoomChanged?.Invoke(null); BattleChanged?.Invoke(null); battleSignature = "";
                 }
                 if (failures == 1 || Room == null) SetStatus(error);
             });
@@ -260,7 +264,7 @@ namespace Lumen.Runtime
             room = SaveNormalization.NormalizeOnlineRoom(room);
             if (room == null) return;
             if (Room != null && Room.code == room.code && room.serverTime < Room.serverTime) return;
-            Room = room; RoomChanged?.Invoke(room);
+            Room = room; SyncChatRoom(); RoomChanged?.Invoke(room);
             string signature = room.battle == null ? "" : room.battle.id + ":" + room.battle.revision + ":" + room.battle.status;
             if (signature != battleSignature) { battleSignature = signature; BattleChanged?.Invoke(room.battle); }
         }

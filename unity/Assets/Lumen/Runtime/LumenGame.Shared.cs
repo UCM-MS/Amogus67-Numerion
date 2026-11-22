@@ -41,6 +41,7 @@ namespace Lumen.Runtime
                 }
             };
             Online.RoomChanged += ReceiveSharedRoom; Online.BattleChanged += ReceiveSharedBattle;
+            Online.RoomMessagesChanged += ReceiveRoomChat;
             Online.ProfileLoaded += loaded => {
                 ProfileStore.Save(Save); // Keep the previous local version recoverable in the normal backup.
                 int frames = Save.FrameLimit, textures = Save.TextureSize; bool vsync = Save.VSync; var deviceOptions = Save.Options;
@@ -81,6 +82,7 @@ namespace Lumen.Runtime
         }
         private void ReceiveSharedRoom(OnlineRoom room)
         {
+            ResetRoomChatContext(room);
             sharedTargets.Clear();
             if (room != null) foreach (var peer in room.players ?? Array.Empty<OnlinePeer>()) {
                 if (peer.id == Online.IdentityId) {

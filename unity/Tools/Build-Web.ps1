@@ -13,7 +13,10 @@ $webProject = Join-Path (Split-Path $projectRoot) 'lumen-unity-web'
 $artifacts = Join-Path $webProject 'Artifacts'; New-Item -ItemType Directory -Force -Path $artifacts | Out-Null
 $log = Join-Path $artifacts 'build-6.6.log'
 $arguments = @('-batchmode','-nographics','-quit','-projectPath',('"'+$webProject+'"'),'-buildTarget','WebGL','-executeMethod','Lumen.Editor.LumenWebBuilder.Build','-logFile',('"'+$log+'"'))
-$process = Start-Process -FilePath $UnityPath -ArgumentList $arguments -WindowStyle Hidden -Wait -PassThru
+$process = Start-Process -FilePath $UnityPath -ArgumentList $arguments -WindowStyle Hidden -PassThru
+# Unity may leave a console helper alive; wait for the editor, not the whole child-process job.
+$process.WaitForExit()
+$process.Refresh()
 if ($process.ExitCode -ne 0) { throw "Web sa nepodarilo zostaviť. Podrobnosti: $log" }
 $output = Join-Path $webProject 'Builds/WebGL'
 if (-not $SkipCopy) {
@@ -21,6 +24,15 @@ if (-not $SkipCopy) {
     if ($server) {
         $destination = Join-Path $server 'public/unity'; New-Item -ItemType Directory -Force -Path $destination | Out-Null
         Get-ChildItem -LiteralPath $output | Copy-Item -Destination $destination -Recurse -Force
+        $prepareHosting = Join-Path $server 'scripts/prepare-unity-hosting.mjs'
+        if (Test-Path -LiteralPath $prepareHosting) {
+            $nodeCommand = Get-Command node -ErrorAction SilentlyContinue
+            $hostingNode = if ($nodeCommand) { $nodeCommand.Source } else { Join-Path $env:USERPROFILE '.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe' }
+            if (-not (Test-Path -LiteralPath $hostingNode)) { throw 'Na prípravu webových dát nainštaluj Node.js 24 alebo novší.' }
+            Push-Location -LiteralPath $server
+            try { & $hostingNode $prepareHosting; if ($LASTEXITCODE -ne 0) { throw 'Webové dátové časti sa nepodarilo pripraviť.' } }
+            finally { Pop-Location }
+        }
         Write-Output "Unity Web skopírované do lokálneho servera: $destination"
     }
 }

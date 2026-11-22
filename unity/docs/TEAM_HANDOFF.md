@@ -1,4 +1,4 @@
-# LUMEN · tím 3 · odovzdávanie na 10 týždňov
+# Numerion · tím 3 · odovzdávanie na 10 týždňov
 
 Tento plán rozdeľuje **aktuálny AI-asistovaný projekt** na zodpovednosti a budúce odovzdávacie kroky. Nepredstavuje desať týždňov už vykonanej práce. Nevytvára minulé commity, nemení dátumy a nepripisuje existujúci kód konkrétnemu človeku.
 
@@ -73,8 +73,10 @@ python Tools/prepare_handoff.py --self-test
 Po zastavení zmien zdrojov a po kontrolách sa zachytí stabilný stav. Výstupný priečinok musí byť mimo oboch zdrojových repozitárov:
 
 ```text
-python Tools/prepare_handoff.py --capture-freeze ../LUMEN-TEAM-HANDOFF/freeze.json
-python Tools/prepare_handoff.py --package --freeze ../LUMEN-TEAM-HANDOFF/freeze.json --output ../LUMEN-TEAM-HANDOFF --version 0.7.0
+python Tools/prepare_handoff.py --capture-freeze ../LUMEN-TEAM-HANDOFF/freeze-0.8.1.json
+python Tools/prepare_handoff.py --package --freeze ../LUMEN-TEAM-HANDOFF/freeze-0.8.1.json --output ../LUMEN-TEAM-HANDOFF --version 0.8.1
 ```
 
 Ak sa po zmrazení zmení čo len jeden zahrnutý zdrojový súbor, vytvorenie balíkov sa zastaví. Nové zmrazenie treba spraviť až po vedomej kontrole novej verzie. Predchádzajúce balíky sa automaticky neprepisujú. Skript uchováva pôvodné skutočné Git identifikátory aj odtlačok aktuálnych zdrojov; netvrdí, že necommitované zmeny už majú vlastný commit.
+
+Staršie balíky **0.7.0** a ich zmrazenie zostávajú historickým snapshotom. Aktuálny príklad vytvára oddelené vydanie **0.8.1**; interné priečinky a názvy ZIPov `LUMEN` sa kvôli kompatibilite nemenia.

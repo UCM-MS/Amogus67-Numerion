@@ -25,12 +25,13 @@ namespace Lumen.Runtime
         public bool ModalOpen => Hud != null && Hud.ModalOpen;
         public bool Connected => Session != null && Session.LocalPlayer != null;
         public Vector3 PlayerPosition => Connected ? Session.LocalPlayer.transform.position : offline.transform.position;
+        public float PlayerYaw => Connected ? Session.LocalPlayer.transform.eulerAngles.y : offline != null ? offline.transform.eulerAngles.y : yaw;
         public InteractiveStation Target { get; private set; }
         public bool PhotoMode => Graphics != null && Graphics.IsPhotoMode;
         public float CourseSeconds { get; private set; }
         public int CourseCheckpoint { get; private set; }
         public bool CourseActive { get; private set; }
-        public string Toast { get; private set; } = "Vitaj v akadémii. Každý objav sa počíta.";
+        public string Toast { get; private set; } = "Numerion · ďalší cieľ nájdeš v ponuke.";
         public bool OnlineQuestion { get; private set; }
         public Question CurrentQuestion { get; private set; }
         public Subject CurrentSubject { get; private set; }
@@ -57,7 +58,7 @@ namespace Lumen.Runtime
         {
             if (FindFirstObjectByType<LumenGame>() == null)
             {
-                var go = new GameObject("LUMEN Academy");
+                var go = new GameObject("Numerion Academy");
                 go.AddComponent<LumenGame>();
             }
         }
@@ -74,7 +75,7 @@ namespace Lumen.Runtime
             Session = new GameObject("LUMEN Network · 60 Hz").AddComponent<NetworkSession>();
             ExplorerPrefab ??= Resources.Load<GameObject>("Generated/Explorer");
             if (ExplorerPrefab != null) Session.Configure(ExplorerPrefab, 60, world.SpawnPosition);
-            else Debug.LogError("Chýba sieťový prefab. Spusti LUMEN > Prepare Academy v Editore.");
+            else Debug.LogError("Chýba sieťový prefab. Spusti Numerion > Prepare Academy v Editore.");
             var beacons = world.Collectibles.Where(c => c.IsBeacon).ToArray();
             if (beacons.Length > 0) Session.ConfigureBeacons(beacons.Select(c => c.transform.position).ToArray());
             if (world.ParkourPlatforms.Count > 0) Session.ConfigureCourse(world.ParkourPlatforms.ToArray());
@@ -88,8 +89,7 @@ namespace Lumen.Runtime
             offline = new GameObject("Solo explorer"); offline.transform.position = world.SpawnPosition;
             offline.transform.rotation = Quaternion.Euler(0, yaw, 0);
             offlineController = offline.AddComponent<CharacterController>();
-            offlineController.height = 1.8f; offlineController.center = Vector3.up * .9f;
-            offlineController.radius = .3f; offlineController.stepOffset = .3f;
+            ExplorerPhysics.Configure(offlineController);
             offlineAvatar = AvatarFactory.Create(Profile.DisplayName, Appearance());
             offlineAvatar.transform.SetParent(offline.transform, false);
             offlineAvatar.SetNameVisible(false);
@@ -124,10 +124,12 @@ namespace Lumen.Runtime
             else if (wasOnline) { wasOnline = false; offline.SetActive(true); TeleportOffline(lastOnlinePosition); CourseActive = false; Notify("Spojenie sa ukončilo. Pokračuješ v sólo svete."); }
             if (!ModalOpen && !PhotoMode) jumpQueued |= keyboard != null && keyboard.spaceKey.wasPressedThisFrame;
             if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame) Hud.ToggleMenu();
+            if (keyboard != null && keyboard.mKey.wasPressedThisFrame && (!ModalOpen || Hud.FeaturePanel == "MAP")) Hud.ToggleMap();
+            if (keyboard != null && !ModalOpen && (keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame)) Hud.ShowChat();
             if (!ModalOpen && keyboard != null)
             {
                 if (keyboard.eKey.wasPressedThisFrame) Interact();
-                if (keyboard.mKey.wasPressedThisFrame) Hud.ShowMap();
+                if (keyboard.kKey.wasPressedThisFrame) Hud.ShowCurriculum();
                 if (keyboard.jKey.wasPressedThisFrame) Hud.ShowJournal();
             }
             var mouse = Mouse.current;
@@ -186,9 +188,10 @@ namespace Lumen.Runtime
             bool grounded = offlineController.isGrounded;
             if (grounded && offlineVelocity.y < 0) offlineVelocity.y = -2;
             if (jump && grounded) offlineVelocity.y = 7;
-            offlineVelocity.y -= 22 * Time.fixedDeltaTime;
+            offlineVelocity.y = Mathf.Max(ExplorerPhysics.TerminalSpeed, offlineVelocity.y - 22 * Time.fixedDeltaTime);
             Vector3 forward = Quaternion.Euler(0, yaw, 0) * new Vector3(move.x, 0, move.y);
-            offlineController.Move((forward * (sprint ? 7.8f : 5.4f) + offlineVelocity) * Time.fixedDeltaTime);
+            var contacts = offlineController.Move((forward * (sprint ? 7.8f : 5.4f) + offlineVelocity) * Time.fixedDeltaTime);
+            offlineVelocity.y = ExplorerPhysics.ResolveVerticalSpeed(offlineVelocity.y, contacts, offlineController.isGrounded);
             if (forward.sqrMagnitude > .01f) offline.transform.rotation = Quaternion.Slerp(offline.transform.rotation, Quaternion.LookRotation(forward), .2f);
             if (offline.transform.position.y < -12)
             {
@@ -327,6 +330,7 @@ namespace Lumen.Runtime
                 case "pets": Hud.ShowPets(); return;
                 case "customize": Hud.ShowProfile(false); return;
                 case "coop": Hud.ShowMultiplayer(); return;
+                case "expedition": InteractWithExpeditionStation(); return;
                 case "arena": Hud.ShowArena(); return;
                 case "npc": Hud.ShowNpc(Target.Id); return;
                 case "study": Hud.ShowStudy(); return;

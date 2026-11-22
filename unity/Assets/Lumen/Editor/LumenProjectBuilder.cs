@@ -34,7 +34,7 @@ namespace Lumen.Editor
             catch (Exception exception) { Debug.LogException(exception); SessionState.SetBool(PreparedKey, false); }
         }
 
-        [MenuItem("LUMEN/Prepare Academy")]
+        [MenuItem("Numerion/Prepare Academy")]
         public static void Prepare()
         {
             EnsureFolder("Assets/Lumen/Generated"); EnsureFolder("Assets/Lumen/Resources/Generated");
@@ -66,11 +66,10 @@ namespace Lumen.Editor
         {
             var existing = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
             if (existing != null && existing.GetComponent<NetworkObject>() != null && existing.GetComponent<NetworkExplorer>() != null)
-            { ValidateAndSavePrefabHash(existing); return existing; }
+            { ExplorerPhysics.Configure(existing.GetComponent<CharacterController>()); ValidateAndSavePrefabHash(existing); return existing; }
             var go = new GameObject("Lumen Network Explorer");
             var capsule = go.AddComponent<CharacterController>();
-            capsule.height = 1.8f; capsule.center = new Vector3(0, .9f, 0); capsule.radius = .3f;
-            capsule.stepOffset = .3f; capsule.slopeLimit = 50; capsule.skinWidth = .05f;
+            ExplorerPhysics.Configure(capsule);
             go.AddComponent<NetworkObject>(); go.AddComponent<NetworkExplorer>();
             PrefabUtility.SaveAsPrefabAsset(go, PrefabPath);
             UnityEngine.Object.DestroyImmediate(go);
@@ -96,8 +95,8 @@ namespace Lumen.Editor
         private static void ConfigurePlayer()
         {
             PlayerSettings.companyName = "Lumen Academy";
-            PlayerSettings.productName = "LUMEN · Akadémia objavov";
-            PlayerSettings.bundleVersion = "6.0.0";
+            PlayerSettings.productName = "Numerion";
+            PlayerSettings.bundleVersion = "0.11.0";
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Standalone, "sk.lumen.academy");
             PlayerSettings.SetScriptingBackend(NamedBuildTarget.Standalone, ScriptingImplementation.Mono2x);
             PlayerSettings.runInBackground = true;
@@ -116,7 +115,7 @@ namespace Lumen.Editor
             Time.fixedDeltaTime = 1f / NetworkMovement.SimulationRate;
         }
 
-        [MenuItem("LUMEN/Build Windows Player")]
+        [MenuItem("Numerion/Build Windows Player")]
         public static void BuildWindows()
         {
             Validate();
@@ -131,19 +130,25 @@ namespace Lumen.Editor
             Debug.Log("LUMEN_BUILD_SUCCEEDED: " + root);
         }
 
-        [MenuItem("LUMEN/Validate Academy")]
+        [MenuItem("Numerion/Validate Academy")]
         public static void Validate()
         {
             Prepare();
             PersistenceValidation.Run();
+            UiLayoutValidation.Run();
+            ChatValidation.Run();
+            ScrollValidation.Run();
+            ProfileValidation.Run();
+            NavigationValidation.Run();
             var layout = AcademyWorld.Build(true);
             AcademyRouteValidation.Validate(layout);
+            MapValidation.Validate(layout);
             if (layout.Root.GetComponentsInChildren<Renderer>(true).Length != 0)
                 throw new InvalidOperationException("Headless world allocated renderers.");
             if (layout.Stations.Count < 12 || layout.Collectibles.Count < 18 || layout.ParkourPlatforms.Count != 9)
                 throw new InvalidOperationException("Academy content is incomplete.");
             var controller = new GameObject("Physics validator").AddComponent<CharacterController>();
-            controller.height = 1.8f; controller.center = Vector3.up * .9f;
+            ExplorerPhysics.Configure(controller);
             controller.transform.position = layout.SpawnPosition + Vector3.up;
             Physics.SyncTransforms();
             if (!Physics.Raycast(controller.transform.position, Vector3.down, 4))
