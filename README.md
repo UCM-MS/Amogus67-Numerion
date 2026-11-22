@@ -2,13 +2,20 @@
 
 Numerion je matematická hra pre 7. až 9. ročník ZŠ od tímu Amogus. Hráč si v akadémii vyberie ročník a tému, prejde si riešený príklad a vyskúša si ho v teste. Za správne odpovede trénuje spoločníka, s ktorým môže ísť do ťahového súboja.
 
-**Druhý týždeň vývoja (W02, verzia 0.11.0).** V tejto vetve je Ivanova časť projektu. Ak otváraš školský repozitár prvýkrát, začni konzolovým testom uvedeným nižšie. Na hranie v 3D použi spojený tímový projekt W02.
+## Týždenné odovzdania
+
+| Týždeň | Ivanova časť | Kde ju nájdeš |
+| --- | --- | --- |
+| 1 (0.7.0) | Matematické jadro, 108 otázok, 18 kapitol a pravidlá súbojov spoločníkov | [Súbory prvého týždňa](https://github.com/UCM-MS/Amogus67-Numerion/tree/75fede897d7cac37e90223b888c76ef72b1c4bd2) · [Poznámky k odovzdaniu](docs/odovzdavky/w01/ivan-beneda.md) |
+| 2 (0.11.0) | Ďalších 36 úloh a pokračovanie z uloženej pozície prvého týždňa | [Odovzdanie druhého týždňa (PR #2)](https://github.com/UCM-MS/Amogus67-Numerion/pull/2) |
+
+Zo školského repozitára si môžeš hneď spustiť konzolový test jadra. Na hranie v 3D použi spojený tímový projekt príslušného týždňa.
 
 [Spustiť jadro](#prvé-spustenie-zo-školského-githubu) · [Otvoriť hru v Unity](#hrateľná-verzia-pre-windows-a-web) · [Ovládanie](#ovládanie-v-akadémii) · [Upraviť učivo](#kde-upraviť-hru)
 
 ## Čo robí hráč
 
-Prvým cieľom môže byť kapitola **Zlomky bez hádania** v 7. ročníku. V učive si vyberieš tému **Čísla a zlomky** a prejdeš si riešený príklad. V jednej z nových úloh máš 48 kryštálov. Minieš tri osminy zásoby a potom pätinu zo zvyšku. Hra vysvetlí aj druhý krok výpočtu, pri ktorom už počítaš z 30 kryštálov.
+Prvým cieľom môže byť kapitola **Zlomky bez hádania** v 7. ročníku. V učive si vyberieš tému **Čísla a zlomky** a prejdeš si riešený príklad. Jedna z úloh sa pýta, ako zapísať 0,375 ako zlomok v základnom tvare. Vysvetlenie ukáže, ako zlomok 375/1000 skrátiť na 3/8.
 
 Tematický test vyberie šesť otázok. Na úspech potrebuješ aspoň päť správnych odpovedí. Pri chybách si môžeš pozrieť riešenie. V tréningovom súboji máš na výber silnejší ťah s otázkou alebo slabší rýchly výpad bez počítania.
 
@@ -16,20 +23,25 @@ Tematický test vyberie šesť otázok. Na úspech potrebuješ aspoň päť spr�
 
 Pribudlo 36 matematických úloh. Každý ročník má teraz 48 otázok v šiestich témach. Ak už hráč v prvom týždni dokončil všetkých šesť otázok z témy, môže pokračovať dvoma novými. Jeho výsledky, mince aj získané odmeny sa zachovajú.
 
-Spolu je v tomto míľniku **144 otázok a 18 kapitol**. Pokrývajú čísla a zlomky, percentá a pomer, výrazy a rovnice, geometriu, dáta a pravdepodobnosť aj matematiku v praxi. [Odovzdanie prvého týždňa](docs/odovzdavky/w01/ivan-beneda.md)
+Spolu je v druhom týždni **144 otázok a 18 kapitol**. Pokrývajú čísla a zlomky, percentá a pomer, výrazy a rovnice, geometriu, dáta a pravdepodobnosť aj matematiku v praxi.
 
 ## Prvé spustenie zo školského GitHubu
 
-Potrebuješ Git a .NET 10 SDK. Funguje aj novšie SDK s nainštalovaným runtime .NET 10. Nasledujúce príkazy stiahnu vetvu druhého týždňa, zostavia matematické jadro a spustia jeho test v konzole.
+Potrebuješ Git a .NET 10 SDK. Funguje aj novšie SDK s nainštalovaným runtime .NET 10. Stiahni si repozitár a otvor jeho priečinok.
 
 ```powershell
-git clone --branch ivan/tyzden-02 --single-branch https://github.com/UCM-MS/Amogus67-Numerion.git
+git clone https://github.com/UCM-MS/Amogus67-Numerion.git
 cd Amogus67-Numerion
+```
+
+Klon sa otvorí na hlavnej vetve. Ak chceš vyskúšať druhý týždeň, najprv zadaj `git switch ivan/tyzden-02`. Jadro zvolenej verzie potom zostavíš a overíš rovnakými príkazmi.
+
+```powershell
 dotnet build unity/Tests/MathHarness/MathHarness.csproj
 dotnet run --no-build --project unity/Tests/MathHarness/MathHarness.csproj
 ```
 
-V poslednom riadku hľadaj `NUMERION_MATH_HARNESS_PASS`, 974 kontrol a 144 otázok. Test overí aj pokračovanie z uloženej pozície prvého týždňa. Unity Editor potrebuješ až pri spustení hernej scény.
+Posledný riadok pre prvý týždeň obsahuje `LUMEN_MATH_HARNESS_PASS`, 648 kontrol a 108 otázok. Pri druhom týždni uvidíš `NUMERION_MATH_HARNESS_PASS`, 974 kontrol a 144 otázok. Unity Editor potrebuješ až pri spustení hernej scény.
 
 ## Hrateľná verzia pre Windows a web
 
