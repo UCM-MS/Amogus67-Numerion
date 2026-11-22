@@ -4,14 +4,39 @@ Numerion je matematická hra pre 7. až 9. ročník ZŠ od tímu Amogus. Hráč 
 
 ## Týždenné odovzdania
 
-| Týždeň | Ivanova časť | Kde ju nájdeš |
+| Verzia | Čo sa dá vyskúšať | Odovzdané súbory |
 | --- | --- | --- |
-| 1 (0.7.0) | Matematické jadro, 108 otázok, 18 kapitol a pravidlá súbojov spoločníkov | [Súbory prvého týždňa](https://github.com/UCM-MS/Amogus67-Numerion/tree/75fede897d7cac37e90223b888c76ef72b1c4bd2) · [Poznámky k odovzdaniu](docs/odovzdavky/w01/ivan-beneda.md) |
-| 2 (0.11.0) | Ďalších 36 úloh a pokračovanie z uloženej pozície prvého týždňa | [Odovzdanie druhého týždňa (PR #2)](https://github.com/UCM-MS/Amogus67-Numerion/pull/2) |
+| Pôvodný prototyp (OG) | Vyliahnuť prvého spoločníka, riešiť kvízy v troch pavilónoch a odomykať vajíčka | [Ivanova časť - pravidlá a test](prototypy/og) |
+| Týždeň 1 (0.7.0) | Matematické jadro, 108 otázok, 18 kapitol a pravidlá súbojov spoločníkov | [Súbory prvého týždňa](https://github.com/UCM-MS/Amogus67-Numerion/tree/75fede897d7cac37e90223b888c76ef72b1c4bd2) · [Ivanove poznámky](docs/odovzdavky/w01/ivan-beneda.md) |
+| Týždeň 2 (0.11.0) | Ďalších 36 úloh a pokračovanie z uloženej pozície prvého týždňa | [Ivanove zmeny v PR #2](https://github.com/UCM-MS/Amogus67-Numerion/pull/2) |
 
 Zo školského repozitára si môžeš hneď spustiť konzolový test jadra. Na hranie v 3D použi spojený tímový projekt príslušného týždňa.
 
-[Spustiť jadro](#prvé-spustenie-zo-školského-githubu) · [Otvoriť hru v Unity](#hrateľná-verzia-pre-windows-a-web) · [Ovládanie](#ovládanie-v-akadémii) · [Upraviť učivo](#kde-upraviť-hru)
+[Spustiť pôvodný prototyp](#pôvodný-webový-prototyp) · [Spustiť matematické jadro](#prvé-spustenie-zo-školského-githubu) · [Otvoriť hru v Unity](#hrateľná-verzia-pre-windows-a-web) · [Ovládanie](#ovládanie-v-akadémii) · [Upraviť učivo](#kde-upraviť-hru)
+
+## Pôvodný webový prototyp
+
+Prvá hrateľná akadémia z 8. októbra 2026 sa volala **LUMEN · Akadémia objavov**. Vznikla pre prehliadač s knižnicou Three.js. V troch pavilónoch bolo spolu 24 otázok z matematiky, vedy a prírody. Za prvé správne riešenie hráč získal poznatok, ktorý sa mu počítal k odomknutiu ďalšieho druhu vajíčka.
+
+### Ako spustiť celú akadémiu
+
+1. V úplnom členskom balíku otvor `W01/NA-HRANIE/OG-WEB-ZDROJE.zip`. V menšej sade pre Discord je rovnaký ZIP samostatnou prílohou k W01. Rozbaľ ho do vlastného priečinka. Susedný archív `W01-01-ALFA-NA-SPOJENIE.zip` patrí už prvej Unity alfe.
+2. Otvor terminál v rozbalenom priečinku, kde vedľa seba vidíš `serve.mjs` a `dist`. S Node.js 24 spusti `node serve.mjs`. Potrebné knižnice sú súčasťou archívu.
+3. V prehliadači otvor `http://127.0.0.1:4173/` a klikni na **Ideme objavovať**. Terminál nechaj otvorený, kým hráš. Server ukončíš cez **Ctrl+C**. Ak vypíše `EADDRINUSE`, port 4173 už používa iný lokálny server.
+
+**Čo skúsiť ako prvé.** Pri stánku kúp lúčne vajce za 40 mincí, zanes ho do liahne vo svojej základni a vyliahni spoločníka. Potom zájdi do pavilónu a odpovedz na otázku. Za jej prvé správne vyriešenie dostaneš poznatok. Po troch rôznych správne vyriešených otázkach sa odomkne vedecké vajce. Postup sa ukladá v danom prehliadači na rovnakej adrese.
+
+Na počítači sa pohybuješ cez **WASD** alebo šípky, skáčeš medzerníkom a pri stánku či liahni používaš **E**. Kameru otočíš ťahaním myši a priblížiš kolieskom. Na dotykovej obrazovke máš virtuálnu páčku a tlačidlá na skok a interakciu.
+
+### Ako overiť pôvodné pravidlá zo školského repozitára
+
+V repozitári sú [pravidlá prototypu](prototypy/og/dist/academy-engine.js) a [ich pôvodný test](prototypy/og/tests/academy-engine.test.mjs) z revízie `df7bba8`. Test skontroluje nákup a vyliahnutie vajíčka, všetkých 24 otázok, odmenu za prvé vyriešenie aj obnovenie uloženej hry. S Node.js ho spustíš z koreňa klonu.
+
+```powershell
+node prototypy/og/tests/academy-engine.test.mjs
+```
+
+Po úspechu sa vypíše riadok začínajúci `AcademyEngine:` a končiaci `passed.`. Ak si práve v rozbalenom plnom OG, ten istý test spustíš kratším príkazom `node tests/academy-engine.test.mjs`.
 
 ## Čo robí hráč
 
@@ -108,6 +133,15 @@ Prvé dva testy kontrolujú postup hráča, odmeny, výbavu a súboje. Tretí pr
 
 ## Tím
 
-Numerion vyvíja školský tím **Amogus (tím 3)**. Programovanie majú na starosti Ivan Beneda a Peter Baláž, grafiku Aleksandra Talyzina a Alexander Brezina. Každý odovzdáva svoju časť po týždňoch cez vlastnú vetvu.
+Numerion vyvíja školský tím **Amogus (tím 3)**.
+
+| Člen tímu | Oblasť odovzdania |
+| --- | --- |
+| Ivan Beneda | Pravidlá hry, matematické úlohy, učebnice a testy |
+| Peter Baláž | Prepojenie herných systémov, multiplayer a zostavenia hry |
+| Aleksandra Talyzina | 3D prostredie, spoločníci a vizuálne efekty |
+| Alexander Brezina | Používateľské rozhranie, prístupnosť a prezentácia |
+
+Každý člen má vo svojom týždennom balíku vlastný zoznam zmien v `W01/ODOVZDANIE.md` (v ďalšom týždni `W02/ODOVZDANIE.md`). Na svoju vetvu prenesie príslušné súbory z priečinka `SUBORY` a otvorí pull request. Priečinok `NA-HRANIE` slúži celému tímu na vyskúšanie rovnakej verzie.
 
 Pri hlásení chyby uveď týždeň, platformu, ročník a kroky, pri ktorých sa dá chyba zopakovať. Ak ide o úlohu, pripoj aj jej znenie a odpoveď, ktorú hra vyhodnotila. [GitHub Issues](https://github.com/UCM-MS/Amogus67-Numerion/issues)
