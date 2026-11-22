@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#b6edee">
+  <meta name="description" content="LUMEN Akadémia objavov. Preskúmaj živý 3D svet, rieš výzvy a odhaľ svojich nových spoločníkov.">
+  <title>LUMEN · Akadémia objavov</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="game3d.js"></script>
+</head>
+<body>
+  <svg class="icon-library" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 2 2.6 7.4L22 12l-7.4 2.6L12 22l-2.6-7.4L2 12l7.4-2.6L12 2Z"/></symbol>
+    <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m12 6 1.8 3.5 3.9.6-2.8 2.7.7 3.9-3.6-1.8-3.5 1.8.6-3.9-2.8-2.7 3.9-.6L12 6Z"/></symbol>
+    <symbol id="i-gem" viewBox="0 0 24 24"><path d="m3 8 5-5h8l5 5-9 13L3 8Zm0 0h18M8 3 7 8l5 13 5-13-1-5"/></symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24"><path d="m14 2-9 11h6l-1 9 9-12h-6l1-8Z"/></symbol>
+    <symbol id="i-sound" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4V9Zm12-1a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 8.8a3 3 0 0 1 6 0c0 2-3 2.2-3 4.7m0 3h.01"/></symbol>
+    <symbol id="i-paw" viewBox="0 0 24 24"><ellipse cx="5.5" cy="9" rx="2.2" ry="3" transform="rotate(-22 5.5 9)"/><ellipse cx="10" cy="5.5" rx="2" ry="3"/><ellipse cx="15" cy="5.5" rx="2" ry="3"/><ellipse cx="19" cy="9" rx="2.2" ry="3" transform="rotate(22 19 9)"/><path d="M5.7 17c0-3 4-6 6.3-6s6.3 3 6.3 6c0 4-3.3 2-6.3 2s-6.3 2-6.3-2Z"/></symbol>
+    <symbol id="i-egg" viewBox="0 0 24 24"><path d="M20 14c0 5-3.6 8-8 8s-8-3-8-8S8.7 2 12 2s8 7 8 12Z"/><path d="m5 12 4 2 4-3 5 3m-9 3h.01m5-10h.01"/></symbol>
+    <symbol id="i-upgrade" viewBox="0 0 24 24"><path d="m5 12 7-8 7 8h-5v8h-4v-8H5Z"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 5C9 3 6 3 3 4v16c3-1 6-1 9 1 3-2 6-2 9-1V4c-3-1-6-1-9 1Zm0 0v16M6 8h3m6 0h3M6 12h3m6 0h3"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12m0-12L6 18"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 22V3c5-4 9 4 14 0v11c-5 4-9-4-14 0"/></symbol>
+    <symbol id="i-location" viewBox="0 0 24 24"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-jump" viewBox="0 0 24 24"><path d="m6 10 6-6 6 6m-6-6v12m-7 4h14"/></symbol>
+  </svg>
+
+  <main class="game-shell" aria-label="LUMEN Akadémia objavov">
+    <canvas id="game-canvas" tabindex="0" aria-label="3D svet Akadémie objavov. Použi WASD na pohyb, myš na kameru, medzerník na skok a E na interakciu."></canvas>
+    <div class="world-vignette" aria-hidden="true"></div>
+
+    <header class="top-hud hud-layer">
+      <a class="brand-pill" href="./" aria-label="Lumen Akadémia objavov">
+        <span class="brand-mark"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="m20 3 5.5 11.5L38 20l-12.5 5.5L20 37l-5.5-11.5L2 20l12.5-5.5L20 3Z"/><path d="m20 12 2.6 5.4L28 20l-5.4 2.6L20 28l-2.6-5.4L12 20l5.4-2.6L20 12Z"/></svg></span>
+        <span class="brand-copy"><strong>LUMEN</strong><small>AKADÉMIA OBJAVOV</small></span>
+      </a>
+      <div class="resources" aria-label="Tvoje zdroje" aria-live="polite">
+        <div class="resource-pill coins"><span class="resource-icon"><svg class="ui-icon"><use href="#i-coin"/></svg></span><span><strong id="coins-count">150</strong><small>MINCE</small></span></div>
+        <div class="resource-pill knowledge"><span class="resource-icon"><svg class="ui-icon"><use href="#i-gem"/></svg></span><span><strong id="knowledge-count">0</strong><small>VEDOMOSTI</small></span></div>
+        <div class="resource-pill income"><span class="resource-icon"><svg class="ui-icon"><use href="#i-zap"/></svg></span><span><strong id="income-count">0</strong><small>ZA SEKUNDU</small></span></div>
+      </div>
+      <div class="top-actions">
+        <button id="sound-btn" class="round-btn" aria-label="Zapnúť zvuk" aria-pressed="false" title="Zvuk"><svg class="ui-icon"><use href="#i-sound"/></svg></button>
+        <button id="help-btn" class="round-btn" aria-label="Ako hrať" title="Ako hrať"><svg class="ui-icon"><use href="#i-help"/></svg></button>
+        <button id="profile-btn" class="player-pill" aria-label="Profil objaviteľa"><span class="player-avatar" aria-hidden="true">✦</span><span id="player-name">Objaviteľ</span></button>
+      </div>
+    </header>
+
+    <div class="left-hud hud-layer">
+      <div class="zone-pill"><span class="live-dot"></span><span id="zone-label">Námestie objavov</span><svg class="ui-icon"><use href="#i-location"/></svg></div>
+      <aside id="welcome-card" class="welcome-card">
+        <span class="eyebrow"><span class="welcome-stars">✦</span> VITAJ V AKADÉMII</span>
+        <h1>Tvoj svet.<br>Tvoje <span>objavy.</span></h1>
+        <p>Preskúmaj ostrov, vyrieš výzvy a vyliahni si vlastných spoločníkov.</p>
+        <button class="primary-btn" data-action="start">Ideme objavovať <svg class="ui-icon"><use href="#i-arrow"/></svg></button>
+        <span class="welcome-note"><i></i> Každý objav sa počíta.</span>
+      </aside>
+    </div>
+
+    <aside id="quest-panel" class="quest-panel hud-layer" aria-label="Tvoje úlohy">
+      <div class="quest-heading"><span class="quest-emblem"><svg class="ui-icon"><use href="#i-flag"/></svg></span><div><span class="eyebrow">MALÉ KROKY. VEĽKÉ OBJAVY.</span><h2>Tvoja výprava</h2></div><span class="quest-count" id="quest-count">01</span></div>
+      <div id="quest-list"><div class="quest-item"><span class="quest-step">1</span><div class="quest-copy"><strong>Vitaj, objaviteľ!</strong><p>Choď k vajíčku na námestí.</p><div class="progress-track"><span style="width:12%"></span></div></div></div><div class="quest-item"><span class="quest-step">2</span><div class="quest-copy"><strong>Nájdi svojho spoločníka</strong><p>Vyliahni svoje prvé vajíčko.</p></div></div><div class="quest-item"><span class="quest-step">3</span><div class="quest-copy"><strong>Zvedavosť sa vypláca</strong><p>Vyrieš prvú vzdelávaciu výzvu.</p></div></div></div>
+      <div class="quest-reward"><svg class="ui-icon"><use href="#i-spark"/></svg><span>Dobrodružstvo začína tebou.</span></div>
+    </aside>
+
+    <div class="bottom-left hud-layer">
+      <div class="minimap-shell"><canvas id="minimap-canvas" width="160" height="160" aria-label="Minimapa akadémie"></canvas><span class="minimap-north">N</span><span class="minimap-caption">AKADÉMIA</span></div>
+      <div class="control-caption"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> pohyb</span><span><span class="mouse-icon" aria-hidden="true"></span> kamera</span><span><kbd class="wide">SPACE</kbd> skok</span><span><kbd>E</kbd> interakcia</span></div>
+    </div>
+    <div id="joystick" class="joystick" aria-label="Virtuálny ovládač pohybu"><div id="joystick-stick"></div></div>
+    <button id="jump-btn" class="jump-btn" aria-label="Skok"><svg class="ui-icon"><use href="#i-jump"/></svg></button>
+
+    <div id="interaction-prompt" class="interaction-prompt" hidden>
+      <div class="interaction-copy"><span class="eyebrow">OBJAV NIEČO NOVÉ</span><strong id="interaction-name">Záhadné vajíčko</strong></div><button id="interact-btn" class="interact-btn"><span id="interaction-key">E</span> Preskúmať <svg class="ui-icon"><use href="#i-arrow"/></svg></button>
+    </div>
+
+    <nav class="game-menu hud-layer" aria-label="Herné menu">
+      <button data-panel="pets" class="menu-btn pets-btn" title="Spoločníci"><span class="menu-icon"><svg class="ui-icon"><use href="#i-paw"/></svg></span><span>Spoločníci</span><kbd>1</kbd></button>
+      <button data-panel="eggs" class="menu-btn eggs-btn" title="Vajíčka"><span class="menu-icon"><svg class="ui-icon"><use href="#i-egg"/></svg></span><span>Vajíčka</span><kbd>2</kbd></button>
+      <button data-panel="upgrades" class="menu-btn upgrades-btn" title="Vylepšenia"><span class="menu-icon"><svg class="ui-icon"><use href="#i-upgrade"/></svg></span><span>Vylepšenia</span><kbd>3</kbd></button>
+      <button data-panel="journal" class="menu-btn journal-btn" title="Denník"><span class="menu-icon"><svg class="ui-icon"><use href="#i-book"/></svg></span><span>Denník</span><kbd>4</kbd></button>
+    </nav>
+    <div class="world-label hud-layer"><span>✦</span> SVET PATRÍ ZVEDAVÝM</div>
+  </main>
+
+  <div id="modal-root"></div>
+  <div id="toast-root" class="toast-root" role="status" aria-live="polite"></div>
+  <div id="loading-overlay" class="loading-overlay">
+    <div class="loading-logo"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="m20 3 5.5 11.5L38 20l-12.5 5.5L20 37l-5.5-11.5L2 20l12.5-5.5L20 3Z"/></svg><strong>LUMEN</strong></div>
+    <span class="eyebrow">AKADÉMIA OBJAVOV</span>
+    <div class="loading-orbit" aria-hidden="true"><span></span><i></i><b>✦</b></div>
+    <h2>Tvoj nový svet sa prebúdza.</h2>
+    <p>Pripravujeme ostrov plný malých veľkých objavov.</p>
+    <div class="loading-track"><span></span></div>
+    <div id="load-error" hidden role="alert"></div>
+  </div>
+  <noscript><div class="noscript">Na návštevu akadémie zapni JavaScript v prehliadači.</div></noscript>
+</body>
+</html>

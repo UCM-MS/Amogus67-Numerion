@@ -6,11 +6,11 @@ Numerion je matematická hra pre 7. až 9. ročník ZŠ od tímu Amogus. Hráč 
 
 | Verzia | Čo sa dá vyskúšať | Odovzdané súbory |
 | --- | --- | --- |
-| Pôvodný prototyp (OG) | Vyliahnuť prvého spoločníka, riešiť kvízy v troch pavilónoch a odomykať vajíčka | [Ivanova časť - pravidlá a test](prototypy/og) |
+| Pôvodný prototyp (OG) | Vyliahnuť prvého spoločníka, riešiť kvízy v troch pavilónoch a odomykať vajíčka | [Celý prototyp, návod a rozdelenie tímu](prototypy/og/README.md) |
 | Týždeň 1 (0.7.0) | Matematické jadro, 108 otázok, 18 kapitol a pravidlá súbojov spoločníkov | [Súbory prvého týždňa](https://github.com/UCM-MS/Amogus67-Numerion/tree/75fede897d7cac37e90223b888c76ef72b1c4bd2) · [Ivanove poznámky](docs/odovzdavky/w01/ivan-beneda.md) |
 | Týždeň 2 (0.11.0) | Ďalších 36 úloh a pokračovanie z uloženej pozície prvého týždňa | [Ivanove zmeny v PR #2](https://github.com/UCM-MS/Amogus67-Numerion/pull/2) |
 
-Zo školského repozitára si môžeš hneď spustiť konzolový test jadra. Na hranie v 3D použi spojený tímový projekt príslušného týždňa.
+Pôvodnú 3D akadémiu spustíš priamo z tohto repozitára v prehliadači. Pri týždenných verziách si tu môžeš overiť matematické jadro. Na hranie ich Unity scén slúži spojený tímový balík príslušného týždňa.
 
 [Spustiť pôvodný prototyp](#pôvodný-webový-prototyp) · [Spustiť matematické jadro](#prvé-spustenie-zo-školského-githubu) · [Otvoriť hru v Unity](#hrateľná-verzia-pre-windows-a-web) · [Ovládanie](#ovládanie-v-akadémii) · [Upraviť učivo](#kde-upraviť-hru)
 
@@ -20,9 +20,16 @@ Prvá hrateľná akadémia z 8. októbra 2026 sa volala **LUMEN · Akadémia obj
 
 ### Ako spustiť celú akadémiu
 
-1. V úplnom členskom balíku otvor `W01/NA-HRANIE/OG-WEB-ZDROJE.zip`. V menšej sade pre Discord je rovnaký ZIP samostatnou prílohou k W01. Rozbaľ ho do vlastného priečinka. Susedný archív `W01-01-ALFA-NA-SPOJENIE.zip` patrí už prvej Unity alfe.
-2. Otvor terminál v rozbalenom priečinku, kde vedľa seba vidíš `serve.mjs` a `dist`. S Node.js 24 spusti `node serve.mjs`. Potrebné knižnice sú súčasťou archívu.
-3. V prehliadači otvor `http://127.0.0.1:4173/` a klikni na **Ideme objavovať**. Terminál nechaj otvorený, kým hráš. Server ukončíš cez **Ctrl+C**. Ak vypíše `EADDRINUSE`, port 4173 už používa iný lokálny server.
+Otvor terminál v koreni stiahnutého repozitára. S Node.js 24 spusti tieto dva príkazy. Knižnica Three.js je pribalená.
+
+```powershell
+cd prototypy/og
+node serve.mjs
+```
+
+V prehliadači otvor `http://127.0.0.1:4173/` a klikni na **Ideme objavovať**. Terminál nechaj počas hrania otvorený. Server ukončíš cez **Ctrl+C**.
+
+Ak máš tímový ZIP, rozbaľ `W01/NA-HRANIE/OG-WEB-ZDROJE.zip` a spusti `node serve.mjs` priamo vedľa súboru `serve.mjs`. Na Discorde je ten istý archív samostatnou prílohou k W01. Prehľad súborov každej tímovej role nájdeš v [README pôvodnej hry](prototypy/og/README.md#rozdelenie-tímu).
 
 **Čo skúsiť ako prvé.** Pri stánku kúp lúčne vajce za 40 mincí, zanes ho do liahne vo svojej základni a vyliahni spoločníka. Potom zájdi do pavilónu a odpovedz na otázku. Za jej prvé správne vyriešenie dostaneš poznatok. Po troch rôznych správne vyriešených otázkach sa odomkne vedecké vajce. Postup sa ukladá v danom prehliadači na rovnakej adrese.
 
