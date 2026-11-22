@@ -1,6 +1,6 @@
 param(
     [ValidateSet('Prepare','Validate','Build','Test','Open')][string]$Action = 'Build',
-    [string]$UnityPath
+    [string]$UnityPath = $env:UNITY_EDITOR_PATH
 )
 $ErrorActionPreference = 'Stop'
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
@@ -11,8 +11,7 @@ if (-not $editorVersion) { throw "Chýba verzia Unity v $versionFile." }
 if (-not $UnityPath) {
     $candidates = @(
         "$env:LOCALAPPDATA/UnityEditors/$editorVersion/Editor/Unity.exe",
-        "$env:ProgramFiles/Unity/Hub/Editor/$editorVersion/Editor/Unity.exe",
-        "$env:LOCALAPPDATA/Packages/OpenAI.Codex_2p2nqsd0c76g0/LocalCache/Local/UnityEditors/$editorVersion/Editor/Unity.exe"
+        "$env:ProgramFiles/Unity/Hub/Editor/$editorVersion/Editor/Unity.exe"
     )
     $UnityPath = $candidates | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
 }

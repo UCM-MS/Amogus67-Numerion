@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "title": "Numerion · desaťtýždňové odovzdávanie zdrojov tímu 3",
-  "responsibility_note": "Každý člen má cieľových 25 % zodpovednosti. Nejde o namerané autorstvo, percento riadkov ani dôkaz odpracovaného času. Balíky rozdeľujú aktuálny AI-asistovaný stav do budúceho harmonogramu; nevytvárajú minulé commity.",
+  "responsibility_note": "Každý člen má na starosti jednu zo štyroch oblastí projektu. Podiel 25 % vyjadruje plánované rozdelenie zodpovednosti. Autorstvo konkrétnych zmien a ich dátumy sa sledujú v histórii repozitára.",
   "git_baselines": {
     "unity": "12f6b5cb3a1ea95861ac179eca1a3d71a4ca7aea",
     "web": "499c4c8c8de61efba6823b95d7b6e408d285e498"

@@ -2,7 +2,7 @@ param(
     [ValidateSet('Both','Web','PC')][string]$Mode = 'Both',
     [int]$Port = 4174,
     [switch]$LAN,
-    [string]$NodePath,
+    [string]$NodePath = $env:NODE_EXE,
     [string]$ServerRoot
 )
 $ErrorActionPreference = 'Stop'
@@ -12,15 +12,9 @@ if (-not $ServerRoot) {
 }
 if (-not $ServerRoot) { throw 'Nenašiel sa priečinok spoločného servera. Zadaj -ServerRoot.' }
 $ServerRoot = [IO.Path]::GetFullPath($ServerRoot)
-if (-not $NodePath) {
-    $nodeCommand = Get-Command node -ErrorAction SilentlyContinue
-    if ($nodeCommand) { $NodePath = $nodeCommand.Source }
-    else {
-        $bundled = Join-Path $env:USERPROFILE '.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe'
-        if (Test-Path -LiteralPath $bundled) { $NodePath = $bundled }
-    }
-}
-if (-not $NodePath) { throw 'Nainštaluj Node.js 24 alebo novší, prípadne zadaj -NodePath.' }
+if (-not $NodePath) { $NodePath = 'node' }
+$nodeCommand = Get-Command $NodePath -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
+if (-not $nodeCommand) { throw 'Nainštaluj Node.js 24 alebo novší, prípadne zadaj -NodePath.' }
 $url = "http://127.0.0.1:$Port"
 $serverReady = $false
 try { $response = Invoke-WebRequest -Uri "$url/api/unity/unknown" -UseBasicParsing -TimeoutSec 2; $serverReady = $response.StatusCode -in 404,405 }
@@ -30,7 +24,7 @@ if (-not $serverReady) {
     $previousPort = $env:PORT; $previousHost = $env:HOST
     try {
         $env:PORT = [string]$Port; $env:HOST = if ($LAN) { '0.0.0.0' } else { '127.0.0.1' }
-        $serverProcess = Start-Process -FilePath $NodePath -ArgumentList @('serve.mjs') -WorkingDirectory $ServerRoot -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $artifactRoot 'local-server.log') -RedirectStandardError (Join-Path $artifactRoot 'local-server-errors.log')
+        $serverProcess = Start-Process -FilePath $nodeCommand.Source -ArgumentList @('serve.mjs') -WorkingDirectory $ServerRoot -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $artifactRoot 'local-server.log') -RedirectStandardError (Join-Path $artifactRoot 'local-server-errors.log')
         @{ProcessId=$serverProcess.Id; Port=$Port; LAN=[bool]$LAN; ServerRoot=$ServerRoot} | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $artifactRoot 'local-server.json') -Encoding utf8
     } finally { $env:PORT = $previousPort; $env:HOST = $previousHost }
     for ($i=0; $i -lt 30; $i++) {

@@ -1,4 +1,4 @@
-param([string]$UnityPath, [switch]$SkipCopy)
+param([string]$UnityPath = $env:UNITY_EDITOR_PATH, [switch]$SkipCopy, [string]$NodePath = $env:NODE_EXE)
 $ErrorActionPreference = 'Stop'
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $versionLine = Get-Content -LiteralPath (Join-Path $projectRoot 'ProjectSettings/ProjectVersion.txt') | Where-Object { $_ -match '^m_EditorVersion:' } | Select-Object -First 1
@@ -26,11 +26,13 @@ if (-not $SkipCopy) {
         Get-ChildItem -LiteralPath $output | Copy-Item -Destination $destination -Recurse -Force
         $prepareHosting = Join-Path $server 'scripts/prepare-unity-hosting.mjs'
         if (Test-Path -LiteralPath $prepareHosting) {
-            $nodeCommand = Get-Command node -ErrorAction SilentlyContinue
-            $hostingNode = if ($nodeCommand) { $nodeCommand.Source } else { Join-Path $env:USERPROFILE '.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe' }
-            if (-not (Test-Path -LiteralPath $hostingNode)) { throw 'Na prípravu webových dát nainštaluj Node.js 24 alebo novší.' }
+            if (-not $NodePath) { $NodePath = 'node' }
+            $nodeCommand = Get-Command $NodePath -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
+            if (-not $nodeCommand) {
+                throw 'Na prípravu webových dát nainštaluj Node.js 24 alebo novší, prípadne zadaj -NodePath.'
+            }
             Push-Location -LiteralPath $server
-            try { & $hostingNode $prepareHosting; if ($LASTEXITCODE -ne 0) { throw 'Webové dátové časti sa nepodarilo pripraviť.' } }
+            try { & $nodeCommand.Source $prepareHosting; if ($LASTEXITCODE -ne 0) { throw 'Webové dátové časti sa nepodarilo pripraviť.' } }
             finally { Pop-Location }
         }
         Write-Output "Unity Web skopírované do lokálneho servera: $destination"

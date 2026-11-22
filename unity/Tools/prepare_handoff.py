@@ -325,7 +325,7 @@ def instructions(role: dict, week: dict | None, selected: list[dict], snapshot: 
     title = 'Všetky priradené zmeny' if week is None else 'Týždeň %02d · %s' % (week['number'], week['title'])
     payload = sum(c['action'] != 'deleted' for c in selected); removed = sum(c['action'] == 'deleted' for c in selected)
     text = [f'LUMEN · TÍM 3 · {title}', f'{role["name"]} · {role["role"]} · cieľ zodpovednosti 25 %', '',
-            'Toto je plánované odovzdávanie aktuálneho AI-asistovaného zdrojového stavu.',
+            'Rozpis vychádza zo snímky zdrojových súborov uvedenej nižšie.',
             'Balík netvrdí, kto existujúci kód napísal ani v ktorom minulom týždni vznikol.',
             f'Súbory na skopírovanie: {payload}; odstránenia na ručnú kontrolu: {removed}.',
             'SHA-256 celého cieľového zdrojového stavu: ' + snapshot, '',
