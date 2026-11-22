@@ -13,8 +13,6 @@ node serve.mjs
 
 Otvor `http://127.0.0.1:4173/` v prehliadači s podporou WebGL 2 a stlač **Ideme objavovať**. Knižnica Three.js je súčasťou projektu. Terminál nechaj otvorený, kým hráš. **Ctrl+C** ukončí server. Chyba `EADDRINUSE` znamená, že port 4173 už používa iný lokálny server.
 
-Pri hraní z tímového archívu `OG-WEB-ZDROJE.zip` otvor terminál priamo v rozbalenom priečinku so súborom `serve.mjs` a spusti iba druhý príkaz.
-
 ## Ovládanie
 
 | Akcia | Ovládanie |
@@ -39,7 +37,7 @@ V priečinku `prototypy/og` spusti `node tests/academy-engine.test.mjs`. Test pr
 
 ## Rozdelenie tímu
 
-Tím Amogus má pri odovzdaní prototypu štyri oblasti zodpovednosti. V tabuľke nájdeš pri každej oblasti aj jej hlavné súbory.
+Pri každej časti prototypu je uvedený tímový kontakt a miesto v zdrojovom kóde.
 
 | Člen tímu | Oblasť | Súbory |
 | --- | --- | --- |
@@ -48,4 +46,4 @@ Tím Amogus má pri odovzdaní prototypu štyri oblasti zodpovednosti. V tabuľk
 | Aleksandra Talyzina | Grafika sveta. Priestorové rozloženie ostrova, pavilóny, modely postáv a spoločníkov. | [3D scéna akadémie](dist/scene3d.js) |
 | Alexander Brezina | Rozhranie. Úvodná obrazovka, ukazovatele mincí a poznatkov, panely a dotykové ovládacie prvky. | [Rozloženie obrazovky](dist/index.html) a [vzhľad rozhrania](dist/style.css) |
 
-Ivan Beneda zverejnil OG za tím v jednom spoločnom odovzdaní. Historické revízie prototypu vznikli pod účtom Codex v štyroch vývojových rolách. Zdrojom je tímový archív `OG-WEB-ZDROJE.zip` z revízie `b5b9d80`. Pribalenú knižnicu Three.js vytvorili autori Three.js. [Licencia MIT](dist/vendor/THREE-LICENSE.txt)
+Zdrojová revízia prototypu je `b5b9d80`. Ivan Beneda ju za tím zverejnil v [commite s pôvodnou akadémiou](https://github.com/UCM-MS/Amogus67-Numerion/commit/e4c6bf5309b92fccadf108675173916fb01083e2). Prototyp používa knižnicu Three.js. [Licencia MIT](dist/vendor/THREE-LICENSE.txt)
