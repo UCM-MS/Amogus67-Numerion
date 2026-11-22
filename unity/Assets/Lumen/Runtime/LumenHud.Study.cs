@@ -12,13 +12,13 @@ namespace Lumen.Runtime
         public void ShowStudy()
         {
             Open("Učebnice a tematické testy", "MATEMATIKA / KNIŽNICA"); FeaturePanel = "study";
-            Label(body, "Pochop postup. Vyskúšaj príklad. Potom si over, čo už dokážeš sám.", 28, Ink);
+            Label(body, "Vyber ročník a matematickú tému.", 26, Muted);
             var grades = Row(body, 76);
             for (int value = 7; value <= 9; value++)
             {
                 int grade = value;
                 ButtonNode(grades, CurriculumLabels.Grade(grade), () => { game.SetStudyGrade(grade); ShowStudy(); },
-                    game.Profile.Grade == grade ? Lavender : Color.white, Ink, 25);
+                    game.Profile.Grade == grade ? Selected : Lavender, Ink, 25);
             }
             var active = game.Save.ActiveStudyTest;
             if (active != null)
@@ -30,12 +30,14 @@ namespace Lumen.Runtime
                 ButtonNode(resume, active.Completed ? "Výsledky a vysvetlenia" : "Pokračovať v teste", () =>
                 { game.SetStudyGrade(active.Grade); if (active.Completed) ShowStudyResults(); else ShowStudyTest(); }, Lime);
             }
+            RectTransform lessonRow=null;int lessonIndex=0;
             foreach (var section in game.Catalog.Sections)
             {
                 Subject topic = section.Subject;
                 var lessons = LessonCatalog.GetLessons(game.Profile.Grade, topic);
                 var lesson = lessons.FirstOrDefault();
-                var card = Card(body, Cream);
+                if(lessonIndex++%2==0)lessonRow=CardRow(body);
+                var card = Card(lessonRow, Cream);
                 Label(card, section.Name, 30, Ink);
                 Label(card, lesson == null ? section.Description : lesson.Title + "\n" + lesson.Takeaway, 24, Muted);
                 bool passed = game.Profile.Progress.ClaimedQuestIds.Contains("study.pass.g" + game.Profile.Grade + ".s" + (int)topic);
@@ -101,36 +103,37 @@ namespace Lumen.Runtime
                 ButtonNode(body, "Nový test tejto témy", () => game.BeginStudyTest(test.Subject, true), Lime);
                 ButtonNode(body, "Späť do knižnice", ShowStudy, Lavender); return;
             }
-            Label(body, CurriculumLabels.Grade(test.Grade) + " · otázka " + (test.NextIndex + 1) + "/" + test.QuestionIds.Length + " · náročnosť " + question.Difficulty + "/4", 24, Purple);
-            ProgressBar(body, test.NextIndex / (float)test.QuestionIds.Length, Purple);
-            Label(body, question.Prompt, 34, Ink);
-            if (game.Save.Options.PetHelp) ButtonNode(body, "Pomoc od spoločníka", ShowPetHelper, Mint, Ink, 23);
-            var answers = new List<Button>();
-            for (int i = 0; i < question.Options.Length; i++)
-            {
-                int choice = i;
-                var answer = ButtonNode(body, ((char)('A' + i)) + "  " + question.Options[i], () =>
-                { foreach (var b in answers) b.interactable = false; game.SubmitStudyAnswer(choice); }, i % 2 == 0 ? Lavender : Mint, Ink, 28);
-                answers.Add(answer);
-            }
-            Label(body, "Bez časového limitu. Po odpovedi uvidíš vysvetlenie a na konci rozbor chýb. Za nové správne riešenie môžeš získať artefakt iba raz.", 23, Muted);
-            ButtonNode(body, "Odložiť test a otvoriť knižnicu", ShowStudy, Cream, Ink, 23);
+            BuildStudyQuestionContent(body,question,CurriculumLabels.Grade(test.Grade)+" · otázka "+(test.NextIndex+1)+"/"+test.QuestionIds.Length+" · náročnosť "+question.Difficulty+"/4",
+                test.NextIndex/(float)test.QuestionIds.Length,game.SubmitStudyAnswer,game.Save.Options.PetHelp?(Action)ShowPetHelper:null,ShowStudy);
+        }
+
+        private void BuildStudyQuestionContent(Transform parent,Question question,string metadata,float progress,Action<int> answer,Action help,Action pause)
+        {
+            CompactLabel(parent,metadata,14,Muted);
+            var track=ImageNode("Test progress",parent,Lavender);SetHeight(track.rectTransform,4);
+            var fill=ImageNode("Test progress fill",track.transform,Brass);fill.type=Image.Type.Filled;fill.fillMethod=Image.FillMethod.Horizontal;
+            fill.fillAmount=progress;Stretch(fill.rectTransform,Vector2.zero,Vector2.one);
+            BuildQuestionBlock(parent,question,answer);
+            var footer=CSSRow(parent);
+            if(help!=null)CompactButton(footer,"Pomoc",help,Mint);
+            CompactButton(footer,"Odložiť test",pause,Cream);
+            CompactLabel(parent,"Bez časového limitu · odpovede sa priebežne ukladajú",13,Muted);
         }
 
         public void ShowStudyFeedback(Question question, StudyAnswerResult answer)
         {
-            Open(answer.Accepted ? answer.Correct ? "Správne. Rozumieš tomu!" : "Chyba je ďalší krok k pochopeniu." : "Odpoveď sa neuložila", "TEST / VYSVETLENIE"); FeaturePanel = "study-feedback";
+            Open(answer.Accepted ? answer.Correct ? "Správna odpoveď" : "Nesprávna odpoveď" : "Odpoveď sa neuložila", "TEST / VYSVETLENIE"); FeaturePanel = "study-feedback";
             if (!answer.Accepted)
             {
                 Label(body, answer.Error, 28, Ink); ButtonNode(body, "Vrátiť sa k otázke", ShowStudyTest, Lime); return;
             }
+            ButtonNode(body, answer.Completed ? "Výsledok testu  →" : "Ďalšia otázka  →", answer.Completed ? (Action)ShowStudyResults : ShowStudyTest, Lime, Ink, 26);
             Label(body, question.Prompt, 28, Ink);
             var solved = Card(body, answer.Correct ? Mint : Lavender);
             Label(solved, "Správna odpoveď: " + question.Options[answer.CorrectOption], 31, Purple);
             Label(solved, answer.Explanation, 29, Ink);
             var lesson = LessonCatalog.GetLessons(question.Grade, question.Subject).FirstOrDefault();
             if (lesson != null) ButtonNode(body, "Potrebujem postup z učebnice", () => ShowLesson(lesson), Cream, Ink, 24);
-            ButtonNode(body, answer.Completed ? "Zobraziť výsledok testu  →" : "Ďalšia otázka  →", answer.Completed ? (Action)ShowStudyResults : ShowStudyTest, Lime, Ink, 28);
         }
 
         public void ShowStudyResults()
@@ -147,7 +150,7 @@ namespace Lumen.Runtime
                 ButtonNode(body, "Späť do knižnice", ShowStudy, Lavender); return;
             }
             game.RecordStudyCompletion();
-            Open(results.Passed ? "Tému máš v rukách!" : "Pozri sa na postup a skús to znovu.", "TEST / VÝSLEDKY A ROZBOR"); FeaturePanel = "study-results";
+            Open(results.Passed ? "Test zvládnutý" : "Výsledok testu", "TEST / VÝSLEDKY A ROZBOR"); FeaturePanel = "study-results";
             var score = Card(body, results.Passed ? Mint : Lavender);
             Label(score, results.Percent + " %", 60, results.Passed ? Purple : Ink);
             Label(score, results.CorrectCount + " zo " + results.TotalCount + " správne · " + CurriculumLabels.Grade(test.Grade) + " · " + CurriculumLabels.SubjectName(test.Subject), 28, Ink);

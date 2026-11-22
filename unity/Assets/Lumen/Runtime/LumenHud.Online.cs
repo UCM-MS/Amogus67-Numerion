@@ -27,7 +27,7 @@ namespace Lumen.Runtime
         public void ShowMultiplayer()
         {
             if (!game.Save.HasCreatedProfile) { ShowProfile(true); return; }
-            Open("Spoločná matematická akadémia", "HRAŤ SPOLU / PC + WEB");
+            Open("Hrať spolu", "MIESTNOSTI / PC + WEB");
             FeaturePanel = "ONLINE"; ObserveOnlineStatus();
             var online = game.Online;
             if (online == null) { Label(body, "Online služba sa ešte pripravuje. Môžeš pokračovať v sólo svete.", 26, Ink); return; }
@@ -113,7 +113,7 @@ namespace Lumen.Runtime
         {
             if (!game.Save.HasCreatedProfile) { ShowProfile(true); return; }
             if (FeaturePanel != "CLOUD") revealCloudCode = false;
-            Open("Tvoja výprava na každom zariadení", "SPOLOČNÝ PROFIL / PC + WEB");
+            Open("Ukladanie a prenos postupu", "SPOLOČNÝ PROFIL / PC + WEB");
             FeaturePanel = "CLOUD"; ObserveOnlineStatus();
             var online = game.Online;
             if (online == null) { Label(body, "Cloudový profil sa pripravuje. Lokálne uloženie zostáva dostupné.", 26, Ink); return; }

@@ -261,7 +261,7 @@ namespace Lumen.Runtime
             const int size = 128;
             var texture = new Texture2D(size, size, TextureFormat.RGBA32, false)
             {
-                name = pointed ? "LUMEN portrait triangle" : "LUMEN portrait circle",
+                name = pointed ? "NUMERION portrait triangle" : "NUMERION portrait circle",
                 filterMode = FilterMode.Bilinear,
                 wrapMode = TextureWrapMode.Clamp,
                 hideFlags = HideFlags.DontSave
