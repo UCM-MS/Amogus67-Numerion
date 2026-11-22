@@ -8,9 +8,9 @@ namespace Lumen.World
         private sealed partial class Builder
         {
             private static Mesh fractionSliceMesh, triangularPrismMesh;
-            private readonly Color gardenMint = new Color(.39f, .79f, .69f);
-            private readonly Color gardenPurple = new Color(.65f, .52f, .86f);
-            private readonly Color gardenLime = new Color(.78f, .9f, .39f);
+            private readonly Color gardenMint = new Color(.43f, .55f, .49f);
+            private readonly Color gardenPurple = new Color(.47f, .46f, .58f);
+            private readonly Color gardenLime = new Color(.72f, .68f, .41f);
 
             private void MathDiscoveryGarden()
             {
@@ -196,7 +196,7 @@ namespace Lumen.World
                 for (int i = 0; i < 5; i++)
                 {
                     Vector3 point = new Vector3(-15.2f + i * .7f, 4.7f + Mathf.Sin(i * 1.8f) * .45f, -3.6f);
-                    MathPart("Library constellation light", PrimitiveType.Sphere, fixedArt, point, Vector3.one * .12f, gardenLime, .45f);
+                    MathPart("Library constellation light", PrimitiveType.Sphere, fixedArt, point, Vector3.one * .12f, gardenLime);
                     if (i > 0) MathLink("Connected idea", fixedArt, previous, point, .025f, brass);
                     previous = point;
                 }
@@ -204,7 +204,7 @@ namespace Lumen.World
                 {
                     Vector3 p = new Vector3(-15.4f + i * 3.2f, .1f, -5.1f);
                     MathPart("Library lantern stem", PrimitiveType.Cylinder, fixedArt, p + Vector3.up * .7f, new Vector3(.07f, .7f, .07f), brass);
-                    MathPart("Library lantern globe", PrimitiveType.Sphere, fixedArt, p + Vector3.up * 1.5f, Vector3.one * .4f, gardenLime, .35f);
+                    MathPart("Library lantern globe", PrimitiveType.Sphere, fixedArt, p + Vector3.up * 1.5f, Vector3.one * .4f, new Color(.77f,.67f,.45f), .10f);
                 }
                 WorldLabels.Create(labels, "KAŽDÝ OBJAV SA ZAČÍNA OTÁZKOU", new Vector3(-13.7f, 1.35f, -2.1f), .35f, ink);
             }

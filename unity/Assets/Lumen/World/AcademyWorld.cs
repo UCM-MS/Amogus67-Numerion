@@ -20,18 +20,25 @@ namespace Lumen.World
             private readonly bool headless;
             private readonly WorldLayout layout = new WorldLayout();
             private readonly Dictionary<PrimitiveType, Mesh> meshes = new Dictionary<PrimitiveType, Mesh>();
+            private Mesh cylinderCollisionMesh;
             private readonly Color cream = new Color(.89f, .87f, .79f);
             private readonly Color path = new Color(.68f, .67f, .59f);
             private readonly Color stone = new Color(.25f, .31f, .34f);
             private readonly Color grass = new Color(.30f, .45f, .33f);
             private readonly Color trunk = new Color(.32f, .26f, .21f);
+            // Environment accents are independent of the player's saved outfit palette.
+            private static readonly Color[] CampusAccents = {
+                new Color(.40f,.48f,.55f), new Color(.58f,.62f,.55f), new Color(.68f,.52f,.34f),
+                new Color(.42f,.53f,.40f), new Color(.61f,.49f,.42f), new Color(.37f,.45f,.51f),
+                new Color(.75f,.64f,.40f), new Color(.32f,.35f,.36f)
+            };
             private Transform root;
 
             public Builder(bool headless) { this.headless = headless; }
 
             public WorldLayout Build()
             {
-                layout.Root = new GameObject(headless ? "Academy / Server physics" : "LUMEN / Academy of discovery");
+                layout.Root = new GameObject(headless ? "Academy / Server physics" : "NUMERION / Academy of discovery");
                 root = layout.Root.transform;
                 Island("Academy commons", Vector3.zero, 20, grass);
                 Disc("Central plaza", root, new Vector3(0, 0.04f, 0), 12, 0.12f, path, true);
@@ -39,8 +46,8 @@ namespace Lumen.World
                 CompassRose();
                 Fountain(new Vector3(0, 0.35f, -3.5f));
                 HubKiosks();
-                Station("pet-arena", "math", "arena", "Aréna spoločníkov", new Vector3(9, 0, -1), new Color(.66f, .5f, .92f));
-                Station("study-library", "math", "study", "Matematická knižnica", new Vector3(-10, 0, -2), new Color(.38f, .73f, .7f));
+                Station("pet-arena", "math", "arena", "Aréna spoločníkov", new Vector3(9, 0, -1), CampusAccents[0]);
+                Station("study-library", "math", "study", "Matematická knižnica", new Vector3(-10, 0, -2), CampusAccents[1]);
                 Station("artifact-workshop", "math", "artifacts", "Dielňa artefaktov", new Vector3(3, 0, -9), new Color(.9f, .67f, .31f));
                 PetArenaExhibit();
                 MathDiscoveryGarden();
@@ -51,7 +58,7 @@ namespace Lumen.World
                 for (int i = 0; i < SectionPositions.Length; i++)
                 {
                     Vector3 position = SectionPositions[i];
-                    Color accent = LumenMaterials.OutfitColors[i];
+                    Color accent = CampusAccents[i];
                     Island(SubjectNames[i], position, 16.5f, Color.Lerp(grass, accent, 0.18f));
                     Bridge(Vector3.zero, position, accent, i);
                     BuildSection(i, position, accent);
@@ -73,6 +80,7 @@ namespace Lumen.World
                 }
 
                 Parkour();
+                ExpeditionArchipelago();
                 Tree(new Vector3(-11, 0, 9), 1.3f, 1);
                 Tree(new Vector3(11, 0, 9), 1.15f, 3);
                 Tree(new Vector3(-13, 0, -7), 1.05f, 0);
@@ -83,6 +91,7 @@ namespace Lumen.World
                 {
                     DistantScenery();
                     AcademyAtmosphere();
+                    AcademyPolish();
                 }
                 SyntyAcademyDecor.Attach(root, headless);
                 return layout;
@@ -136,9 +145,9 @@ namespace Lumen.World
 
             private void HubKiosks()
             {
-                Station("expedition-hub", "math", "coop", "Spoločná výprava", new Vector3(-5, 0, -8), LumenMaterials.OutfitColors[1]);
-                Station("companion-garden", "nature", "pets", "Záhrada spoločníkov", new Vector3(7, 0, -7), LumenMaterials.OutfitColors[3]);
-                Station("style-studio", "language", "customize", "Tvoj objaviteľ", new Vector3(-7, 0, 7), LumenMaterials.OutfitColors[4]);
+                ExpeditionPortalHub();
+                Station("companion-garden", "nature", "pets", "Záhrada spoločníkov", new Vector3(7, 0, -7), CampusAccents[3]);
+                Station("style-studio", "language", "customize", "Tvoj objaviteľ", new Vector3(-7, 0, 7), CampusAccents[4]);
             }
 
             private void BuildSection(int index, Vector3 center, Color accent)
@@ -149,10 +158,10 @@ namespace Lumen.World
                 Disc("Learning plaza", group.transform, new Vector3(0, 0.04f, 0), 9.5f, 0.12f, path, true);
                 // Open arcades are approachable from every bridge; no wall hides the subject exhibit.
                 PavilionArchitecture(group.transform, index, accent);
+                Shape("Exhibit plinth", PrimitiveType.Cylinder, group.transform, new Vector3(0, 0.65f, -1.2f), new Vector3(2.8f, 0.65f, 2.8f), cream, true);
                 if (headless) return;
                 WorldLabels.Create(group.transform, SubjectNames[index], new Vector3(0, 6.35f, 2.2f), 2.4f, cream);
-                WorldLabels.Create(group.transform, "OBJAVUJ  ·  PREMÝŠĽAJ  ·  VYSVETLI", new Vector3(0, 0.85f, 7.5f), 0.55f, stone);
-                Shape("Exhibit plinth", PrimitiveType.Cylinder, group.transform, new Vector3(0, 0.65f, -1.2f), new Vector3(2.8f, 0.65f, 2.8f), cream, false);
+                WorldLabels.Create(group.transform, "UČEBNICA  ·  CVIČENIE  ·  TEST", new Vector3(0, 0.85f, 7.5f), 0.55f, stone);
                 Bench(center + new Vector3(-8, 0, 0), 90);
                 Bench(center + new Vector3(8, 0, 0), -90);
                 SubjectGarden(group.transform, index, accent);
@@ -197,13 +206,13 @@ namespace Lumen.World
             private void Parkour()
             {
                 Vector3 start = new Vector3(14, 0, 14);
-                Station("sky-course", "science", "parkour", "Nebeská dráha", start, LumenMaterials.OutfitColors[6]);
+                Station("sky-course", "science", "parkour", "Nebeská dráha", start, CampusAccents[6]);
                 // Short gaps and <=0.45m rises are compatible with the standard 1.8m character jump.
                 for (int i = 0; i < 9; i++)
                 {
                     Vector3 center = new Vector3(20 + (i % 3) * 2.7f, 0.3f + i * 0.4f, 22 + (i / 3) * 3.3f);
                     if (i / 3 == 1) center.x = 25.4f - (i % 3) * 2.7f;
-                    Shape("Parkour checkpoint " + (i + 1), PrimitiveType.Cube, root, new Vector3(center.x, center.y * 0.5f, center.z), new Vector3(2.2f, center.y, 2.5f), i % 2 == 0 ? cream : LumenMaterials.OutfitColors[6], true);
+                    Shape("Parkour checkpoint " + (i + 1), PrimitiveType.Cube, root, new Vector3(center.x, center.y * 0.5f, center.z), new Vector3(2.2f, center.y, 2.5f), i % 2 == 0 ? cream : CampusAccents[6], true);
                     layout.ParkourPlatforms.Add(center + Vector3.up * 0.1f);
                     if (!headless) WorldLabels.Create(root, (i + 1).ToString(), center + Vector3.up * 1.1f, 0.8f, stone);
                 }
@@ -216,14 +225,14 @@ namespace Lumen.World
             private void Fountain(Vector3 position)
             {
                 Disc("Fountain basin", root, position, 2.6f, 0.35f, cream, true);
+                Shape("Fountain stone pedestal", PrimitiveType.Cylinder, root, position + Vector3.up * 0.5f, new Vector3(0.65f, 0.5f, 0.65f), cream, true);
+                Disc("Upper fountain bowl", root, position + Vector3.up * 1.1f, 1, 0.18f, cream, true);
                 if (headless) return;
                 Disc("Still reflective water", root, position + Vector3.up * 0.04f, 2.25f, 0.03f, new Color(0.28f, 0.73f, 0.79f), false, 0.55f, 0.97f);
                 Torus("Fountain limestone rim", root, position + Vector3.up * 0.12f, 2.48f, 0.16f, cream, Vector3.zero);
-                Shape("Fountain stone pedestal", PrimitiveType.Cylinder, root, position + Vector3.up * 0.5f, new Vector3(0.65f, 0.5f, 0.65f), cream, false);
-                Disc("Upper fountain bowl", root, position + Vector3.up * 1.1f, 1, 0.18f, cream, false);
                 Disc("Upper fountain water", root, position + Vector3.up * 1.12f, 0.86f, 0.025f, new Color(0.28f, 0.73f, 0.79f), false, 0.4f, 0.92f);
-                Shape("Lumen heart", PrimitiveType.Sphere, root, position + Vector3.up * 1.5f, Vector3.one * 0.9f, LumenMaterials.OutfitColors[0], false, 0.3f, 0.85f, 0.4f);
-                Ring(root, position + Vector3.up * 1.5f, 1.15f, LumenMaterials.OutfitColors[6], new Vector3(75, 20, 0));
+                Shape("Lumen heart", PrimitiveType.Sphere, root, position + Vector3.up * 1.5f, Vector3.one * 0.9f, CampusAccents[0], false, 0.3f, 0.85f, 0.4f);
+                Ring(root, position + Vector3.up * 1.5f, 1.15f, CampusAccents[6], new Vector3(75, 20, 0));
             }
 
             private void CompassRose()
@@ -232,7 +241,7 @@ namespace Lumen.World
                 for (int i = 0; i < 6; i++)
                 {
                     float angle = i * 60 * Mathf.Deg2Rad;
-                    var tile = Shape("Compass ray", PrimitiveType.Cube, root, new Vector3(Mathf.Sin(angle) * 2, 0.19f, Mathf.Cos(angle) * 2), new Vector3(0.24f, 0.02f, 1.9f), LumenMaterials.OutfitColors[i], false);
+                    var tile = Shape("Compass ray", PrimitiveType.Cube, root, new Vector3(Mathf.Sin(angle) * 2, 0.19f, Mathf.Cos(angle) * 2), new Vector3(0.24f, 0.02f, 1.9f), CampusAccents[i], false);
                     tile.transform.localRotation = Quaternion.Euler(0, i * 60, 0);
                 }
             }
@@ -297,8 +306,22 @@ namespace Lumen.World
                 }
                 if (solid)
                 {
-                    // Primitive cylinder has unit diameter and height 2. Box bounds are deterministic on headless servers.
-                    var collider = obj.AddComponent<BoxCollider>(); collider.size = primitive == PrimitiveType.Cylinder ? new Vector3(1, 2, 1) : Vector3.one;
+                    if (primitive == PrimitiveType.Cylinder)
+                    {
+                        // Unity's cylinder is a 20-sided, unit-diameter, two-unit-tall solid. A square envelope
+                        // blocks invisible corners on columns and trunks; use the same static silhouette instead.
+                        if (!cylinderCollisionMesh)
+                        {
+                            cylinderCollisionMesh = CylinderMesh(.5f, .5f, 2, 20);
+                            var points = cylinderCollisionMesh.vertices;
+                            for (int i = 0; i < points.Length; i++) points[i] += Vector3.up;
+                            cylinderCollisionMesh.vertices = points;
+                            cylinderCollisionMesh.RecalculateBounds();
+                            cylinderCollisionMesh.name = "Numerion / shared unit cylinder collision";
+                        }
+                        obj.AddComponent<MeshCollider>().sharedMesh = cylinderCollisionMesh;
+                    }
+                    else obj.AddComponent<BoxCollider>().size = Vector3.one;
                 }
                 return obj;
             }
@@ -328,9 +351,8 @@ namespace Lumen.World
                 obj.AddComponent<MeshRenderer>().sharedMaterial = LumenMaterials.Get(ColorUtility.ToHtmlStringRGB(tint), tint);
             }
 
-            private static Mesh CylinderMesh(float topRadius, float bottomRadius, float height)
+            private static Mesh CylinderMesh(float topRadius, float bottomRadius, float height, int sides = 32)
             {
-                const int sides = 32;
                 var vertices = new Vector3[(sides + 1) * 2 + 2];
                 var triangles = new int[sides * 12];
                 var uv = new Vector2[vertices.Length];
